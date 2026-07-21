@@ -1,0 +1,25 @@
+﻿<div class="ibd-checkbox ibd-input">
+    <p>@Title</p>
+    @if (ReadOnly) 
+    {
+        <input type="checkbox" checked="@Value" readonly />
+    }
+    else
+    {
+        <input type="checkbox" checked="@Value" @onchange="@OnInputChanged"/>
+    }
+</div>
+
+@code {
+    [Parameter] public bool Value { get; set; }
+    [Parameter] public EventCallback<bool> ValueChanged { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    private async Task OnInputChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not bool value) return;
+        Value = value;
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

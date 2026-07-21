@@ -1,0 +1,8 @@
+﻿<div class="medicine-report-row">
+    <div>@MedicineReport.Medicine.Name</div>
+    <div>@MedicineReport.SubmittedFor</div>
+</div>
+
+@code {
+    [Parameter] required public MedicineReport MedicineReport { get; set; }
+}

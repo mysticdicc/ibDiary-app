@@ -1,0 +1,64 @@
+﻿@inject MedicineDatabaseService _medDbService;
+
+@if (Visible)
+{
+    <div class="medicine-viewer">
+        <div>
+            <IbdTextInput @bind-Value="@Medicine.Name" Title="Name" />
+            <IbdCheckbox @bind-Value="@Medicine.Active" Title="Enabled" />
+        </div>
+        <div>
+            <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
+        </div>
+        <div>
+            <MedicineScheduleViewer @bind-MedicineSchedule="@Medicine.MedicineSchedule" />
+        </div>
+        <div>
+            <IbdTextInput @bind-Value="@Medicine.PrescribedBy" Title="Prescribed By" />
+        </div>
+        <div>
+            <IbdDateOnlyInput @bind-Value="@Medicine.PrescribedAt" Title="Prescribed At" />
+        </div>
+        <div>
+            <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
+        </div>
+        <div>
+            <button @onclick="@OnClickCancel">
+                Cancel
+            </button>
+            <button @onclick="@OnClickSave">
+                Save
+            </button>
+        </div>
+    </div>
+
+}
+
+@code {
+    [Parameter] required public Medicine Medicine { get; set; }
+    [Parameter] public EventCallback<Medicine> MedicineChanged { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task OnClickCancel()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+
+    private async Task OnClickSave()
+    {
+        bool result = false;
+
+        if (Medicine.Id == 0) 
+        {
+            result = await _medDbService.AddAsync(Medicine) > 0;
+        }
+        else
+        {
+            result = await _medDbService.UpdateAsync(Medicine);
+        }
+
+        if (result) await OnClickCancel();
+    }
+}

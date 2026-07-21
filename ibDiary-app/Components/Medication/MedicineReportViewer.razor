@@ -1,0 +1,56 @@
+﻿@inject MedicineReportDatabaseService _medDbService;
+
+@if (Visible)
+{
+    <div class="medicine-report-viewer">
+        <div>
+            <MedicineRow Medicine="@MedicineReport.Medicine"/>
+        </div>
+        <div>
+            <IbdDateTimeInput Title="Submitted At" ReadOnly="true" @bind-Value="@MedicineReport.SubmittedAt"/>
+        </div>
+        <div>
+            <IbdDateTimeInput Title="Submitted For" @bind-Value="@MedicineReport.SubmittedFor"/>
+        </div>
+        <div>
+            <IbdTextArea Title="Notes" @bind-Value="@MedicineReport.Notes"/>
+        </div>
+        <div>
+            <button @onclick="@OnClickCancel">
+                Cancel
+            </button>
+            <button @onclick="@OnClickSave">
+                Save
+            </button>                                                                                                                    
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] required public MedicineReport MedicineReport { get; set; }
+    [Parameter] required public EventCallback<MedicineReport> MedicineReportChanged { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task OnClickCancel()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+
+    private async Task OnClickSave()
+    {
+        bool result = false;
+
+        if (MedicineReport.Id == 0)
+        {
+            result = await _medDbService.AddAsync(MedicineReport) > 0;
+        }
+        else
+        {
+            result = await _medDbService.UpdateAsync(MedicineReport);
+        }
+
+        if (result) await OnClickCancel();
+    }
+}

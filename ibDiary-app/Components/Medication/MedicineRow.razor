@@ -1,0 +1,9 @@
+﻿<div class="medicine-row">
+    <div>@Medicine.Name</div>
+    <div>@Medicine.Dose</div>
+    <div>@Medicine.DoseSchedule</div>
+</div>
+
+@code {
+    [Parameter] required public Medicine Medicine { get; set; }
+}

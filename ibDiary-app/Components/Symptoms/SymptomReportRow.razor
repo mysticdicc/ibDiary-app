@@ -1,0 +1,9 @@
+﻿<div class="symptom-report-row">
+    <div>@SymptomReport.Symptom</div>
+    <div>@SymptomReport.Severity</div>
+    <div>@SymptomReport.SubmittedFor</div>
+</div>
+
+@code {
+    [Parameter] required public SymptomReport SymptomReport { get; set; }
+}

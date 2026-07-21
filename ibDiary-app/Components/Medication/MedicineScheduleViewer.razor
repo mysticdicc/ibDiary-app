@@ -1,0 +1,16 @@
+﻿<div class="medicine-schedule-viewer">
+    <p>Schedule</p>
+    <div>
+        <IbdIntInput @bind-Value="@MedicineSchedule.Days" Title="Days"/>
+    </div>
+    <div>
+        <IbdIntInput @bind-Value="@MedicineSchedule.Hours" Title="Hours" />
+    </div>
+    <div>
+        <IbdIntInput @bind-Value="@MedicineSchedule.Minutes" Title="Minutes" />
+    </div>
+</div>
+
+@code {
+    [Parameter] required public MedicineSchedule MedicineSchedule { get; set; }
+}

@@ -1,0 +1,51 @@
+﻿@inject SymptomDatabaseService _symDbService;
+
+@if (Visible)
+{
+    <div class="symptom-viewer">
+        <div>
+            <IbdTextInput @bind-Value="@Symptom.Title" Title="Title"/>
+            <IbdCheckbox @bind-Value="@Symptom.Active" Title="Enabled"/>
+        </div>
+        <div>
+            <IbdTextInput @bind-Value="@Symptom.Description" Title="Description"/>
+        </div>
+        <div>
+            <button @onclick="@OnClickCancel">
+                Cancel
+            </button>
+            <button @onclick="@OnClickSave">
+                Save
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] required public Symptom Symptom { get; set; }
+    [Parameter] public EventCallback<Symptom> SymptomChanged { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task OnClickCancel()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+
+    private async Task OnClickSave()
+    {
+        bool result = false;
+
+        if (Symptom.Id == 0)
+        {
+            result = await _symDbService.AddAsync(Symptom) > 0;
+        }
+        else
+        {
+            result = await _symDbService.UpdateAsync(Symptom);
+        }
+
+        if (result) await OnClickCancel();
+    }
+}

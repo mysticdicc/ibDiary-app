@@ -1,0 +1,8 @@
+﻿<div class="symptom-row">
+    <div>@Symptom.Title</div>
+    <div>@Symptom.Description</div>
+</div>
+
+@code {
+    [Parameter] required public Symptom Symptom { get; set; }
+}

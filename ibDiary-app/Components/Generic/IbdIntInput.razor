@@ -1,0 +1,25 @@
+﻿<div class="ibd-int-input ibd-input">
+    <p>@Title</p>
+    @if (ReadOnly)
+    {
+        <input type="number" value="@Value" readonly />
+    }
+    else
+    {
+        <input type="number" value="@Value" @onchange="@OnInputChanged"/>
+    }
+</div>
+
+@code {
+    [Parameter] public int Value { get; set; }
+    [Parameter] public EventCallback<int> ValueChanged { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    private async Task OnInputChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not int value) return;
+        Value = value;
+        await ValueChanged.InvokeAsync(value);
+    }
+}

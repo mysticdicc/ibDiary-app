@@ -1,0 +1,53 @@
+﻿@implements IDisposable
+@inject NotificationService NotificationService
+
+@if (_visible)
+{
+    <div class="notification-wrapper">
+        <p>@_title</p>
+        <p>@_message</p>
+    </div>
+}
+
+
+@code {
+    private string _title = string.Empty;
+    private string _message = string.Empty;
+    private bool _visible = false;
+    private TimeSpan _hideDelay = TimeSpan.FromSeconds(5);
+
+    protected override Task OnInitializedAsync()
+    {
+        NotificationService.Register(HandleNotification);
+        return base.OnInitializedAsync();
+    }
+
+    private void HandleNotification((string Title, string Message) notification)
+    {
+        _ = InvokeAsync(() =>
+        {
+            _title = notification.Title;
+            _message = notification.Message;
+            _visible = true;
+            StateHasChanged();
+            _ = HideAfterDelayAsync(_hideDelay);
+        });
+    }
+
+    private async Task HideAfterDelayAsync(TimeSpan delay)
+    {
+        await Task.Delay(delay);
+        await InvokeAsync(() =>
+        {
+            _visible = false;
+            _title = string.Empty;
+            _message = string.Empty;
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        NotificationService.UnRegister(HandleNotification);
+    }
+}

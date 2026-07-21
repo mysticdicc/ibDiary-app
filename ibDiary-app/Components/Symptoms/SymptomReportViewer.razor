@@ -1,0 +1,66 @@
+﻿@inject SymptomReportDatabaseService _symDbService;
+
+@if (Visible)
+{
+    <div class="symptom-report-viewer">
+        <div>
+            <SymptomRow Symptom="@SymptomReport.Symptom"/>
+        </div>
+        <div>
+            @if (null != SymptomReport.Medication)
+            {
+                <MedicineRow Medicine="@SymptomReport.Medication"/>
+            }
+            else
+            {
+                
+            }
+        </div>
+        <div>
+            <IbdIntInput @bind-Value="@SymptomReport.Severity" Title="Severity"/>
+        </div>
+        <div>
+            <IbdDateTimeInput @bind-Value="@SymptomReport.SubmittedFor" Title="Submitted For" />
+        </div>
+        <div>
+            <IbdDateTimeInput @bind-Value="@SymptomReport.SubmittedAt" ReadOnly="true" Title="Submitted At"/>
+        </div>
+        <div>
+            <button @onclick="@OnClickCancel">
+                Cancel
+            </button>
+            <button @onclick="@OnClickSave">
+                Save
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] required public SymptomReport SymptomReport { get; set; }
+    [Parameter] public EventCallback<SymptomReport> SymptomReportChanged { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task OnClickCancel()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+
+    private async Task OnClickSave()
+    {
+        bool result = false;
+
+        if (SymptomReport.Id == 0)
+        {
+            result = await _symDbService.AddAsync(SymptomReport) > 0;
+        }
+        else
+        {
+            result = await _symDbService.UpdateAsync(SymptomReport);
+        }
+
+        if (result) await OnClickCancel();
+    }
+}
