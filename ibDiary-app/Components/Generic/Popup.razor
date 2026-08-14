@@ -1,0 +1,27 @@
+﻿@if (Visible)
+{
+    <div class="popup-background-fade">
+        <div>
+            <header>
+                <h1>@Title</h1>
+                <button @onclick="@OnClickClose">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </header>
+            @ChildContent
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    private async Task OnClickClose()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(false);
+    }
+}

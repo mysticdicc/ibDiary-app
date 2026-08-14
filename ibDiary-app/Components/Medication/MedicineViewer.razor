@@ -1,7 +1,6 @@
 ﻿@inject MedicineDatabaseService _medDbService;
 
-@if (Visible)
-{
+<Popup @bind-Visible="@Visible" Title="@_title">
     <div class="medicine-viewer">
         <div>
             <IbdTextInput @bind-Value="@Medicine.Name" Title="Name" />
@@ -11,13 +10,13 @@
             <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
         </div>
         <div>
-            <MedicineScheduleViewer @bind-MedicineSchedule="@Medicine.MedicineSchedule" />
+            <MedicineScheduleViewer MedicineSchedule="@Medicine.MedicineSchedule" />
         </div>
         <div>
             <IbdTextInput @bind-Value="@Medicine.PrescribedBy" Title="Prescribed By" />
         </div>
         <div>
-            <IbdDateOnlyInput @bind-Value="@Medicine.PrescribedAt" Title="Prescribed At" />
+            <IbdDateTimeInput @bind-Value="@Medicine.PrescribedAt" Title="Prescribed At" />
         </div>
         <div>
             <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
@@ -31,14 +30,22 @@
             </button>
         </div>
     </div>
+</Popup>
 
-}
 
 @code {
     [Parameter] required public Medicine Medicine { get; set; }
     [Parameter] public EventCallback<Medicine> MedicineChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private string _title = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (Medicine.IsNew) _title = "Add Medicine";
+        else _title = $"{Medicine.Name}";
+        base.OnParametersSet();
+    }
 
     private async Task OnClickCancel()
     {

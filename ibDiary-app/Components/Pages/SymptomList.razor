@@ -1,0 +1,73 @@
+﻿@inject SymptomDatabaseService _symDbService;
+@page "/symptoms"
+
+<article class="symptom-page">
+    <header>
+        <button @onclick="@OnClickAddNew">
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </header>
+    <div class="symptom-list">
+        @if (_activeSymptoms.Count > 0)
+        {
+            <h2>Active</h2>
+            @foreach (var active in _activeSymptoms)
+            {
+                <SymptomRow Symptom="active" SymptomClicked="@OnSymptomRowClicked" />
+            }
+        }
+
+        @if (_inactiveSymptoms.Count > 0)
+        {
+            <h2>Inactive</h2>
+            @foreach (var inactive in _inactiveSymptoms)
+            {
+                <SymptomRow Symptom="inactive" SymptomClicked="@OnSymptomRowClicked" />
+            }
+        }
+
+        @if (_activeSymptoms.Count == 0 && _inactiveSymptoms.Count == 0)
+        {
+            <p>No symptoms have been added, press the add button to get started.</p>
+        }
+    </div>
+</article>
+
+<SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible" SymptomChanged="@OnSymptomChanged"/>
+
+@code {
+    private List<Symptom> _activeSymptoms = [];
+    private List<Symptom> _inactiveSymptoms = [];
+    private Symptom _currentSymptom = new();
+    private bool _symptomViewerVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshSymptomsAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshSymptomsAsync()
+    {
+        var symps = await _symDbService.GetAllAsync();
+        _activeSymptoms = symps.Where(x => x.Active).ToList();
+        _inactiveSymptoms = symps.Where(x => !x.Active).ToList();
+    }
+
+    private void OnClickAddNew()
+    {
+        _currentSymptom = new();
+        _symptomViewerVisible = true;
+    }
+
+    private async Task OnSymptomChanged(Symptom symptom)
+    {
+        await RefreshSymptomsAsync();
+    }
+
+    private void OnSymptomRowClicked(Symptom symptom)
+    {
+        _currentSymptom = symptom;
+        _symptomViewerVisible = true;
+    }
+}

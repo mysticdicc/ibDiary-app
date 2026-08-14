@@ -1,14 +1,13 @@
 ﻿@inject SymptomDatabaseService _symDbService;
 
-@if (Visible)
-{
+<Popup @bind-Visible="@Visible" Title="@_title">
     <div class="symptom-viewer">
         <div>
-            <IbdTextInput @bind-Value="@Symptom.Title" Title="Title"/>
-            <IbdCheckbox @bind-Value="@Symptom.Active" Title="Enabled"/>
+            <IbdTextInput @bind-Value="@Symptom.Title" Title="Name" />
+            <IbdCheckbox @bind-Value="@Symptom.Active" Title="Active" />
         </div>
         <div>
-            <IbdTextInput @bind-Value="@Symptom.Description" Title="Description"/>
+            <IbdTextArea @bind-Value="@Symptom.Description" Title="Description" />
         </div>
         <div>
             <button @onclick="@OnClickCancel">
@@ -19,13 +18,21 @@
             </button>
         </div>
     </div>
-}
+</Popup>
 
 @code {
     [Parameter] required public Symptom Symptom { get; set; }
     [Parameter] public EventCallback<Symptom> SymptomChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private string _title = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (Symptom.IsNew) _title = "Add Symptom";
+        else _title = $"{Symptom.Title}";
+        base.OnParametersSet();
+    }
 
     private async Task OnClickCancel()
     {
@@ -39,13 +46,18 @@
 
         if (Symptom.Id == 0)
         {
-            result = await _symDbService.AddAsync(Symptom) > 0;
+            var id = await _symDbService.AddAsync(Symptom);
+            result = id > 0;
         }
         else
         {
             result = await _symDbService.UpdateAsync(Symptom);
         }
 
-        if (result) await OnClickCancel();
+        if (result)
+        {
+            await SymptomChanged.InvokeAsync(Symptom);
+            await OnClickCancel();
+        }
     }
 }

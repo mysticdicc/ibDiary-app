@@ -1,15 +1,12 @@
-﻿<div class="ibd-text-input ibd-input">
-    @if (_headerVisible)
-    {
-        <p>@Title</p>
-    }
+﻿<div class="ibd-text-area ibd-input">
+    <p>@Title</p>
     @if (ReadOnly)
     {
-        <textarea value="@Value" placeholder="@Title" readonly />
+        <textarea value="@Value" readonly />
     }
     else
     {
-        <textarea value="@Value" @onchange="@OnInputChanged" placeholder="@Title" />
+        <textarea value="@Value" @onchange="@OnInputChanged"/>
     }
 </div>
 
@@ -23,10 +20,6 @@
     private async Task OnInputChanged(ChangeEventArgs e)
     {
         if (e.Value is not string value) return;
-
-        if (string.IsNullOrWhiteSpace(value)) _headerVisible = false;
-        else _headerVisible = true;
-
         Value = value;
         await ValueChanged.InvokeAsync(Value);
     }

@@ -1,6 +1,8 @@
-﻿using ibDiary_app.Models.Interfaces;
+﻿using ibDiary_app.Data;
+using ibDiary_app.Models.Interfaces;
 using ibDiary_app.Models.Medication;
-using SQLite;
+using ibDiary_app.Models.Symptoms;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,16 +11,16 @@ namespace ibDiary_app.Services
 {
     public class MedicineRepository : IDatabaseService<Medicine>
     {
-        private readonly SQLiteAsyncConnection _dbService;
+        private readonly AppDbContext _dbService;
 
-        public MedicineRepository(SQLiteAsyncConnection connection)
+        public MedicineRepository(AppDbContext connection)
         {
             _dbService = connection;
         }
 
         public async Task<List<Medicine>> GetAllAsync()
         {
-            return await _dbService.Table<Medicine>().ToListAsync();
+            return await _dbService.Medicines.ToListAsync();
         }
 
         public async Task<Medicine?> GetByIdAsync(int id)
@@ -28,18 +30,30 @@ namespace ibDiary_app.Services
 
         public async Task<bool> UpdateAsync(Medicine medicine)
         {
-            return await _dbService.UpdateAsync(medicine) > 0;
+            var dbItem = await GetByIdAsync(medicine.Id);
+            if (dbItem == null) return false;
+
+            dbItem = medicine;
+            var rows = await _dbService.SaveChangesAsync();
+            return rows > 0;
         }
 
         public async Task<int> AddAsync(Medicine medicine)
         {
-            await _dbService.InsertAsync(medicine);
+            medicine.IsNew = false;
+            await _dbService.Medicines.AddAsync(medicine);
+            await _dbService.SaveChangesAsync();
             return medicine.Id;
         }
 
         public async Task<bool> DeleteAsync(Medicine medicine)
         {
-            return await _dbService.DeleteAsync<Medicine>(medicine.Id) > 0;
+            var dbItem = await GetByIdAsync(medicine.Id);
+            if (dbItem == null) return false;
+
+            _dbService.Medicines.Remove(medicine);
+            var rows = await _dbService.SaveChangesAsync();
+            return rows > 0;
         }
     }
 }

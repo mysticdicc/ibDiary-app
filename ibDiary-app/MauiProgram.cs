@@ -1,8 +1,11 @@
-﻿using ibDiary_app.Services;
+﻿using ibDiary_app.Data;
+using ibDiary_app.Models.Medication;
+using ibDiary_app.Models.Symptoms;
+using ibDiary_app.Services;
 using ibDiary_app.Services.Medication;
 using ibDiary_app.Services.Symptoms;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SQLite;
 
 namespace ibDiary_app
 {
@@ -12,12 +15,15 @@ namespace ibDiary_app
         {
             var builder = MauiApp.CreateBuilder();
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "ibdiary_db.db");
-
-            builder.Services.AddSingleton(sp =>
+#if DEBUG
+            if (File.Exists(dbPath))
             {
-                var conn = new SQLiteAsyncConnection(dbPath);
-                return conn;
-            });
+                File.Delete(dbPath);
+            }
+#endif
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlite($"Filename={dbPath}")
+            );
 
             builder.Services.AddSingleton<NotificationService>();
 
@@ -30,6 +36,7 @@ namespace ibDiary_app
             builder.Services.AddSingleton<SymptomReportRepository>();
             builder.Services.AddSingleton<SymptomReportDatabaseService>();
 
+            builder.Services.AddSingleton<SymptomStateChangeRepository>();
             builder.Services.AddSingleton<SymptomRepository>();
             builder.Services.AddSingleton<SymptomDatabaseService>();
 

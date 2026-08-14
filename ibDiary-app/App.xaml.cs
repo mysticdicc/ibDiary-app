@@ -9,7 +9,15 @@
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new MainPage()) { Title = "ibDiary-app" };
+            try
+            {
+                return new Window(new MainPage()) { Title = "ibDiary-app" };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Window creation error: {ex}");
+                throw;
+            }
         }
     }
 }

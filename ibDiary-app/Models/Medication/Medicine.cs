@@ -1,21 +1,24 @@
-﻿using SQLite;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace ibDiary_app.Models.Medication
 {
     public class Medicine
     {
-        [PrimaryKey]
-        public int Id { get; set; }
+        [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
         public string Name { get; set; }
         public string Dose { get; set; }
         public string PrescribedBy { get; set; }
         public string Notes { get; set; }
-        public DateOnly PrescribedAt { get; set; }
+        public DateTime PrescribedAt { get; set; }
+        [NotMapped] public virtual DateOnly PrescribedAtDate { get => DateOnly.FromDateTime(PrescribedAt) ; }
         public MedicineSchedule MedicineSchedule { get; set; }
         public bool Active { get; set; }
+        public bool IsNew { get; set; }
 
         public Medicine()
         {
@@ -24,9 +27,10 @@ namespace ibDiary_app.Models.Medication
             Dose = string.Empty;
             PrescribedBy = string.Empty;
             Notes = string.Empty;
-            PrescribedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            PrescribedAt = DateTime.UtcNow;
             Active = true;
             MedicineSchedule = new();
+            IsNew = true;
         }
     }
 }

@@ -1,0 +1,62 @@
+﻿@inject MedicineDatabaseService _medDbService;
+@page "/medicines"
+
+<article class="medicine-page">
+    <header>
+        <button @onclick="@OnClickAddNew">
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </header>
+    <div class="medicine-list">
+        @if (_activeMedicines.Count > 0) 
+        {
+            <h2>Active</h2>
+            @foreach (var active in _activeMedicines)
+            {
+                <MedicineRow Medicine="active" />
+            }
+        }
+
+        @if (_inactiveMedicines.Count > 0)
+        {
+            <h2>Inactive</h2>
+            @foreach (var inactive in _inactiveMedicines)
+            {
+                <MedicineRow Medicine="inactive" />
+            }
+        }
+
+        @if (_activeMedicines.Count == 0 && _inactiveMedicines.Count == 0)
+        {
+            <p>No medicines have been added, press the add button to get</p>
+        }
+    </div>
+</article>
+
+<MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible"/>
+
+@code {
+    private List<Medicine> _activeMedicines = [];
+    private List<Medicine> _inactiveMedicines = [];
+    private Medicine _currentMedicine = new();
+    private bool _medicineViewerVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshMedicinesAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshMedicinesAsync()
+    {
+        var meds = await _medDbService.GetAllAsync();
+        _activeMedicines = meds.Where(x => x.Active).ToList();
+        _inactiveMedicines = meds.Where(x => !x.Active).ToList();
+    }
+
+    private void OnClickAddNew()
+    {
+        _currentMedicine = new();
+        _medicineViewerVisible = true;
+    }
+}

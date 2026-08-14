@@ -1,6 +1,8 @@
-﻿using ibDiary_app.Models.Interfaces;
+﻿using ibDiary_app.Data;
+using ibDiary_app.Models.Interfaces;
 using ibDiary_app.Models.Medication;
-using SQLite;
+using ibDiary_app.Models.Symptoms;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,16 +11,16 @@ namespace ibDiary_app.Services
 {
     public class MedicineReportRepository : IDatabaseService<MedicineReport>
     {
-        private readonly SQLiteAsyncConnection _dbService;
+        private readonly AppDbContext _dbService;
 
-        public MedicineReportRepository(SQLiteAsyncConnection connection)
+        public MedicineReportRepository(AppDbContext connection)
         {
             _dbService = connection;
         }
 
         public async Task<List<MedicineReport>> GetAllAsync()
         {
-            return await _dbService.Table<MedicineReport>().ToListAsync();
+            return await _dbService.MedicineReports.ToListAsync();
         }
 
         public async Task<MedicineReport?> GetByIdAsync(int id)
@@ -28,18 +30,30 @@ namespace ibDiary_app.Services
 
         public async Task<bool> UpdateAsync(MedicineReport medicine)
         {
-            return await _dbService.UpdateAsync(medicine) > 0;
+            var dbItem = await GetByIdAsync(medicine.Id);
+            if (dbItem == null) return false;
+
+            dbItem = medicine;
+            var rows = await _dbService.SaveChangesAsync();
+            return rows > 0;
         }
 
         public async Task<int> AddAsync(MedicineReport medicine)
         {
-            await _dbService.InsertAsync(medicine);
+            medicine.IsNew = false;
+            await _dbService.MedicineReports.AddAsync(medicine);
+            await _dbService.SaveChangesAsync();
             return medicine.Id;
         }
 
         public async Task<bool> DeleteAsync(MedicineReport medicine)
         {
-            return await _dbService.DeleteAsync<MedicineReport>(medicine.Id) > 0;
+            var dbItem = await GetByIdAsync(medicine.Id);
+            if (dbItem == null) return false;
+
+            _dbService.MedicineReports.Remove(dbItem);
+            var rows = await _dbService.SaveChangesAsync();
+            return rows > 0;
         }
     }
 }

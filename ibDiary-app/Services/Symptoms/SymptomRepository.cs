@@ -1,7 +1,9 @@
-﻿using ibDiary_app.Models.Interfaces;
+﻿using ibDiary_app.Data;
+using ibDiary_app.Models.Interfaces;
 using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
-using SQLite;
+using ibDiary_app.Services.Symptoms;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,16 +12,18 @@ namespace ibDiary_app.Services
 {
     public class SymptomRepository : IDatabaseService<Symptom>
     {
-        private readonly SQLiteAsyncConnection _dbService;
+        private readonly AppDbContext _dbService;
+        private readonly SymptomStateChangeRepository _sympStateChangeRepo;
 
-        public SymptomRepository(SQLiteAsyncConnection connection)
+        public SymptomRepository(AppDbContext connection, SymptomStateChangeRepository sympStateChangeRepo)
         {
             _dbService = connection;
+            _sympStateChangeRepo = sympStateChangeRepo;
         }
 
         public async Task<List<Symptom>> GetAllAsync()
         {
-            return await _dbService.Table<Symptom>().ToListAsync();
+            return await _dbService.Symptoms.ToListAsync();
         }
 
         public async Task<Symptom?> GetByIdAsync(int id)
@@ -27,20 +31,39 @@ namespace ibDiary_app.Services
             return await _dbService.FindAsync<Symptom>(id) ?? null;
         }
 
-        public async Task<bool> UpdateAsync(Symptom medicine)
+        public async Task<bool> UpdateAsync(Symptom symptom)
         {
-            return await _dbService.UpdateAsync(medicine) > 0;
+            var dbItem = await GetByIdAsync(symptom.Id);
+            if (null == dbItem) throw new Exception("Cannot find in database to update.");
+
+            if (dbItem.Active != symptom.Active)
+            {
+                var stateChange = new SymptomActiveStateChange(dbItem, symptom);
+                await _sympStateChangeRepo.AddAsync(stateChange);
+            }
+
+            dbItem = symptom;
+            var rows = await _dbService.SaveChangesAsync();
+
+            return rows > 0;
         }
 
-        public async Task<int> AddAsync(Symptom medicine)
+        public async Task<int> AddAsync(Symptom symptom)
         {
-            await _dbService.InsertAsync(medicine);
-            return medicine.Id;
+            symptom.IsNew = false;
+            await _dbService.Symptoms.AddAsync(symptom);
+            await _dbService.SaveChangesAsync();
+            return symptom.Id;
         }
 
-        public async Task<bool> DeleteAsync(Symptom medicine)
+        public async Task<bool> DeleteAsync(Symptom symptom)
         {
-            return await _dbService.DeleteAsync<Symptom>(medicine.Id) > 0;
+            var dbItem = await GetByIdAsync(symptom.Id);
+            if (null == dbItem) return false;
+
+            _dbService.Symptoms.Remove(dbItem);
+            var rows = await _dbService.SaveChangesAsync();
+            return rows > 0;
         }
     }
 }
