@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ibDiary_app.Models.Symptoms
 {
@@ -13,6 +15,7 @@ namespace ibDiary_app.Models.Symptoms
         public string Description { get; set; }
         public bool Active { get; set; }
         public bool IsNew { get; set; }
+        [NotMapped][JsonIgnore] public List<SymptomStateChange> StateChanges { get; set; }
         public Symptom()
         {
             Id = 0;
@@ -20,6 +23,57 @@ namespace ibDiary_app.Models.Symptoms
             Description = string.Empty;
             Active = true;
             IsNew = true;
+            StateChanges = [];
+        }
+
+        public static Symptom FromDbEntry(int id, PropertyValues originalValues)
+        {
+            var title = (string?)originalValues[nameof(Title)];
+            var description = (string?)originalValues[nameof(Description)];
+            var active = (bool?)originalValues[nameof(Active)];
+
+            return new Symptom
+            {
+                Id = id,
+                Title = title ?? string.Empty,
+                Description = description ?? string.Empty,
+                Active = active ?? true,
+                IsNew = true
+            };
+        }
+
+        public void UpdateProperties(Symptom symptom)
+        {
+            Title = symptom.Title;
+            Description = symptom.Description;
+            Active = symptom.Active;
+        }
+
+        public bool HasChangedState(Symptom symptom)
+        {
+            var titleChanged = Title != symptom.Title;
+            var descChanged = Description != symptom.Description;
+            var activeChanged = Active != symptom.Active;
+
+            return titleChanged || descChanged || activeChanged;
+        }
+
+        public Symptom Clone()
+        {
+            var clone = new Symptom();
+
+            foreach (var property in typeof(Symptom).GetProperties())
+            {
+                if (property.Name == nameof(StateChanges) || property.Name == nameof(IsNew))
+                    continue;
+
+                if (property.CanWrite)
+                {
+                    property.SetValue(clone, property.GetValue(this));
+                }
+            }
+
+            return clone;
         }
     }
 }

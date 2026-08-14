@@ -13,7 +13,7 @@
             <h2>Active</h2>
             @foreach (var active in _activeMedicines)
             {
-                <MedicineRow Medicine="active" />
+                <MedicineRow Medicine="active" MedicineClicked="@OnMedicineRowClicked"/>
             }
         }
 
@@ -22,18 +22,18 @@
             <h2>Inactive</h2>
             @foreach (var inactive in _inactiveMedicines)
             {
-                <MedicineRow Medicine="inactive" />
+                <MedicineRow Medicine="inactive" MedicineClicked="@OnMedicineRowClicked" />
             }
         }
 
         @if (_activeMedicines.Count == 0 && _inactiveMedicines.Count == 0)
         {
-            <p>No medicines have been added, press the add button to get</p>
+            <p>No medicines have been added, press the add button to get started.</p>
         }
     </div>
 </article>
 
-<MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible"/>
+<MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible" MedicineChanged="@OnMedicineChanged"/>
 
 @code {
     private List<Medicine> _activeMedicines = [];
@@ -57,6 +57,17 @@
     private void OnClickAddNew()
     {
         _currentMedicine = new();
+        _medicineViewerVisible = true;
+    }
+
+    private async Task OnMedicineChanged()
+    {
+        await RefreshMedicinesAsync();
+    }
+
+    private void OnMedicineRowClicked(Medicine medicine)
+    {
+        _currentMedicine = medicine;
         _medicineViewerVisible = true;
     }
 }

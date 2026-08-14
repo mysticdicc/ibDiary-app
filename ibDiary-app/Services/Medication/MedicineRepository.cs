@@ -2,6 +2,7 @@
 using ibDiary_app.Models.Interfaces;
 using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
+using ibDiary_app.Services.Medication;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,17 @@ namespace ibDiary_app.Services
     public class MedicineRepository : IDatabaseService<Medicine>
     {
         private readonly AppDbContext _dbService;
+        private readonly MedicineStateChangeRepository _medStateChangeRepo;
 
-        public MedicineRepository(AppDbContext connection)
+        public MedicineRepository(AppDbContext connection, MedicineStateChangeRepository repo)
         {
             _dbService = connection;
+            _medStateChangeRepo = repo;
         }
 
         public async Task<List<Medicine>> GetAllAsync()
         {
-            return await _dbService.Medicines.ToListAsync();
+            return await _dbService.Medicines.Include(x => x.MedicineSchedule).Include(x => x.StateChanges).ToListAsync();
         }
 
         public async Task<Medicine?> GetByIdAsync(int id)
@@ -33,7 +36,20 @@ namespace ibDiary_app.Services
             var dbItem = await GetByIdAsync(medicine.Id);
             if (dbItem == null) return false;
 
-            dbItem = medicine;
+            var entry = _dbService.Entry(dbItem);
+            var clone = Medicine.FromDbEntry(
+                dbItem.Id,
+                _dbService.Entry(dbItem).OriginalValues
+            );
+            _dbService.Entry(clone).State = EntityState.Detached;
+
+            if (dbItem.HasChangedState(clone))
+            {
+                var stateChange = new MedicineStateChange(medicine.Clone(), clone);
+                await _medStateChangeRepo.AddAsync(stateChange);
+            }
+
+            dbItem.UpdateProperties(medicine);
             var rows = await _dbService.SaveChangesAsync();
             return rows > 0;
         }

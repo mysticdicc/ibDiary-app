@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ibDiary_app.Services.Symptoms
 {
-    public class SymptomStateChangeRepository : IDatabaseService<SymptomActiveStateChange>
+    public class SymptomStateChangeRepository : IDatabaseService<SymptomStateChange>
     {
         private readonly AppDbContext _dbService;
 
@@ -17,34 +17,28 @@ namespace ibDiary_app.Services.Symptoms
             _dbService = connection;
         }
 
-        public async Task<List<SymptomActiveStateChange>> GetAllAsync()
+        public async Task<List<SymptomStateChange>> GetAllAsync()
         {
             return await _dbService.SymptomStateChanges.ToListAsync();
         }
 
-        public async Task<SymptomActiveStateChange?> GetByIdAsync(int id)
+        public async Task<SymptomStateChange?> GetByIdAsync(int id)
         {
-            return await _dbService.FindAsync<SymptomActiveStateChange>(id) ?? null;
+            return await _dbService.FindAsync<SymptomStateChange>(id) ?? null;
         }
 
-        public async Task<bool> UpdateAsync(SymptomActiveStateChange symptom)
+        public async Task<bool> UpdateAsync(SymptomStateChange symptom)
         {
-            var dbItem = await GetByIdAsync(symptom.Id);
-            if (dbItem == null) return false;
-
-            dbItem = symptom;
-            var rows = await _dbService.SaveChangesAsync();
-            return rows > 0;
+            throw new NotImplementedException("State changes are not designed to be edited.");
         }
 
-        public async Task<int> AddAsync(SymptomActiveStateChange symptom)
+        public async Task<int> AddAsync(SymptomStateChange symptom)
         {
             await _dbService.SymptomStateChanges.AddAsync(symptom);
-            await _dbService.SaveChangesAsync();
             return symptom.Id;
         }
 
-        public async Task<bool> DeleteAsync(SymptomActiveStateChange symptom)
+        public async Task<bool> DeleteAsync(SymptomStateChange symptom)
         {
             var dbItem = await GetByIdAsync(symptom.Id);
             if (dbItem == null) return false;

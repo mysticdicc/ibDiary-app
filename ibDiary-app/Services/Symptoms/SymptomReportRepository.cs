@@ -33,7 +33,7 @@ namespace ibDiary_app.Services
             var dbItem = await GetByIdAsync(report.Id);
             if (null == dbItem) return false;
 
-            dbItem = report;
+            dbItem.UpdateProperties(report);
             var rows = await _dbService.SaveChangesAsync();
 
             return rows > 0;

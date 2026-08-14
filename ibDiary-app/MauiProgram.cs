@@ -27,6 +27,7 @@ namespace ibDiary_app
 
             builder.Services.AddSingleton<NotificationService>();
 
+            builder.Services.AddSingleton<MedicineStateChangeRepository>();
             builder.Services.AddSingleton<MedicineRepository>();
             builder.Services.AddSingleton<MedicineDatabaseService>();
 
@@ -39,6 +40,8 @@ namespace ibDiary_app
             builder.Services.AddSingleton<SymptomStateChangeRepository>();
             builder.Services.AddSingleton<SymptomRepository>();
             builder.Services.AddSingleton<SymptomDatabaseService>();
+
+            builder.Services.AddSingleton<PendingMedicineReportService>();
 
             builder
                 .UseMauiApp<App>()

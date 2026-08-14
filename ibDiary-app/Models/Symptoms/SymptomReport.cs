@@ -26,5 +26,21 @@ namespace ibDiary_app.Models.Symptoms
             Severity = 0;
             IsNew = true;
         }
+
+        public SymptomReport(Symptom symptom)
+        {
+            Id = 0;
+            Symptom = symptom;
+            SubmittedAt = DateTime.UtcNow;
+            SubmittedFor = SubmittedAt;
+            Severity = 0;
+            IsNew = true;
+        }
+
+        public void UpdateProperties(SymptomReport report)
+        {
+            Medication = report.Medication;
+            Severity = report.Severity;
+        }
     }
 }

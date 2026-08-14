@@ -1,8 +1,15 @@
-﻿<div class="medicine-report-row">
+﻿<div class="medicine-report-row" @onclick="@OnClickRow">
     <div>@MedicineReport.Medicine.Name</div>
-    <div>@MedicineReport.SubmittedFor</div>
+    <div>@MedicineReport.MedicineTaken</div>
+    <div>@MedicineReport.MedicineTakenAt</div>
 </div>
 
 @code {
     [Parameter] required public MedicineReport MedicineReport { get; set; }
+    [Parameter] public EventCallback<MedicineReport> MedicineReportClicked { get; set; }
+
+    private async Task OnClickRow()
+    {
+        await MedicineReportClicked.InvokeAsync(MedicineReport);
+    }
 }

@@ -20,5 +20,12 @@ namespace ibDiary_app.Models.Medication
             Id = 0;
             IsNew = true;
         }
+
+        public void UpdateProperties(MedicineSchedule schedule)
+        {
+            Days = schedule.Days;
+            Hours = schedule.Hours;
+            Minutes = schedule.Minutes;
+        }
     }
 }

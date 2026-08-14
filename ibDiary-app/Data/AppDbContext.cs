@@ -1,13 +1,15 @@
 ﻿using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace ibDiary_app.Data
 {
-    public class AppDbContext : DbContext 
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -19,11 +21,60 @@ namespace ibDiary_app.Data
         public DbSet<MedicineReport> MedicineReports { get; set; }
         public DbSet<Symptom> Symptoms { get; set; }
         public DbSet<SymptomReport> SymptomReports { get; set; }
-        public DbSet<SymptomActiveStateChange> SymptomStateChanges { get; set; }
+        public DbSet<SymptomStateChange> SymptomStateChanges { get; set; }
+        public DbSet<MedicineStateChange> MedicineStateChanges { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                WriteIndented = false
+            };
+
+            var medicineConverter = new ValueConverter<Medicine, string>(
+                v => JsonSerializer.Serialize(v, options),
+                v => JsonSerializer.Deserialize<Medicine>(v, options) ?? new Medicine()
+            );
+
+            var symptomConverter = new ValueConverter<Symptom, string>(
+                v => JsonSerializer.Serialize(v, options),
+                v => JsonSerializer.Deserialize<Symptom>(v, options) ?? new Symptom()
+            );
+
+            modelBuilder.Entity<MedicineStateChange>()
+                .HasOne(m => m.Medicine)
+                .WithMany(m => m.StateChanges)
+                .HasForeignKey(m => m.MedicineId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MedicineStateChange>()
+                .Property(m => m.MedicineBefore)
+                .HasColumnType("jsonb")
+                .HasConversion(medicineConverter);
+
+            modelBuilder.Entity<MedicineStateChange>()
+                .Property(m => m.MedicineAfter)
+                .HasColumnType("jsonb")
+                .HasConversion(medicineConverter);
+
+            modelBuilder.Entity<SymptomStateChange>()
+                .HasOne(s => s.Symptom)
+                .WithMany(s => s.StateChanges)
+                .HasForeignKey(s => s.SymptomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<SymptomStateChange>()
+                .Property(s => s.SymptomBefore)
+                .HasColumnType("jsonb")
+                .HasConversion(symptomConverter);
+
+            modelBuilder.Entity<SymptomStateChange>()
+                .Property(s => s.SymptomAfter)
+                .HasColumnType("jsonb")
+                .HasConversion(symptomConverter);
         }
     }
 }

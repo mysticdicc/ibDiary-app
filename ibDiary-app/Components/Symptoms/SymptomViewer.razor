@@ -9,6 +9,20 @@
         <div>
             <IbdTextArea @bind-Value="@Symptom.Description" Title="Description" />
         </div>
+        @if (!Symptom.IsNew && Symptom.StateChanges.Count > 0)
+        {
+            <div class="state-change-list">
+                <header>
+                    <h2>History</h2>
+                </header>
+                <div>
+                    @foreach (var change in Symptom.StateChanges)
+                    {
+                        <SymptomStateChangeRow StateChange="change" />
+                    }
+                </div>
+            </div>
+        }
         <div>
             <button @onclick="@OnClickCancel">
                 Cancel

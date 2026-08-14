@@ -1,5 +1,106 @@
-﻿@page "/"
+﻿@inject PendingMedicineReportService _pendingMedService
+@inject MedicineDatabaseService _medDbService
+@inject SymptomDatabaseService _symDbSevrice
+@page "/"
 
-<h1>IbDiary</h1>
+<article class="home-page">
+    <h1>IbDiary</h1>
+    @if (_pendingReports.Count > 0)
+    {
+        <div class="pending-reports">
+            <h2>Pending Reports</h2>
+            <p>The following medicines are due reports.</p>
+            <div>
+                @foreach (var report in _pendingReports)
+                {
+                    <MedicineReportRow MedicineReport="report" MedicineReportClicked="@OnMedicineReportClicked"/>
+                }
+            </div>
+        </div>
+    }
+    <div class="current-medicines">
+        <h2>Active Medicines</h2>
+        @if (_currentMedicines.Count > 0)
+        {
+            @foreach (var active in _currentMedicines)
+            {
+                <MedicineRow Medicine="active" MedicineClicked="@OnMedicineRowClicked" />
+            }
+        }
+        else
+        {
+            <p>You have no active medicines.</p>
+        }
+    </div>
+    <div class="current-symptoms">
+        <h2>Active Symptoms</h2>
+        @if (_currentSymptoms.Count > 0)
+        {
+            @foreach (var active in _currentSymptoms)
+            {
+                <SymptomRow Symptom="active" SymptomClicked="@OnSymptomRowClicked" />
+            }
+        }
+        else
+        {
+            <p>You have no active symptoms.</p>
+        }
+    </div>
+</article>
 
+<MedicineReportViewer MedicineReport="@_currentMedicineReport" MedicineReportChanged="@OnMedicineReportChanged" @bind-Visible="@_medicineReportViewerVisible"/>
+<MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible"/>
+<SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible"/>
+
+@code {
+    private List<MedicineReport> _pendingReports = [];
+    private MedicineReport _currentMedicineReport = new();
+    private bool _medicineReportViewerVisible = false;
+
+    private List<Medicine> _currentMedicines = [];
+    private Medicine _currentMedicine = new();
+    private bool _medicineViewerVisible = false;
+
+    private List<Symptom> _currentSymptoms = [];
+    private Symptom _currentSymptom = new();
+    private bool _symptomViewerVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshHomeAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshHomeAsync()
+    {
+        _pendingReports = await _pendingMedService.GetPendingReportsAsync();
+        var meds = await _medDbService.GetAllAsync();
+        _currentMedicines = meds.Where(x => x.Active).ToList();
+        var symps = await _symDbSevrice.GetAllAsync();
+        _currentSymptoms = symps.Where(x => x.Active).ToList();
+    }
+
+    private void OnMedicineReportClicked(MedicineReport report)
+    {
+        _currentMedicineReport = report;
+        _medicineReportViewerVisible = true;
+    }
+
+    private async Task OnMedicineReportChanged(MedicineReport report)
+    {
+        _pendingReports = await _pendingMedService.GetPendingReportsAsync();
+    }
+
+    private void OnMedicineRowClicked(Medicine medicine)
+    {
+        _currentMedicine = medicine;
+        _medicineViewerVisible = true;
+    }
+
+    private void OnSymptomRowClicked(Symptom symptom)
+    {
+        _currentSymptom = symptom;
+        _symptomViewerVisible = true;
+    }
+}
 

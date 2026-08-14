@@ -6,6 +6,7 @@ using ibDiary_app.Services.Symptoms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace ibDiary_app.Services
@@ -23,7 +24,7 @@ namespace ibDiary_app.Services
 
         public async Task<List<Symptom>> GetAllAsync()
         {
-            return await _dbService.Symptoms.ToListAsync();
+            return await _dbService.Symptoms.Include(x => x.StateChanges).ToListAsync();
         }
 
         public async Task<Symptom?> GetByIdAsync(int id)
@@ -36,13 +37,20 @@ namespace ibDiary_app.Services
             var dbItem = await GetByIdAsync(symptom.Id);
             if (null == dbItem) throw new Exception("Cannot find in database to update.");
 
-            if (dbItem.Active != symptom.Active)
+            var entry = _dbService.Entry(dbItem);
+            var clone = Symptom.FromDbEntry(
+                dbItem.Id,
+                _dbService.Entry(dbItem).OriginalValues
+            );
+            _dbService.Entry(clone).State = EntityState.Detached;
+
+            if (dbItem.HasChangedState(clone))
             {
-                var stateChange = new SymptomActiveStateChange(dbItem, symptom);
+                var stateChange = new SymptomStateChange(symptom.Clone(), clone);
                 await _sympStateChangeRepo.AddAsync(stateChange);
             }
 
-            dbItem = symptom;
+            dbItem.UpdateProperties(symptom);
             var rows = await _dbService.SaveChangesAsync();
 
             return rows > 0;

@@ -4,7 +4,7 @@
     <div class="medicine-viewer">
         <div>
             <IbdTextInput @bind-Value="@Medicine.Name" Title="Name" />
-            <IbdCheckbox @bind-Value="@Medicine.Active" Title="Enabled" />
+            <IbdCheckbox @bind-Value="@Medicine.Active" Title="Active" />
         </div>
         <div>
             <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
@@ -21,6 +21,20 @@
         <div>
             <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
         </div>
+        @if (!Medicine.IsNew && Medicine.StateChanges.Count > 0)
+        {
+            <div class="state-change-list">
+                <header>
+                    <h2>History</h2>
+                </header>
+                <div>
+                    @foreach (var change in Medicine.StateChanges)
+                    {
+                        <MedicineStateChangeRow StateChange="change"/>
+                    }
+                </div>
+            </div>
+        }
         <div>
             <button @onclick="@OnClickCancel">
                 Cancel
@@ -66,6 +80,10 @@
             result = await _medDbService.UpdateAsync(Medicine);
         }
 
-        if (result) await OnClickCancel();
+        if (result)
+        {
+            await MedicineChanged.InvokeAsync(Medicine);
+            await OnClickCancel();
+        }
     }
 }
