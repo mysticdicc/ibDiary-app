@@ -1,0 +1,23 @@
+﻿<div class="calendar-card">
+    <header>
+        @(Date.DayOfWeek.ToString()) @(Date.ToString("MMMM")) @(Date.Year.ToString())
+    </header>
+    <div>
+        @if (null != Day)
+        {
+            if ((Day.MedicineReports.Count + Day.MedicineStateChanges.Count + Day.SymptomReports.Count + Day.SymptomStateChanges.Count) == 0)
+            {
+                <p>No activity.</p>
+            }
+        }
+        else
+        {
+            <p>No activity.</p>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] required public DateOnly Date { get; set; }
+    [Parameter] public CalendarDay? Day { get; set; }
+}

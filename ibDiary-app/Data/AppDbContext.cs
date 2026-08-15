@@ -1,4 +1,5 @@
-﻿using ibDiary_app.Models.Medication;
+﻿using ibDiary_app.Models.Calendar;
+using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -23,6 +24,7 @@ namespace ibDiary_app.Data
         public DbSet<SymptomReport> SymptomReports { get; set; }
         public DbSet<SymptomStateChange> SymptomStateChanges { get; set; }
         public DbSet<MedicineStateChange> MedicineStateChanges { get; set; }
+        public DbSet<CalendarDay> CalendarDays { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -75,6 +77,12 @@ namespace ibDiary_app.Data
                 .Property(s => s.SymptomAfter)
                 .HasColumnType("jsonb")
                 .HasConversion(symptomConverter);
+
+            modelBuilder.Entity<Medicine>()
+                .HasOne(m => m.MedicineSchedule)
+                .WithOne(ms => ms.Medicine)
+                .HasForeignKey<Medicine>(m => m.MedicineScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

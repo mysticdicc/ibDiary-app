@@ -2,6 +2,7 @@
 using ibDiary_app.Models.Interfaces;
 using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
+using ibDiary_app.Services.Calendar;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,11 @@ namespace ibDiary_app.Services
     public class SymptomReportRepository : IDatabaseService<SymptomReport>
     {
         private readonly AppDbContext _dbService;
-
-        public SymptomReportRepository(AppDbContext connection)
+        private readonly CalendarDayGenerationService _calendarService;
+        public SymptomReportRepository(AppDbContext connection, CalendarDayGenerationService cal)
         {
             _dbService = connection;
+            _calendarService = cal;
         }
 
         public async Task<List<SymptomReport>> GetAllAsync()
@@ -44,6 +46,9 @@ namespace ibDiary_app.Services
             report.IsNew = false;
             await _dbService.SymptomReports.AddAsync(report);
             await _dbService.SaveChangesAsync();
+
+            await _calendarService.NotifyUpdateCalendarDayAsync(report);
+
             return report.Id;
         }
 

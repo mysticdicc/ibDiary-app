@@ -1,5 +1,4 @@
-﻿using Android.Animation;
-using ibDiary_app.Models.Symptoms;
+﻿using ibDiary_app.Models.Symptoms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -20,7 +19,8 @@ namespace ibDiary_app.Models.Medication
         public string Notes { get; set; }
         public DateTime PrescribedAt { get; set; }
         [NotMapped] public virtual DateOnly PrescribedAtDate { get => DateOnly.FromDateTime(PrescribedAt) ; }
-        public MedicineSchedule MedicineSchedule { get; set; }
+        public int MedicineScheduleId { get; set; }
+        virtual public MedicineSchedule MedicineSchedule { get; set; }
         [JsonIgnore][NotMapped] public List<MedicineStateChange> StateChanges { get; set; }
         public bool Active { get; set; }
         public bool IsNew { get; set; }
@@ -34,9 +34,9 @@ namespace ibDiary_app.Models.Medication
             Notes = string.Empty;
             PrescribedAt = DateTime.UtcNow;
             Active = true;
-            MedicineSchedule = new();
             StateChanges = [];
             IsNew = true;
+            MedicineSchedule = new();
         }
 
         public static Medicine FromDbEntry(int id, PropertyValues originalValues)
@@ -47,7 +47,6 @@ namespace ibDiary_app.Models.Medication
             var notes = (string?)originalValues[nameof(Notes)];
             var prescribedAt = (DateTime?)originalValues[nameof(PrescribedAt)];
             var active = (bool?)originalValues[nameof(Active)];
-            var medicineSchedule = (MedicineSchedule?)originalValues[nameof(MedicineSchedule)];
 
             return new Medicine
             {
@@ -58,7 +57,7 @@ namespace ibDiary_app.Models.Medication
                 Notes = notes ?? string.Empty,
                 PrescribedAt = prescribedAt ?? DateTime.UtcNow,
                 Active = active ?? true,
-                MedicineSchedule = medicineSchedule ?? new()
+                MedicineSchedule = new()
             };
         }
 
@@ -66,7 +65,7 @@ namespace ibDiary_app.Models.Medication
         {
             Name = medicine.Name;
             Dose = medicine.Dose;
-            PrescribedBy = medicine.Dose;
+            PrescribedBy = medicine.PrescribedBy;
             Notes = medicine.Notes;
             PrescribedAt = medicine.PrescribedAt;
             Active = medicine.Active;

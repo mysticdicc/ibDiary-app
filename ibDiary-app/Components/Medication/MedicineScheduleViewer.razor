@@ -1,4 +1,4 @@
-﻿<div class="medicine-schedule-viewer">
+﻿<div class="medicine-schedule-viewer" @key="@MedicineSchedule.Id">
     <p>Schedule</p>
     <div>
         <IbdIntInput @bind-Value="@MedicineSchedule.Days" Title="Days" />
@@ -9,4 +9,5 @@
 
 @code {
     [Parameter] required public MedicineSchedule MedicineSchedule { get; set; }
+    [Parameter] public EventCallback<MedicineSchedule> MedicineScheduleChanged { get; set; }
 }

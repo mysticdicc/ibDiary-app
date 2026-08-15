@@ -2,35 +2,46 @@
 
 <Popup @bind-Visible="@Visible" Title="@_title">
     <div class="medicine-viewer">
-        <div>
-            <IbdTextInput @bind-Value="@Medicine.Name" Title="Name" />
-            <IbdCheckbox @bind-Value="@Medicine.Active" Title="Active" />
-        </div>
-        <div>
-            <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
-        </div>
-        <div>
-            <MedicineScheduleViewer MedicineSchedule="@Medicine.MedicineSchedule" />
-        </div>
-        <div>
-            <IbdTextInput @bind-Value="@Medicine.PrescribedBy" Title="Prescribed By" />
-        </div>
-        <div>
-            <IbdDateTimeInput @bind-Value="@Medicine.PrescribedAt" Title="Prescribed At" />
-        </div>
-        <div>
-            <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
-        </div>
         @if (!Medicine.IsNew && Medicine.StateChanges.Count > 0)
         {
+            <div>
+                <button @onclick="@(() => ChangeTab("med"))">
+                    Medicine
+                </button>
+                <button @onclick="@(() => ChangeTab("his"))">
+                    History
+                </button>
+            </div>
+        }
+        @if (_medicineVisible)
+        {
+            <div>
+                <IbdTextInput @bind-Value="@Medicine.Name" Title="Name" />
+                <IbdCheckbox @bind-Value="@Medicine.Active" Title="Active" />
+            </div>
+            <div>
+                <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
+            </div>
+            <div>
+                <MedicineScheduleViewer @bind-MedicineSchedule="@Medicine.MedicineSchedule" />
+            </div>
+            <div>
+                <IbdTextInput @bind-Value="@Medicine.PrescribedBy" Title="Prescribed By" />
+            </div>
+            <div>
+                <IbdDateTimeInput @bind-Value="@Medicine.PrescribedAt" Title="Prescribed At" />
+            </div>
+            <div>
+                <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
+            </div>
+        }
+        @if (_historyVisible)
+        {
             <div class="state-change-list">
-                <header>
-                    <h2>History</h2>
-                </header>
                 <div>
                     @foreach (var change in Medicine.StateChanges)
                     {
-                        <MedicineStateChangeRow StateChange="change"/>
+                        <MedicineStateChangeRow StateChange="change" />
                     }
                 </div>
             </div>
@@ -53,6 +64,8 @@
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     private string _title = string.Empty;
+    private bool _medicineVisible = true;
+    private bool _historyVisible = false;
 
     protected override void OnParametersSet()
     {
@@ -84,6 +97,22 @@
         {
             await MedicineChanged.InvokeAsync(Medicine);
             await OnClickCancel();
+        }
+    }
+
+    public void ChangeTab(string tab)
+    {
+        _medicineVisible = false;
+        _historyVisible = false;
+
+        switch(tab)
+        {
+            case "med":
+                _medicineVisible = true;
+                break;
+            case "his":
+                _historyVisible = true;
+                break;
         }
     }
 }

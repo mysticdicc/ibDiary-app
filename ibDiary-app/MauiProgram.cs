@@ -2,6 +2,7 @@
 using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
 using ibDiary_app.Services;
+using ibDiary_app.Services.Calendar;
 using ibDiary_app.Services.Medication;
 using ibDiary_app.Services.Symptoms;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,10 @@ namespace ibDiary_app
             );
 
             builder.Services.AddSingleton<NotificationService>();
+
+            builder.Services.AddSingleton<CalendarRepositoryService>();
+            builder.Services.AddSingleton<CalendarDayGenerationService>();
+            builder.Services.AddSingleton<CalendarDatabaseService>();
 
             builder.Services.AddSingleton<MedicineStateChangeRepository>();
             builder.Services.AddSingleton<MedicineRepository>();

@@ -1,0 +1,35 @@
+﻿@inject CalendarDatabaseService _calDbService;
+
+<div class="scrolling-calendar">
+    @foreach (var day in _calendarData)
+    {
+        <CalendarCard Date="@day.Key" Day="@day.Value"/>
+    }
+</div>
+
+@code {
+    private DateOnly _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-365));
+    private DateOnly _today = DateOnly.FromDateTime(DateTime.UtcNow);
+    private Dictionary<DateOnly, CalendarDay?> _calendarData = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _today = DateOnly.FromDateTime(DateTime.UtcNow);
+        _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-365));
+
+        var days = await _calDbService.GetFromDateAsync(_oldDate);
+        var lookup = days.ToDictionary(x => x.Date);
+        var dates = Enumerable
+            .Range(0, (_today.DayNumber - _oldDate.DayNumber) + 1)
+            .Select(offset => _oldDate.AddDays(offset))
+            .OrderByDescending(d => d)
+            .ToList();
+
+        _calendarData = dates.ToDictionary(
+            date => date,
+            date => lookup.TryGetValue(date, out var data) ? data : null
+        );
+
+        await base.OnInitializedAsync();
+    }
+}

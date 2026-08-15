@@ -1,7 +1,9 @@
 ﻿using ibDiary_app.Data;
+using ibDiary_app.Models.Calendar;
 using ibDiary_app.Models.Interfaces;
 using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
+using ibDiary_app.Services.Calendar;
 using ibDiary_app.Services.Medication;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -28,7 +30,7 @@ namespace ibDiary_app.Services
 
         public async Task<Medicine?> GetByIdAsync(int id)
         {
-            return await _dbService.FindAsync<Medicine>(id) ?? null;
+            return await _dbService.Medicines.Include(x => x.MedicineSchedule).FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<bool> UpdateAsync(Medicine medicine)
@@ -41,6 +43,7 @@ namespace ibDiary_app.Services
                 dbItem.Id,
                 _dbService.Entry(dbItem).OriginalValues
             );
+            clone.MedicineSchedule = dbItem.MedicineSchedule;
             _dbService.Entry(clone).State = EntityState.Detached;
 
             if (dbItem.HasChangedState(clone))
@@ -57,8 +60,15 @@ namespace ibDiary_app.Services
         public async Task<int> AddAsync(Medicine medicine)
         {
             medicine.IsNew = false;
+
+            medicine.MedicineSchedule.IsNew = false;
+            await _dbService.MedicineSchedules.AddAsync(medicine.MedicineSchedule);
+            await _dbService.SaveChangesAsync();
+
+            medicine.MedicineScheduleId = medicine.MedicineSchedule.Id;
             await _dbService.Medicines.AddAsync(medicine);
             await _dbService.SaveChangesAsync();
+
             return medicine.Id;
         }
 

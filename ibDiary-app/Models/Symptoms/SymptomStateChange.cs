@@ -1,4 +1,6 @@
-﻿using ibDiary_app.Models.Medication;
+﻿using ibDiary_app.Models.Calendar;
+using ibDiary_app.Models.Interfaces;
+using ibDiary_app.Models.Medication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +9,7 @@ using System.Text;
 
 namespace ibDiary_app.Models.Symptoms
 {
-    public class SymptomStateChange
+    public class SymptomStateChange : ICalendarUpdate
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
         [ForeignKey(nameof(SymptomId))] public Symptom? Symptom { get; set; }
@@ -33,6 +35,13 @@ namespace ibDiary_app.Models.Symptoms
             ChangedAt = DateTime.UtcNow;
             SymptomBefore = oldSymptom;
             SymptomAfter = symptom;
+        }
+
+        public DateOnly GetDate() => ChangedAtDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            if (!day.SymptomStateChanges.Contains(this)) day.SymptomStateChanges.Add(this);
         }
     }
 }

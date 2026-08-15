@@ -6,7 +6,7 @@
     }
     else
     {
-        <input type="number" value="@Value" @onchange="@OnInputChanged"/>
+        <input type="number" value="@Value" @onchange="OnValueChanged" />
     }
 </div>
 
@@ -16,10 +16,10 @@
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
 
-    private async Task OnInputChanged(ChangeEventArgs e)
+    private async Task OnValueChanged(ChangeEventArgs e)
     {
-        if (e.Value is not int value) return;
-        Value = value;
-        await ValueChanged.InvokeAsync(value);
+        int newValue = int.Parse(e.Value?.ToString() ?? "0");
+        Value = newValue;
+        await ValueChanged.InvokeAsync(newValue);
     }
 }

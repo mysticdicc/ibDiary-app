@@ -1,6 +1,7 @@
 ﻿@inject PendingMedicineReportService _pendingMedService
 @inject MedicineDatabaseService _medDbService
 @inject SymptomDatabaseService _symDbSevrice
+@inject NavigationManager _navManager
 @page "/"
 
 <article class="home-page">
@@ -18,7 +19,7 @@
             </div>
         </div>
     }
-    <div class="current-medicines">
+    <div class="current-medicines" @onclick="@OnClickCurrentMedicines">
         <h2>Active Medicines</h2>
         @if (_currentMedicines.Count > 0)
         {
@@ -32,7 +33,7 @@
             <p>You have no active medicines.</p>
         }
     </div>
-    <div class="current-symptoms">
+    <div class="current-symptoms" @onclick="@OnClickCurrentSymptoms">
         <h2>Active Symptoms</h2>
         @if (_currentSymptoms.Count > 0)
         {
@@ -46,6 +47,7 @@
             <p>You have no active symptoms.</p>
         }
     </div>
+    <ScrollingCalendar/>
 </article>
 
 <MedicineReportViewer MedicineReport="@_currentMedicineReport" MedicineReportChanged="@OnMedicineReportChanged" @bind-Visible="@_medicineReportViewerVisible"/>
@@ -101,6 +103,16 @@
     {
         _currentSymptom = symptom;
         _symptomViewerVisible = true;
+    }
+
+    private void OnClickCurrentMedicines()
+    {
+        if (_currentMedicines.Count == 0) _navManager.NavigateTo("/medicines");
+    }
+
+    private void OnClickCurrentSymptoms()
+    {
+        if (_currentSymptoms.Count == 0) _navManager.NavigateTo("/symptoms");
     }
 }
 

@@ -328,13 +328,12 @@ button:active {
     }
 
     div {
-        max-height: 10rem;
         overflow-x: hidden;
         overflow-y: auto;
     }
 }
 
-.symptom-state-change {
+.symptom-state-change, .medicine-state-change {
     display: flex;
     flex-direction: row;
 
@@ -351,11 +350,14 @@ button:active {
     display: flex;
     flex-direction: column;
 
-    > div {
+    > div:not(.state-change-list) {
         display: flex;
         flex-direction: row;
 
-
+        button {
+            flex: 1;
+            background-color: var(--background);
+        }
     }
 }
 
@@ -413,5 +415,35 @@ button:active {
             background-color: var(--background);
             flex: 1;
         }
+    }
+}
+
+.scrolling-calendar {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 50%;
+}
+
+.calendar-card {
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--text);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-top: 1rem;
+    min-height: fit-content;
+
+    header {
+        padding: 5px;
+        background-color: var(--text);
+        color: var(--background);
+    }
+
+    div {
+        padding: 5px;
     }
 }
