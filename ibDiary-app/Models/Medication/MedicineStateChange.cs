@@ -41,6 +41,7 @@ namespace ibDiary_app.Models.Medication
 
         public void AddToCalendarDay(CalendarDay day)
         {
+            if (GetDate() != day.Date) return;
             if (!day.MedicineStateChanges.Contains(this)) day.MedicineStateChanges.Add(this);
         }
     }

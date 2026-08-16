@@ -445,5 +445,20 @@ button:active {
 
     div {
         padding: 5px;
+        text-align: center;
+
+        .symptom-state-change, .medicine-state-change {
+            padding: 0;
+
+            .left {
+                visibility: hidden;
+                width: 0;
+            }
+
+            .right {
+                width: 100%;
+                padding: 0;
+            }
+        }
     }
 }

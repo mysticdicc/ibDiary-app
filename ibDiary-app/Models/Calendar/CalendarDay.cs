@@ -18,6 +18,8 @@ namespace ibDiary_app.Models.Calendar
         public List<MedicineStateChange> MedicineStateChanges { get; set; }
         public List<SymptomReport> SymptomReports { get; set; }
         public List<SymptomStateChange> SymptomStateChanges { get; set; }
+        public List<Medicine> CreatedMedicines { get; set; }
+        public List<Symptom> CreatedSymptoms { get; set; }
         public bool IsNew { get; set; }
 
         public CalendarDay()
@@ -27,6 +29,8 @@ namespace ibDiary_app.Models.Calendar
             MedicineStateChanges = [];
             SymptomReports = [];
             SymptomStateChanges = [];
+            CreatedMedicines = [];
+            CreatedSymptoms = [];
             IsNew = true;
         }
 
@@ -37,6 +41,8 @@ namespace ibDiary_app.Models.Calendar
             MedicineStateChanges = [];
             SymptomReports = [];
             SymptomStateChanges = [];
+            CreatedMedicines = [];
+            CreatedSymptoms = [];
             IsNew = true;
         }
 
@@ -47,6 +53,8 @@ namespace ibDiary_app.Models.Calendar
             MedicineStateChanges = day.MedicineStateChanges;
             SymptomReports = day.SymptomReports;
             SymptomStateChanges = day.SymptomStateChanges;
+            CreatedSymptoms = day.CreatedSymptoms;
+            CreatedMedicines = day.CreatedMedicines;
         }
 
         public bool HasChangedState(CalendarDay old)
@@ -55,7 +63,9 @@ namespace ibDiary_app.Models.Calendar
                 MedicineReports != old.MedicineReports ||
                 MedicineStateChanges != old.MedicineStateChanges ||
                 SymptomReports != old.SymptomReports ||
-                SymptomStateChanges != old.SymptomStateChanges;
+                SymptomStateChanges != old.SymptomStateChanges ||
+                CreatedMedicines != old.CreatedMedicines ||
+                CreatedSymptoms != old.CreatedSymptoms;
         }
 
         public CalendarDay Clone()

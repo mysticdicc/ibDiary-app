@@ -16,11 +16,13 @@ namespace ibDiary_app.Services
     {
         private readonly AppDbContext _dbService;
         private readonly MedicineStateChangeRepository _medStateChangeRepo;
+        private readonly CalendarDayGenerationService _calService;
 
-        public MedicineRepository(AppDbContext connection, MedicineStateChangeRepository repo)
+        public MedicineRepository(AppDbContext connection, MedicineStateChangeRepository repo, CalendarDayGenerationService cal)
         {
             _dbService = connection;
             _medStateChangeRepo = repo;
+            _calService = cal;
         }
 
         public async Task<List<Medicine>> GetAllAsync()
@@ -46,7 +48,8 @@ namespace ibDiary_app.Services
             clone.MedicineSchedule = dbItem.MedicineSchedule;
             _dbService.Entry(clone).State = EntityState.Detached;
 
-            if (dbItem.HasChangedState(clone))
+            bool changedState = dbItem.HasChangedState(clone);
+            if (changedState)
             {
                 var stateChange = new MedicineStateChange(medicine.Clone(), clone);
                 await _medStateChangeRepo.AddAsync(stateChange);
@@ -54,7 +57,7 @@ namespace ibDiary_app.Services
 
             dbItem.UpdateProperties(medicine);
             var rows = await _dbService.SaveChangesAsync();
-            return rows > 0;
+            return rows > 0 || changedState;
         }
 
         public async Task<int> AddAsync(Medicine medicine)
@@ -68,6 +71,8 @@ namespace ibDiary_app.Services
             medicine.MedicineScheduleId = medicine.MedicineSchedule.Id;
             await _dbService.Medicines.AddAsync(medicine);
             await _dbService.SaveChangesAsync();
+
+            await _calService.NotifyUpdateCalendarDayAsync(medicine);
 
             return medicine.Id;
         }

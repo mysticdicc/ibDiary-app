@@ -2,6 +2,7 @@
 using ibDiary_app.Models.Interfaces;
 using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
+using ibDiary_app.Services.Calendar;
 using ibDiary_app.Services.Symptoms;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,11 +16,13 @@ namespace ibDiary_app.Services
     {
         private readonly AppDbContext _dbService;
         private readonly SymptomStateChangeRepository _sympStateChangeRepo;
+        private readonly CalendarDayGenerationService _calService;
 
-        public SymptomRepository(AppDbContext connection, SymptomStateChangeRepository sympStateChangeRepo)
+        public SymptomRepository(AppDbContext connection, SymptomStateChangeRepository sympStateChangeRepo, CalendarDayGenerationService cal)
         {
             _dbService = connection;
             _sympStateChangeRepo = sympStateChangeRepo;
+            _calService = cal;
         }
 
         public async Task<List<Symptom>> GetAllAsync()
@@ -44,7 +47,8 @@ namespace ibDiary_app.Services
             );
             _dbService.Entry(clone).State = EntityState.Detached;
 
-            if (dbItem.HasChangedState(clone))
+            bool changedState = dbItem.HasChangedState(clone);
+            if (changedState)
             {
                 var stateChange = new SymptomStateChange(symptom.Clone(), clone);
                 await _sympStateChangeRepo.AddAsync(stateChange);
@@ -53,7 +57,7 @@ namespace ibDiary_app.Services
             dbItem.UpdateProperties(symptom);
             var rows = await _dbService.SaveChangesAsync();
 
-            return rows > 0;
+            return rows > 0 || changedState;
         }
 
         public async Task<int> AddAsync(Symptom symptom)
@@ -61,6 +65,9 @@ namespace ibDiary_app.Services
             symptom.IsNew = false;
             await _dbService.Symptoms.AddAsync(symptom);
             await _dbService.SaveChangesAsync();
+
+            await _calService.NotifyUpdateCalendarDayAsync(symptom);
+
             return symptom.Id;
         }
 

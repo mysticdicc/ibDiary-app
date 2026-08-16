@@ -1,4 +1,6 @@
-﻿using ibDiary_app.Models.Symptoms;
+﻿using ibDiary_app.Models.Calendar;
+using ibDiary_app.Models.Interfaces;
+using ibDiary_app.Models.Symptoms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -10,7 +12,7 @@ using System.Text.Json.Serialization;
 
 namespace ibDiary_app.Models.Medication
 {
-    public class Medicine
+    public class Medicine : ICalendarUpdate
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
         public string Name { get; set; }
@@ -100,6 +102,14 @@ namespace ibDiary_app.Models.Medication
             }
 
             return clone;
+        }
+
+        public DateOnly GetDate() => PrescribedAtDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            if (GetDate() != day.Date) return;
+            if (!day.CreatedMedicines.Contains(this)) day.CreatedMedicines.Add(this);
         }
     }
 }

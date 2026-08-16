@@ -5,27 +5,27 @@
     <div class="right">
         @if (StateChange.MedicineBefore.Active != StateChange.MedicineAfter.Active)
         {
-            <p>@StateChange.MedicineAfter.Name active was changed to @StateChange.MedicineAfter.Active</p>
+            <p>@StateChange.MedicineAfter.Name active was changed to @(StateChange.MedicineAfter.Active).</p>
         }
         @if (StateChange.MedicineBefore.Name != StateChange.MedicineAfter.Name)
         {
-            <p>@StateChange.MedicineBefore.Name was changed to @StateChange.MedicineAfter.Name</p>
+            <p>@StateChange.MedicineBefore.Name was changed to @(StateChange.MedicineAfter.Name).</p>
         }
         @if (StateChange.MedicineBefore.Dose != StateChange.MedicineAfter.Dose)
         {
-            <p>@StateChange.MedicineAfter.Name dose was changed to @StateChange.MedicineAfter.Dose</p>
+            <p>@StateChange.MedicineAfter.Name dose was changed to @(StateChange.MedicineAfter.Dose).</p>
         }
         @if (StateChange.MedicineBefore.MedicineSchedule != StateChange.MedicineAfter.MedicineSchedule)
         {
-            <p>@StateChange.MedicineAfter.Name schedule was updated</p>
+            <p>@StateChange.MedicineAfter.Name schedule was updated.</p>
         }
         @if (StateChange.MedicineBefore.PrescribedBy != StateChange.MedicineAfter.PrescribedBy)
         {
-            <p>@StateChange.MedicineAfter.Name prescribed by was changed to @StateChange.MedicineAfter.PrescribedBy</p>
+            <p>@StateChange.MedicineAfter.Name prescribed by was changed to @(StateChange.MedicineAfter.PrescribedBy).</p>
         }
         @if (StateChange.MedicineBefore.PrescribedAt != StateChange.MedicineAfter.PrescribedAt)
         {
-            <p>@StateChange.MedicineAfter.Name prescribed at was updated to @StateChange.MedicineAfter.PrescribedAtDate</p>
+            <p>@StateChange.MedicineAfter.Name prescribed at was updated to @(StateChange.MedicineAfter.PrescribedAtDate).</p>
         }
     </div>
 </div>

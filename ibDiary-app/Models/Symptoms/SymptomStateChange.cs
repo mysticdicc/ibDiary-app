@@ -41,6 +41,7 @@ namespace ibDiary_app.Models.Symptoms
 
         public void AddToCalendarDay(CalendarDay day)
         {
+            if (GetDate() != day.Date) return;
             if (!day.SymptomStateChanges.Contains(this)) day.SymptomStateChanges.Add(this);
         }
     }

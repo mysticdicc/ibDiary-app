@@ -58,6 +58,7 @@ namespace ibDiary_app.Models.Medication
 
         public void AddToCalendarDay(CalendarDay day)
         {
+            if (GetDate() != day.Date) return;
             if (!day.MedicineReports.Contains(this)) day.MedicineReports.Add(this);
         }
     }

@@ -50,6 +50,7 @@ namespace ibDiary_app.Models.Symptoms
 
         public void AddToCalendarDay(CalendarDay day)
         {
+            if (GetDate() != day.Date) return;
             if (!day.SymptomReports.Contains(this)) day.SymptomReports.Add(this);
         }
     }

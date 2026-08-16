@@ -5,10 +5,54 @@
     <div>
         @if (null != Day)
         {
-            if ((Day.MedicineReports.Count + Day.MedicineStateChanges.Count + Day.SymptomReports.Count + Day.SymptomStateChanges.Count) == 0)
+            if ((Day.MedicineReports.Count + Day.MedicineStateChanges.Count + Day.SymptomReports.Count + 
+                Day.SymptomStateChanges.Count + Day.CreatedMedicines.Count + Day.CreatedSymptoms.Count) == 0)
             {
                 <p>No activity.</p>
             }
+            else
+            {
+                if (Day.MedicineReports.Count > 0)
+                {
+                    foreach (var report in Day.MedicineReports)
+                    {
+                        <p>You took @report.Medicine.Dose of @report.Medicine.Name at @(report.MedicineTakenAt.Hour):@(report.MedicineTakenAt.Minute).</p>
+                    }
+                }
+                if (Day.MedicineStateChanges.Count > 0)
+                {
+                    foreach (var medChange in Day.MedicineStateChanges)
+                    {
+                        <MedicineStateChangeRow StateChange="@medChange" />
+                    }
+                }
+                if (Day.CreatedMedicines.Count > 0)
+                {
+                    foreach (var medicine in Day.CreatedMedicines)
+                    {
+                        <p>You were prescribed @medicine.Dose of @medicine.Name by @(medicine.PrescribedBy).</p>
+                    }
+                }
+                if (Day.SymptomReports.Count > 0)
+                {
+
+                }
+                if (Day.SymptomStateChanges.Count > 0)
+                {
+                    foreach (var sympChange in Day.SymptomStateChanges)
+                    {
+                        <SymptomStateChangeRow StateChange="@sympChange" />
+                    }
+                }
+                @if (Day.CreatedSymptoms.Count > 0)
+                {
+                    foreach (var symptom in Day.CreatedSymptoms)
+                    {
+                        <p>You added @symptom.Title to your active symptoms.</p>
+                    }
+                }
+            }
+
         }
         else
         {

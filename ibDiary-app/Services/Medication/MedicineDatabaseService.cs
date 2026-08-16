@@ -45,8 +45,8 @@ namespace ibDiary_app.Services.Medication
             {
                 var result = await _repo.UpdateAsync(medicine);
 
-                if (!result) _notifier.ShowNotification("Update Medicine", "No changes were made to the report.");
-                else _notifier.ShowNotification("Update Report", "Updated successfully.");
+                if (!result) _notifier.ShowNotification("Update Medicine", "No changes were made to the medicine.");
+                else _notifier.ShowNotification("Update Medicine", "Updated successfully.");
 
                 return result;
             }

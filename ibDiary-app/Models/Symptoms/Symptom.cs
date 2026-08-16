@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using ibDiary_app.Models.Calendar;
+using ibDiary_app.Models.Interfaces;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,13 +10,15 @@ using System.Text.Json.Serialization;
 
 namespace ibDiary_app.Models.Symptoms
 {
-    public class Symptom
+    public class Symptom : ICalendarUpdate
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public bool Active { get; set; }
         public bool IsNew { get; set; }
+        public DateTime CreatedAt { get; set; }
+        [NotMapped] public DateOnly CreatedAtDate { get => DateOnly.FromDateTime(CreatedAt); }
         [NotMapped][JsonIgnore] public List<SymptomStateChange> StateChanges { get; set; }
         public Symptom()
         {
@@ -24,6 +28,7 @@ namespace ibDiary_app.Models.Symptoms
             Active = true;
             IsNew = true;
             StateChanges = [];
+            CreatedAt = DateTime.UtcNow;
         }
 
         public static Symptom FromDbEntry(int id, PropertyValues originalValues)
@@ -74,6 +79,14 @@ namespace ibDiary_app.Models.Symptoms
             }
 
             return clone;
+        }
+
+        public DateOnly GetDate() => CreatedAtDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            if (GetDate() != day.Date) return;
+            if (!day.CreatedSymptoms.Contains(this)) day.CreatedSymptoms.Add(this);
         }
     }
 }
