@@ -1,0 +1,32 @@
+﻿<div class="medicine-card small-card" @onclick="@OnClickRow">
+    <header>
+        <h3>@Medicine.Name</h3>
+        <p>@Medicine.Dose</p>
+    </header>
+    <div>
+        <p>Prescribed at: @Medicine.PrescribedAtDate</p>
+    </div>
+    <div>
+        <p>Prescribed by: @Medicine.PrescribedBy</p>
+        <button @onclick:stopPropagation="true" @onclick="@OnClickOpenReport">
+            Create Report
+            <span class="material-symbols-outlined">article</span>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] required public Medicine Medicine { get; set; }
+    [Parameter] public EventCallback<Medicine> MedicineClicked { get; set; }
+    [Parameter] public EventCallback<Medicine> MedicineReportClicked { get; set; }
+
+    private async Task OnClickRow()
+    {
+        await MedicineClicked.InvokeAsync(Medicine);
+    }
+
+    private async Task OnClickOpenReport()
+    {
+        await MedicineReportClicked.InvokeAsync(Medicine);
+    }
+}

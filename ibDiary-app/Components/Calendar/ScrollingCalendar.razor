@@ -11,8 +11,21 @@
     private DateOnly _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-365));
     private DateOnly _today = DateOnly.FromDateTime(DateTime.UtcNow);
     private Dictionary<DateOnly, CalendarDay?> _calendarData = new();
+    private Guid _refreshKey = new();
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadCalendarDataAsync();
+        await base.OnInitializedAsync();
+    }
+
+    public async Task RefreshAsync()
+    {
+        await LoadCalendarDataAsync();
+        StateHasChanged();
+    }
+
+    private async Task LoadCalendarDataAsync()
     {
         _today = DateOnly.FromDateTime(DateTime.UtcNow);
         _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-365));
@@ -29,7 +42,5 @@
             date => date,
             date => lookup.TryGetValue(date, out var data) ? data : null
         );
-
-        await base.OnInitializedAsync();
     }
 }

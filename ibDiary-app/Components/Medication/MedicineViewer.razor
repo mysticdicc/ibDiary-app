@@ -1,6 +1,6 @@
 ﻿@inject MedicineDatabaseService _medDbService;
 
-<Popup @bind-Visible="@Visible" Title="@_title">
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
     <div class="medicine-viewer">
         @if (!Medicine.IsNew && Medicine.StateChanges.Count > 0)
         {
@@ -114,5 +114,10 @@
                 _historyVisible = true;
                 break;
         }
+    }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
     }
 }

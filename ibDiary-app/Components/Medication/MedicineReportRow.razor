@@ -1,7 +1,14 @@
 ﻿<div class="medicine-report-row" @onclick="@OnClickRow">
-    <div>@MedicineReport.Medicine.Name</div>
-    <div>@MedicineReport.MedicineTaken</div>
-    <div>@MedicineReport.MedicineTakenAt</div>
+    <p>@MedicineReport.Medicine.Name</p>
+    <p>@MedicineReport.Dose</p>
+    @if (null != MedicineReport.DueAt)
+    {
+        <p>@(MedicineReport.DueAt?.ToString("d/M h:mm tt") ?? string.Empty)</p>
+    }
+    else
+    {
+        <p>@MedicineReport.MedicineTakenAt.ToString("d/M h:mm tt")</p>
+    }
 </div>
 
 @code {

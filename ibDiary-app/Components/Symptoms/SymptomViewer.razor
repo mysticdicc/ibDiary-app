@@ -1,15 +1,32 @@
 ﻿@inject SymptomDatabaseService _symDbService;
 
-<Popup @bind-Visible="@Visible" Title="@_title">
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
     <div class="symptom-viewer">
-        <div>
-            <IbdTextInput @bind-Value="@Symptom.Title" Title="Name" />
-            <IbdCheckbox @bind-Value="@Symptom.Active" Title="Active" />
-        </div>
-        <div>
-            <IbdTextArea @bind-Value="@Symptom.Description" Title="Description" />
-        </div>
         @if (!Symptom.IsNew && Symptom.StateChanges.Count > 0)
+        {
+            <div>
+                <button @onclick="@(() => ChangeTab("sym"))">
+                    Medicine
+                </button>
+                <button @onclick="@(() => ChangeTab("his"))">
+                    History
+                </button>
+            </div>
+        }
+        @if (_symptomVisible)
+        {
+            <div>
+                <IbdTextInput @bind-Value="@Symptom.Title" Title="Name" />
+                <IbdCheckbox @bind-Value="@Symptom.Active" Title="Active" />
+            </div>
+            <div>
+                <IbdTextArea @bind-Value="@Symptom.Description" Title="Description" />
+            </div>
+            <div>
+                <IbdDateTimeInput @bind-Value="@Symptom.StartedAt" Title="Started At"/>
+            </div>
+        }
+        @if (_historyVisible)
         {
             <div class="state-change-list">
                 <header>
@@ -40,6 +57,8 @@
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     private string _title = string.Empty;
+    private bool _symptomVisible = true;
+    private bool _historyVisible = false;
 
     protected override void OnParametersSet()
     {
@@ -72,6 +91,27 @@
         {
             await SymptomChanged.InvokeAsync(Symptom);
             await OnClickCancel();
+        }
+    }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
+    }
+
+    public void ChangeTab(string tab)
+    {
+        _symptomVisible = false;
+        _historyVisible = false;
+
+        switch (tab)
+        {
+            case "sym":
+                _symptomVisible = true;
+                break;
+            case "his":
+                _historyVisible = true;
+                break;
         }
     }
 }

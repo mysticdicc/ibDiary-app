@@ -2,11 +2,11 @@
     <p>@Title</p>
     @if (ReadOnly)
     {
-        <input type="datetime" value="@Value" readonly/>
+        <input type="text" value="@Value.ToString("yyyy-MM-ddTHH:mm")" readonly />
     }
     else
     {
-        <input type="datetime" value="@Value" @onchange="@OnInputChanged"/>
+        <input type="datetime-local" value="@Value.ToString("yyyy-MM-ddTHH:mm")" @onchange="@OnValueChanged" />
     }
 </div>
 
@@ -16,10 +16,12 @@
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
 
-    private async Task OnInputChanged(ChangeEventArgs e)
+    private async Task OnValueChanged(ChangeEventArgs e)
     {
-        if (e.Value is not DateTime value) return;
-        Value = value;
-        await ValueChanged.InvokeAsync(Value);
+        if (e.Value is string value && DateTime.TryParse(value, out var dateTime))
+        {
+            Value = dateTime;
+            await ValueChanged.InvokeAsync(Value);
+        }
     }
 }

@@ -5,7 +5,6 @@
 @page "/"
 
 <article class="home-page">
-    <h1>IbDiary</h1>
     @if (_pendingReports.Count > 0)
     {
         <div class="pending-reports">
@@ -20,12 +19,17 @@
         </div>
     }
     <div class="current-medicines" @onclick="@OnClickCurrentMedicines">
-        <h2>Active Medicines</h2>
+        <header>
+            <h2>Active Medicines</h2>
+            <button @onclick="@ShowMedicineHelpClicked" @onclick:stopPropagation="true">
+                <span class="material-symbols-outlined">help</span>
+            </button>
+        </header>
         @if (_currentMedicines.Count > 0)
         {
             @foreach (var active in _currentMedicines)
             {
-                <MedicineRow Medicine="active" MedicineClicked="@OnMedicineRowClicked" />
+                <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked" MedicineReportClicked="@OpenMedicineReportClicked"/>
             }
         }
         else
@@ -34,12 +38,18 @@
         }
     </div>
     <div class="current-symptoms" @onclick="@OnClickCurrentSymptoms">
-        <h2>Active Symptoms</h2>
+        <header>
+            <h2>Active Symptoms</h2>
+            <button @onclick="@ShowSymtpomHelpClicked" @onclick:stopPropagation="true">
+                <span class="material-symbols-outlined">help</span>
+            </button>
+        </header>
+        
         @if (_currentSymptoms.Count > 0)
         {
             @foreach (var active in _currentSymptoms)
             {
-                <SymptomRow Symptom="active" SymptomClicked="@OnSymptomRowClicked" />
+                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" SymptomReportClicked="@OpenSymptomReportClicked"/>
             }
         }
         else
@@ -47,12 +57,15 @@
             <p>You have no active symptoms.</p>
         }
     </div>
-    <ScrollingCalendar/>
+    <ScrollingCalendar @ref="@_calendar"/>
 </article>
 
 <MedicineReportViewer MedicineReport="@_currentMedicineReport" MedicineReportChanged="@OnMedicineReportChanged" @bind-Visible="@_medicineReportViewerVisible"/>
-<MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible"/>
-<SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible"/>
+<MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible" MedicineChanged="@OnCalendarUpdate" />
+<SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible" SymptomChanged="@OnCalendarUpdate" />
+<SymptomReportViewer SymptomReport="@_currentSymptomReport" @bind-Visible="@_symptomReportViewerVisible" SymptomReportChanged="@OnCalendarUpdate" />
+<SymptomHelpPopup @bind-Visible="@_symptomHelpVisible"/>
+<MedicineHelpPopup @bind-Visible="@_medicineHelpVisible"/>
 
 @code {
     private List<MedicineReport> _pendingReports = [];
@@ -66,6 +79,14 @@
     private List<Symptom> _currentSymptoms = [];
     private Symptom _currentSymptom = new();
     private bool _symptomViewerVisible = false;
+
+    private SymptomReport _currentSymptomReport = new();
+    private bool _symptomReportViewerVisible = false;
+
+    private bool _symptomHelpVisible = false;
+    private bool _medicineHelpVisible = false;
+
+    private ScrollingCalendar? _calendar;
 
     protected override async Task OnInitializedAsync()
     {
@@ -91,6 +112,7 @@
     private async Task OnMedicineReportChanged(MedicineReport report)
     {
         _pendingReports = await _pendingMedService.GetPendingReportsAsync();
+        if (null != _calendar) await _calendar.RefreshAsync();
     }
 
     private void OnMedicineRowClicked(Medicine medicine)
@@ -114,5 +136,33 @@
     {
         if (_currentSymptoms.Count == 0) _navManager.NavigateTo("/symptoms");
     }
+
+    private void OpenSymptomReportClicked(Symptom symptom)
+    {
+        _currentSymptomReport = new(symptom);
+        _symptomReportViewerVisible = true;
+    }
+
+    private void OpenMedicineReportClicked(Medicine medicine)
+    {
+        _currentMedicineReport = new(medicine, DateTime.UtcNow);
+        _medicineReportViewerVisible = true;
+    }
+
+    private void ShowSymtpomHelpClicked()
+    {
+        _symptomHelpVisible = true;
+    }
+
+    private void ShowMedicineHelpClicked()
+    {
+        _medicineHelpVisible = true;
+    }
+
+    private async Task OnCalendarUpdate(ICalendarUpdate update)
+    {
+        if (null != _calendar) await _calendar.RefreshAsync();
+    }
 }
+
 

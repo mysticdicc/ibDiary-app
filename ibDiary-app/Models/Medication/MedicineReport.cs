@@ -18,6 +18,7 @@ namespace ibDiary_app.Models.Medication
         [NotMapped] public DateOnly MedicineTakenAtDate { get  => DateOnly.FromDateTime(MedicineTakenAt); }
         public DateTime? DueAt { get; set; }
         public bool MedicineTaken { get; set; }
+        public string Dose { get; set; }
         public string Notes { get; set; }
         public bool IsNew { get; set; }
 
@@ -28,6 +29,7 @@ namespace ibDiary_app.Models.Medication
             SubmittedAt = DateTime.UtcNow;
             MedicineTakenAt = SubmittedAt;
             MedicineTaken = true;
+            Dose = string.Empty;
             Notes = string.Empty;
             IsNew = true;
         }
@@ -41,6 +43,7 @@ namespace ibDiary_app.Models.Medication
             MedicineTakenAt = DateTime.UtcNow;
             SubmittedAt = DateTime.UtcNow;
             MedicineTaken = true;
+            Dose = medicine.Dose;
             Notes = string.Empty;
             IsNew = true;
         }
@@ -52,6 +55,7 @@ namespace ibDiary_app.Models.Medication
             MedicineTakenAt = report.MedicineTakenAt;
             MedicineTaken = report.MedicineTaken;
             Notes = report.Notes;
+            DueAt = report.DueAt;
         }
 
         public DateOnly GetDate() => MedicineTakenAtDate;

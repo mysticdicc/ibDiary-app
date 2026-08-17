@@ -1,0 +1,29 @@
+﻿<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Medicine Help">
+    <h2>Medicines</h2>
+    <p>
+        Medicines is where you can keep track of the medicines you are prescribed to help with your health problems. You can keep track
+        of your dose, who and when they were prescribed, and your schedule for taking them. Changes in the medicines are logged to help you 
+        build a profile of the medicines you have taken over time.
+    </p>
+    <h2>Medicine Reports</h2>
+    <p>
+        Medicine reports largely exist to confirm that you have taken your medicine at the schedule you provided. You will be reminded
+        to create a medicine report every time you are due to take your medicine, this lets you keep track of what medicine you took and
+        when you took it.n
+    </p>
+    <p>
+        Reports can be created for medicines either by pressing the <span class="material-symbols-outlined">article</span> button next to the
+        medicine like symptoms, or if you have been due to take your medicine since filling in the last medicine report you will be reminded
+        on the home screen that the medicine report is due.
+    </p>
+</Popup>
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
+    }
+}

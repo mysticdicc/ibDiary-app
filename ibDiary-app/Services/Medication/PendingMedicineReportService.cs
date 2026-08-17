@@ -7,13 +7,13 @@ namespace ibDiary_app.Services.Medication
 {
     public class PendingMedicineReportService
     {
-        private readonly MedicineReportDatabaseService _reportService;
-        private readonly MedicineDatabaseService _medicineService;
+        private readonly MedicineReportRepository _reportService;
+        private readonly MedicineRepository _medicineService;
         private readonly NotificationService _notifier;
 
         public PendingMedicineReportService(
-            MedicineReportDatabaseService reportService,
-            MedicineDatabaseService medicineService,
+            MedicineReportRepository reportService,
+            MedicineRepository medicineService,
             NotificationService notifier)
         {
             _reportService = reportService;
@@ -38,11 +38,13 @@ namespace ibDiary_app.Services.Medication
                         .OrderByDescending(r => r.SubmittedAt)
                         .FirstOrDefault();
 
-                    var nextDueDate = CalculateNextDueDate(lastReport, medicine.MedicineSchedule);
-
-                    if (nextDueDate <= DateTime.UtcNow && (lastReport == null || lastReport.SubmittedAt < nextDueDate))
+                    var nextDueDate = await CalculateNextDueDate(lastReport, medicine.MedicineSchedule);
+                    if (null != nextDueDate)
                     {
-                        pendingReports.Add(new(medicine, nextDueDate));
+                        if (nextDueDate <= DateTime.UtcNow && (lastReport == null || lastReport.SubmittedAt < nextDueDate))
+                        {
+                            pendingReports.Add(new(medicine, nextDueDate.Value));
+                        }
                     }
                 }
 
@@ -55,19 +57,48 @@ namespace ibDiary_app.Services.Medication
             }
         }
 
-        private DateTime CalculateNextDueDate(MedicineReport? lastReport, MedicineSchedule schedule)
+        private async Task<DateTime?> CalculateNextDueDate(MedicineReport? lastReport, MedicineSchedule schedule)
         {
-            if (lastReport == null)
+            if (schedule.Type == MedicineScheduleType.AsNeeded) return null;
+            else if (schedule.Type == MedicineScheduleType.Interval)
             {
-                return DateTime.UtcNow;
+                if (lastReport == null) return DateTime.UtcNow;
+                DateTime? nextDue = null;
+
+                if (schedule.IntervalType == MedicineScheduleIntervalType.Minutes)
+                {
+                    nextDue = lastReport.MedicineTakenAt.AddMinutes(schedule.IntervalValue);
+                }
+                else if (schedule.IntervalType == MedicineScheduleIntervalType.Hours)
+                {
+                    nextDue = lastReport.MedicineTakenAt.AddHours(schedule.IntervalValue);
+                }
+                else if (schedule.IntervalType == MedicineScheduleIntervalType.Days)
+                {
+                    nextDue = lastReport.MedicineTakenAt.AddDays(schedule.IntervalValue);
+                }
+                else if (schedule.IntervalType == MedicineScheduleIntervalType.Months)
+                {
+                    nextDue = lastReport.MedicineTakenAt.AddMonths(schedule.IntervalValue);
+                }
+
+                return nextDue;
+            }
+            else if (schedule.Type == MedicineScheduleType.DailyLimit)
+            {
+                if (lastReport == null) return DateTime.UtcNow;
+                if (null == schedule.Medicine) return null;
+                var reports = await _reportService.GetReportsForMedicineOnDateAsync(schedule.Medicine, DateOnly.FromDateTime(DateTime.UtcNow));
+               
+                if (schedule.IntervalType == MedicineScheduleIntervalType.PerDay && reports.Count < schedule.IntervalValue)
+                {
+                    var intervalHours = 24 / schedule.IntervalValue;
+                    var dueDate = lastReport.MedicineTakenAt.AddHours(intervalHours);
+                    return dueDate;
+                }
             }
 
-            var nextDue = lastReport.MedicineTakenAt
-                .AddDays(schedule.Days)
-                .AddHours(schedule.Hours)
-                .AddMinutes(schedule.Minutes);
-
-            return nextDue;
+            return null;
         }
     }
 }

@@ -2,11 +2,11 @@
     <p>@Title</p>
     @if (ReadOnly)
     {
-        <input type="datetime" value="@Value" readonly />
+        <input type="date" value="@Value" readonly />
     }
     else
     {
-        <input type="datetime" value="@Value" @onchange="@OnInputChanged" />
+        <input type="date" value="@Value" @onchange="@OnInputChanged" />
     }
 </div>
 
@@ -18,8 +18,10 @@
 
     private async Task OnInputChanged(ChangeEventArgs e)
     {
-        if (e.Value is not DateTime value) return;
-        Value = DateOnly.FromDateTime(value);
-        await ValueChanged.InvokeAsync(Value);
+        if (e.Value is string value && DateOnly.TryParse(value, out var dateTime))
+        {
+            Value = dateTime;
+            await ValueChanged.InvokeAsync(Value);
+        }
     }
 }

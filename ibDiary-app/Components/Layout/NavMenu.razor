@@ -1,9 +1,15 @@
 ﻿@inject NavigationManager NavManager
 
 <div class="nav-menu-container">
-    <button @onclick="@OnClickHome"><span class="material-symbols-outlined">home</span></button>
-    <button @onclick="@OnClickOpenSymptoms">Symptoms</button>
-    <button @onclick="@OnClickOpenMedicine">Medicines</button>
+    <header>
+        <h1>IbDiary</h1>
+    </header>
+    <div>
+        <button @onclick="@OnClickHome"><span class="material-symbols-outlined">home</span></button>
+        <button @onclick="@OnClickOpenHistory">History</button>
+        <button @onclick="@OnClickOpenSymptoms">Symptoms</button>
+        <button @onclick="@OnClickOpenMedicine">Medicines</button>
+    </div>
 </div>
 
 @code {
@@ -20,5 +26,10 @@
     private void OnClickOpenMedicine()
     {
         NavManager.NavigateTo("/medicines");
+    }
+
+    private void OnClickOpenHistory()
+    {
+        NavManager.NavigateTo("/history");
     }
 }

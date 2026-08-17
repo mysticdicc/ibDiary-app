@@ -1,13 +1,112 @@
 ﻿<div class="medicine-schedule-viewer" @key="@MedicineSchedule.Id">
-    <p>Schedule</p>
+    <header>
+        <div>
+            <p>Schedule</p>
+            <button @onclick="@OnClickHelp">
+                <span class="material-symbols-outlined">help</span>
+            </button>
+            <IbdSelect Options="@_typeOptions" Title="Schedule Type" Value="@_selectedType" ValueChanged="@OnTypeChanged" />
+        </div>
+    </header>
     <div>
-        <IbdIntInput @bind-Value="@MedicineSchedule.Days" Title="Days" />
-        <IbdIntInput @bind-Value="@MedicineSchedule.Hours" Title="Hours" />
-        <IbdIntInput @bind-Value="@MedicineSchedule.Minutes" Title="Minutes" />
+        @if (_helpVisible)
+        {
+            <p>
+                There are 3 different schedule types for medicine depending on how you take it, largely these impact how often
+                you will be prompted to generate reports for taking them. You can always choose to generate a medicine report regardless of
+                notifications.
+            </p>
+            <p>
+                Number per Day: This is how most medicines are prescribed, you are set a number of day you are allowed or should take
+                and then an interval between them. You will be reminded to create a report every time the interval is reached up to the number
+                per day you set a limit on.
+            </p>
+            <p>
+                Interval: This is for when you have to take medicine on a set schedule (eg. every 4 hours). You will be prompted to create
+                a medicine report every time the interval is reached.
+            </p>
+            <p>
+                As Needed: This is for when you have medicine that you just take as an when you need it rather than on any kind of schedule.
+                You will never be prompted to create a report for these (though you can choose to make one at any time).
+            </p>
+        }
     </div>
+    <div>
+        @if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit)
+        {
+            <IbdDateTimeInput @bind-Value="@MedicineSchedule.StartedAt" Title="Started At" />
+            <IbdIntInput @bind-Value="@MedicineSchedule.IntervalValue" Title="Amount Per Day" />
+        }
+        else if (MedicineSchedule.Type == MedicineScheduleType.Interval)
+        {
+            <IbdSelect Options="@_scheduleOptions" Title="Interval Length" Value="@_selectedInterval" ValueChanged="@OnIntervalTypeChanged" />
+            <IbdIntInput @bind-Value="@MedicineSchedule.IntervalValue" Title="@_intervalTitle" />
+        }
+    </div>
+
 </div>
 
 @code {
     [Parameter] required public MedicineSchedule MedicineSchedule { get; set; }
     [Parameter] public EventCallback<MedicineSchedule> MedicineScheduleChanged { get; set; }
+    private string _intervalTitle = string.Empty;
+
+    private IbdSelectOption? _selectedType;
+    private List<IbdSelectOption> _typeOptions = [
+        new("As Needed", MedicineScheduleType.AsNeeded),
+        new("Number Per Day", MedicineScheduleType.DailyLimit),
+        new("Interval", MedicineScheduleType.Interval)
+    ];
+
+    private IbdSelectOption? _selectedInterval;
+    private List<IbdSelectOption> _scheduleOptions = [
+        new("Minutes", MedicineScheduleIntervalType.Minutes),
+        new("Hours", MedicineScheduleIntervalType.Hours),
+        new("Days", MedicineScheduleIntervalType.Days),
+        new("Months", MedicineScheduleIntervalType.Months)
+    ];
+
+    private bool _helpVisible = false;
+
+    protected override Task OnParametersSetAsync()
+    {
+        _selectedType = _typeOptions.FirstOrDefault(x => x.Value?.Equals(MedicineSchedule.Type) ?? false);
+        _selectedInterval = _scheduleOptions.FirstOrDefault(x => x.Value?.Equals(MedicineSchedule.IntervalType) ?? false);
+        UpdateIntervalTitle();
+        return base.OnParametersSetAsync();
+    }
+
+    private async Task OnTypeChanged(IbdSelectOption e)
+    {
+        if (e.Value is not MedicineScheduleType type || e.Value == null) return;
+        MedicineSchedule.Type = type;
+
+        if (type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = MedicineScheduleIntervalType.PerDay;
+        await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
+    }
+
+    private async Task OnIntervalTypeChanged(IbdSelectOption e)
+    {
+        if (e.Value is not MedicineScheduleIntervalType type || e.Value == null) return;
+        MedicineSchedule.IntervalType = type;
+        UpdateIntervalTitle();
+        await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
+    }
+
+    private void UpdateIntervalTitle()
+    {
+        _intervalTitle = MedicineSchedule.IntervalType switch
+        {
+            MedicineScheduleIntervalType.Minutes => "Minutes",
+            MedicineScheduleIntervalType.Hours => "Hours",
+            MedicineScheduleIntervalType.Days => "Days",
+            MedicineScheduleIntervalType.Months => "Months",
+            _ => string.Empty
+        };
+    }
+
+    private void OnClickHelp()
+    {
+        _helpVisible = !_helpVisible;
+    }
 }

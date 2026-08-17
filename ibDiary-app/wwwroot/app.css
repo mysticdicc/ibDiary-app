@@ -87,12 +87,12 @@ button:active {
 
     .main-layout-header {
         width: 100vw;
-        height: 2rem;
+        height: 4rem;
     }
 
     .main {
         width: 100vw;
-        height: calc(100% - 2rem);
+        height: calc(100% - 4rem);
         overflow-y: auto;
         overflow-x: hidden;
         padding: 5px;
@@ -104,15 +104,17 @@ button:active {
             border-color: var(--text);
             border-radius: 10px;
             height: 100%;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
 
             > header {
                 display: flex;
                 flex-direction: row;
-                justify-content: flex-end;
                 border-bottom: solid;
                 border-color: var(--text);
                 border-width: 1px;
+                width: 100%;
+                justify-content: flex-end;
             }
         }
     }
@@ -120,11 +122,35 @@ button:active {
 
 .nav-menu-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
-    button {
-        flex: 1;
-        background-color: rgba(0,0,0,0);
+    > header {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        h1 {
+            color: var(--text);
+            margin: 0;
+            font-size: 1.2rem;
+        }
+    }
+
+    > div {
+        display: flex;
+        flex-direction: row;
+
+        button:first-child {
+            flex: 0;
+        }
+
+        button:not(:first-child) {
+            flex: 1;
+        }
+
+        button {
+            background-color: rgba(0,0,0,0);
+        }
     }
 }
 
@@ -144,7 +170,10 @@ button:active {
         z-index: 1000;
         width: 90%;
         height: fit-content;
-        background-color: var(--background);
+        background: #7300DB;
+        background: linear-gradient(3deg, rgba(115, 0, 219, 1) 0%, rgba(59, 3, 139, 1) 23%, rgba(0, 6, 54, 1) 100%);
+        border-radius: 10px;
+        overflow: hidden;
 
         > header {
             display: flex;
@@ -158,7 +187,7 @@ button:active {
             }
 
             button {
-                background-color: var(--background);
+                background-color: rgba(0,0,0,0);
             }
         }
 
@@ -193,8 +222,8 @@ button:active {
         margin: 0px;
     }
 
-    > input, textarea {
-        background-color: var(--background);
+    > input, textarea, select {
+        background-color: rgba(0,0,0,0);
         color: var(--text);
         border-style: none;
         border-bottom: solid;
@@ -249,21 +278,26 @@ button:active {
 }
 
 .home-page {
-    h1 {
-        text-align: center;
-        padding: 5px;
-    }
-
     > div {
         border-style: solid;
         border-width: 1px;
         border-color: var(--text);
         border-radius: 5px;
         padding: 5px;
-        margin-bottom: 10px;
+        margin-top: 10px;
         margin-left: 5px;
         margin-right: 5px;
         background-color: rgba(0,0,0,0.1);
+
+        header {
+            display: flex;
+            flex-direction: row;
+
+            button {
+                margin-left: auto;
+                background-color: rgba(0,0,0,0);
+            }
+        }
 
         p {
             margin: 0;
@@ -272,13 +306,15 @@ button:active {
 }
 
 .symptom-page {
-    header {
+    > header {
         button {
             background-color: rgba(0,0,0,0);
+            margin-top: auto;
+            margin-bottom: auto;
         }
     }
 
-    p {
+    > p {
         text-align: center;
         padding: 5px;
     }
@@ -286,14 +322,6 @@ button:active {
     .symptom-list {
         padding: 5px;
     }
-}
-
-.symptom-row {
-    padding-bottom: 10px;
-}
-
-.symptom-row:active {
-    background-color: rgba(0,0,0,0.2);
 }
 
 .symptom-viewer {
@@ -310,7 +338,7 @@ button:active {
 
         button {
             flex: 1;
-            background-color: var(--background);
+            background-color: rgba(0,0,0,0);
         }
     }
 }
@@ -356,7 +384,7 @@ button:active {
 
         button {
             flex: 1;
-            background-color: var(--background);
+            background-color: rgba(0,0,0,0);
         }
     }
 }
@@ -365,54 +393,114 @@ button:active {
     display: flex;
     flex-direction: column;
 
-    > p {
-        margin: 0;
-    }
-
-    > div {
+    > header {
         display: flex;
         flex-direction: row;
-        width: 100%;
 
-        .ibd-input {
-            flex: 1;
+        .ibd-select {
+            justify-self: flex-end;
         }
+    }
+
+    > div:first-child {
+        display: flex;
+        flex-direction: column;
+
+        > p {
+            margin: 0;
+        }
+    }
+
+    > div:last-child {
+        display: flex;
+        flex-direction: row;
     }
 }
 
 .medicine-page {
-    header {
+    > header {
         button {
+            margin-top: auto;
+            margin-bottom: auto;
             background-color: rgba(0,0,0,0);
         }
     }
+}
+
+.medicine-row, .medicine-report-row, .symptom-row, .symptom-report-row {
+    width: 100%;
+    display: grid;
 
     p {
         text-align: center;
-        padding: 5px;
+        margin: 0;
+        padding: 0;
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    p:not(:last-of-type) {
+        border-right: solid;
+        border-width: 1px;
+        border-color: var(--text);
+    }
+
+    button {
+        background-color: rgba(0,0,0,0);
+        margin-left: auto;
     }
 }
 
-.medicine-row, .medicine-report-row, .symptom-row {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+.medicine-row {
+    grid-template-columns: 4fr 2fr 2fr 1fr;
 
-    > div {
-        flex: 1;
-        text-align: center;
+    p {
+        border-right: solid;
+        border-width: 1px;
+        border-color: var(--text);
     }
 }
 
-.medicine-report-viewer {
+.symptom-row {
+    p {
+        border-right: solid;
+        border-width: 1px;
+        border-color: var(--text);
+    }
+}
+
+.medicine-report-row {
+    grid-template-columns: 3fr 2fr 3fr;
+}
+
+.symptom-row, .symptom-report-row {
+    grid-template-columns: 4fr 4fr 1fr;
+}
+
+.symptom-row:active, .symptom-report-row:active, .medicine-report-row:active, .medicine-row:active {
+    background-color: rgba(0,0,0,0.2);
+}
+
+
+.medicine-report-viewer, .symptom-report-viewer {
     padding: 5px;
 
     > div {
         display: flex;
         flex-direction: row;
 
+        .small-card {
+            width: 100%;
+
+            button {
+                display: none;
+            }
+        }
+
         button {
-            background-color: var(--background);
+            background-color: rgba(0,0,0,0);
             flex: 1;
         }
     }
@@ -423,7 +511,11 @@ button:active {
     flex-direction: column;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 50%;
+    height: 100%;
+
+    .calendar-card:last-of-type {
+        margin-bottom: 1rem;
+    }
 }
 
 .calendar-card {
@@ -460,5 +552,60 @@ button:active {
                 padding: 0;
             }
         }
+    }
+}
+
+.small-card {
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--text);
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+
+    > header {
+        background-color: var(--text);
+        color: var(--background-light);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+        margin-bottom: 5px;
+
+        p {
+            margin-left: auto;
+        }
+    }
+
+    > div {
+        display: flex;
+        flex-direction: row;
+        padding-left: 5px;
+
+        button {
+            margin-left: auto;
+            margin-right: 5px;
+            background-color: rgba(0,0,0,0);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+            padding: 0;
+
+            span {
+                font-size: 1rem;
+            }
+        }
+    }
+
+    p {
+        margin: 0;
+    }
+
+    h3 {
+        margin: 0;
     }
 }

@@ -16,7 +16,7 @@
                 {
                     foreach (var report in Day.MedicineReports)
                     {
-                        <p>You took @report.Medicine.Dose of @report.Medicine.Name at @(report.MedicineTakenAt.Hour):@(report.MedicineTakenAt.Minute).</p>
+                        <p>You took @report.Dose of @report.Medicine.Name at @(report.MedicineTakenAt.Hour):@(report.MedicineTakenAt.Minute).</p>
                     }
                 }
                 if (Day.MedicineStateChanges.Count > 0)
@@ -35,7 +35,10 @@
                 }
                 if (Day.SymptomReports.Count > 0)
                 {
-
+                    foreach (var report in Day.SymptomReports)
+                    {
+                        <p>You reported that your @report.Symptom.Title symptom was severity @report.Severity at @report.SubmittedFor.ToString("hh:mm").</p>
+                    }
                 }
                 if (Day.SymptomStateChanges.Count > 0)
                 {

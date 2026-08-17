@@ -1,29 +1,28 @@
 ﻿@inject SymptomReportDatabaseService _symDbService;
 
-@if (Visible)
-{
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Symptom Report">
     <div class="symptom-report-viewer">
         <div>
-            <SymptomRow Symptom="@SymptomReport.Symptom"/>
+            <SymptomSmallCard Symptom="@SymptomReport.Symptom" />
         </div>
         <div>
             @if (null != SymptomReport.Medication)
             {
-                <MedicineRow Medicine="@SymptomReport.Medication"/>
+                <MedicineSmallCard Medicine="@SymptomReport.Medication" />
             }
             else
             {
-                
+
             }
         </div>
         <div>
-            <IbdIntInput @bind-Value="@SymptomReport.Severity" Title="Severity"/>
+            <IbdIntInput @bind-Value="@SymptomReport.Severity" Title="Severity" />
+        </div>
+        <div>
+            <IbdTextArea @bind-Value="@SymptomReport.Notes" Title="Notes"/>
         </div>
         <div>
             <IbdDateTimeInput @bind-Value="@SymptomReport.SubmittedFor" Title="Submitted For" />
-        </div>
-        <div>
-            <IbdDateTimeInput @bind-Value="@SymptomReport.SubmittedAt" ReadOnly="true" Title="Submitted At"/>
         </div>
         <div>
             <button @onclick="@OnClickCancel">
@@ -34,7 +33,7 @@
             </button>
         </div>
     </div>
-}
+</Popup>
 
 @code {
     [Parameter] required public SymptomReport SymptomReport { get; set; }
@@ -61,6 +60,15 @@
             result = await _symDbService.UpdateAsync(SymptomReport);
         }
 
-        if (result) await OnClickCancel();
+        if (result)
+        {
+            await SymptomReportChanged.InvokeAsync(SymptomReport);
+            await OnClickCancel();
+        }
+    }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
     }
 }

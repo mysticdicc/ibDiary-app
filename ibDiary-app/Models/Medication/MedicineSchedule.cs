@@ -12,9 +12,10 @@ namespace ibDiary_app.Models.Medication
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
         [JsonIgnore] public Medicine? Medicine { get; set; }
-        public int Days { get; set; }
-        public int Hours { get; set; }
-        public int Minutes { get; set; }
+        public MedicineScheduleType Type { get; set; }
+        public MedicineScheduleIntervalType IntervalType { get; set; }
+        public int IntervalValue { get; set; }
+        public DateTime StartedAt { get; set; }
         public bool IsNew { get; set; }
 
         public MedicineSchedule()
@@ -25,9 +26,26 @@ namespace ibDiary_app.Models.Medication
 
         public void UpdateProperties(MedicineSchedule schedule)
         {
-            Days = schedule.Days;
-            Hours = schedule.Hours;
-            Minutes = schedule.Minutes;
+            Medicine = schedule.Medicine;
+            Type = schedule.Type;
+            IntervalType = schedule.IntervalType;
+            IntervalValue = schedule.IntervalValue;
         }
+    }
+
+    public enum MedicineScheduleIntervalType
+    {
+        Minutes,
+        Hours,
+        Days,
+        Months,
+        PerDay
+    }
+
+    public enum MedicineScheduleType
+    {
+        Interval,
+        DailyLimit,
+        AsNeeded
     }
 }

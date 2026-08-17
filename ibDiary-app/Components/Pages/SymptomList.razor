@@ -3,6 +3,9 @@
 
 <article class="symptom-page">
     <header>
+        <button @onclick="@OnClickHelp">
+            <span class="material-symbols-outlined">help</span>
+        </button>
         <button @onclick="@OnClickAddNew">
             <span class="material-symbols-outlined">add</span>
         </button>
@@ -13,7 +16,7 @@
             <h2>Active</h2>
             @foreach (var active in _activeSymptoms)
             {
-                <SymptomRow Symptom="active" SymptomClicked="@OnSymptomRowClicked" />
+                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" SymptomReportClicked="@OnAddSymptomReportClicked"/>
             }
         }
 
@@ -22,7 +25,7 @@
             <h2>Inactive</h2>
             @foreach (var inactive in _inactiveSymptoms)
             {
-                <SymptomRow Symptom="inactive" SymptomClicked="@OnSymptomRowClicked" />
+                <SymptomSmallCard Symptom="inactive" SymptomClicked="@OnSymptomRowClicked" SymptomReportClicked="@OnAddSymptomReportClicked" />
             }
         }
 
@@ -34,12 +37,17 @@
 </article>
 
 <SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible" SymptomChanged="@OnSymptomChanged"/>
+<SymptomHelpPopup Visible="@_helpVisible"/>
+<SymptomReportViewer SymptomReport="@_currentSymptomReport" @bind-Visible="@_symptomReportVisible"/>
 
 @code {
-    private List<Symptom> _activeSymptoms = [];
+    private List<Symptom> _activeSymptoms = []; 
     private List<Symptom> _inactiveSymptoms = [];
     private Symptom _currentSymptom = new();
     private bool _symptomViewerVisible = false;
+    private bool _helpVisible = false;
+    private SymptomReport _currentSymptomReport = new();
+    private bool _symptomReportVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,5 +77,16 @@
     {
         _currentSymptom = symptom;
         _symptomViewerVisible = true;
+    }
+
+    private void OnClickHelp()
+    {
+        _helpVisible = true;
+    }
+
+    private void OnAddSymptomReportClicked(Symptom symptom)
+    {
+        _currentSymptomReport = new(symptom);
+        _symptomReportVisible = true;
     }
 }

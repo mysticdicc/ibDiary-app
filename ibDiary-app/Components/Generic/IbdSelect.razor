@@ -1,0 +1,31 @@
+﻿<div class="ibd-select ibd-input">
+    <p>@Title</p>
+    @if (ReadOnly)
+    {
+        <select readonly/>
+    }
+    else
+    {
+        <select value="@Value?.DisplayName" @onchange="@OnSelectChanged">
+            @foreach (var option in Options)
+            {
+                <option value="@option.DisplayName">@option.DisplayName</option>
+            }
+        </select>
+    }
+</div>
+
+@code {
+    [Parameter] public IbdSelectOption? Value { get; set; }
+    [Parameter] public EventCallback<IbdSelectOption?> ValueChanged { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public List<IbdSelectOption> Options { get; set; } = [];
+    [Parameter] public bool ReadOnly { get; set; } = false;
+
+    private async Task OnSelectChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not string option) return;
+        var value = Options.Where(x => x.DisplayName == option).FirstOrDefault();
+        if (null != value) await ValueChanged.InvokeAsync(value);
+    }
+}

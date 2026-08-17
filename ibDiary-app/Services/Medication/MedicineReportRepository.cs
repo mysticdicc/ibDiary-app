@@ -60,5 +60,15 @@ namespace ibDiary_app.Services
             var rows = await _dbService.SaveChangesAsync();
             return rows > 0;
         }
+
+        public async Task<List<MedicineReport>> GetReportsForMedicineOnDateAsync(Medicine medicine, DateOnly date)
+        {
+            var items = 
+                await _dbService.MedicineReports
+                .Where(x => x.Medicine == medicine && x.MedicineTakenAtDate == date)
+                .ToListAsync();
+
+            return items;
+        }
     }
 }

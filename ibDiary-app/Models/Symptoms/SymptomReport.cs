@@ -18,6 +18,7 @@ namespace ibDiary_app.Models.Symptoms
         public DateTime SubmittedFor { get; set; }
         [NotMapped] public DateOnly SubmittedForDate { get => DateOnly.FromDateTime(SubmittedFor); }
         public int Severity { get; set; }
+        public string Notes { get; set; }
         public bool IsNew { get; set; }
 
         public SymptomReport()
@@ -27,6 +28,7 @@ namespace ibDiary_app.Models.Symptoms
             SubmittedAt = DateTime.UtcNow;
             SubmittedFor = SubmittedAt;
             Severity = 0;
+            Notes = string.Empty;
             IsNew = true;
         }
 
@@ -37,6 +39,7 @@ namespace ibDiary_app.Models.Symptoms
             SubmittedAt = DateTime.UtcNow;
             SubmittedFor = SubmittedAt;
             Severity = 0;
+            Notes = string.Empty;
             IsNew = true;
         }
 

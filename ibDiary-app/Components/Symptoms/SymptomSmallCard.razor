@@ -1,0 +1,34 @@
+﻿<div class="symptom-card small-card" @onclick="@OnClickRow">
+    <header>
+        <h3>@Symptom.Title</h3>
+    </header>
+    <div>
+        <p>@Symptom.Description</p>
+    </div>
+    <div>
+        <p>Started at: @Symptom.StartedAt</p>
+    </div>
+    <div>
+        <p>Added on: @Symptom.CreatedAtDate</p>
+        <button @onclick="@OnClickOpenReport" @onclick:stopPropagation="true">
+            Create Report
+            <span class="material-symbols-outlined">article</span>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] required public Symptom Symptom { get; set; }
+    [Parameter] public EventCallback<Symptom> SymptomClicked { get; set; }
+    [Parameter] public EventCallback<Symptom> SymptomReportClicked { get; set; }
+
+    private async Task OnClickRow()
+    {
+        await SymptomClicked.InvokeAsync(Symptom);
+    }
+
+    private async Task OnClickOpenReport()
+    {
+        await SymptomReportClicked.InvokeAsync(Symptom);
+    }
+}

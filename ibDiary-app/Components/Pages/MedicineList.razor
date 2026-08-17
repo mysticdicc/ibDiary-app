@@ -3,6 +3,9 @@
 
 <article class="medicine-page">
     <header>
+        <button @onclick="@OnClickHelp">
+            <span class="material-symbols-outlined">help</span>
+        </button>
         <button @onclick="@OnClickAddNew">
             <span class="material-symbols-outlined">add</span>
         </button>
@@ -13,7 +16,7 @@
             <h2>Active</h2>
             @foreach (var active in _activeMedicines)
             {
-                <MedicineRow Medicine="active" MedicineClicked="@OnMedicineRowClicked"/>
+                <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked"/>
             }
         }
 
@@ -22,7 +25,7 @@
             <h2>Inactive</h2>
             @foreach (var inactive in _inactiveMedicines)
             {
-                <MedicineRow Medicine="inactive" MedicineClicked="@OnMedicineRowClicked" />
+                <MedicineSmallCard Medicine="inactive" MedicineClicked="@OnMedicineRowClicked" />
             }
         }
 
@@ -34,12 +37,14 @@
 </article>
 
 <MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible" MedicineChanged="@OnMedicineChanged"/>
+<MedicineHelpPopup @bind-Visible="@_helpVisible"/>
 
 @code {
     private List<Medicine> _activeMedicines = [];
     private List<Medicine> _inactiveMedicines = [];
     private Medicine _currentMedicine = new();
     private bool _medicineViewerVisible = false;
+    private bool _helpVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,5 +74,10 @@
     {
         _currentMedicine = medicine;
         _medicineViewerVisible = true;
+    }
+
+    private void OnClickHelp()
+    {
+        _helpVisible = true;
     }
 }

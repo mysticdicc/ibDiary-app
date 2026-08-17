@@ -18,6 +18,7 @@ namespace ibDiary_app.Models.Symptoms
         public bool Active { get; set; }
         public bool IsNew { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime StartedAt { get; set; }
         [NotMapped] public DateOnly CreatedAtDate { get => DateOnly.FromDateTime(CreatedAt); }
         [NotMapped][JsonIgnore] public List<SymptomStateChange> StateChanges { get; set; }
         public Symptom()
@@ -29,6 +30,7 @@ namespace ibDiary_app.Models.Symptoms
             IsNew = true;
             StateChanges = [];
             CreatedAt = DateTime.UtcNow;
+            StartedAt = CreatedAt;
         }
 
         public static Symptom FromDbEntry(int id, PropertyValues originalValues)
