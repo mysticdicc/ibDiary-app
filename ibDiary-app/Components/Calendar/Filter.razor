@@ -1,0 +1,116 @@
+﻿<div class="calendar-filter">
+    <div>
+        <h3>Filter By</h3>
+    </div>
+    <div>
+        <IbdCheckbox Value="@CalendarFilter.DateFilterEnabled" ValueChanged="@UpdateDateFilterEnabled" Title="Date" />
+        <IbdCheckbox Value="@CalendarFilter.MedicineFilterEnabled" ValueChanged="@UpdateMedicineFilterEnabled" Title="Medicine" />
+        <IbdCheckbox Value="@CalendarFilter.SymptomFilterEnabled" ValueChanged="@UpdateSymptomFilterEnabled" Title="Symptom" />
+    </div>
+    @if (CalendarFilter.DateFilterEnabled)
+    {
+        <div>
+            <IbdDateOnlyInput Value="@CalendarFilter.DateFilterFrom" ValueChanged="@UpdateDateFilterFrom" Title="Date From" />
+            <IbdDateOnlyInput Value="@CalendarFilter.DateFilterTo" ValueChanged="@UpdateDateFilterTo" Title="Date To" />
+        </div>
+    }
+    @if (CalendarFilter.MedicineFilterEnabled)
+    {
+        <div>
+            <MedicineSearcher Medicine="@CalendarFilter.Medicine" MedicineChanged="@UpdateMedicine" />
+        </div>
+    }
+    @if (CalendarFilter.SymptomFilterEnabled)
+    {
+        <div>
+            <SymptomSearcher Symptom="@CalendarFilter.Symptom" SymptomChanged="@UpdateSymptom" />
+        </div>
+    }
+    <div>
+        <h3>Show/Hide</h3>
+    </div>
+    <div>
+        <IbdCheckbox Value="@CalendarFilter.ShowInactive" ValueChanged="@UpdateShowInactive" Title="Inactive" />
+        <IbdCheckbox Value="@CalendarFilter.ShowCreatedMedicines" ValueChanged="@UpdateShowCreatedMedicines" Title="Medicines" />
+        <IbdCheckbox Value="@CalendarFilter.ShowMedicineReports" ValueChanged="@UpdateShowMedicineReports" Title="Medicine Reports" />
+        <IbdCheckbox Value="@CalendarFilter.ShowAddedSymptoms" ValueChanged="@UpdateShowAddedSymptoms" Title="Symptoms" />
+        <IbdCheckbox Value="@CalendarFilter.ShowSymptomReports" ValueChanged="@UpdateShowSymptomReports" Title="Symptom Reports" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public CalendarFilter CalendarFilter { get; set; } = new();
+    [Parameter] public EventCallback OnFilterChanged { get; set; }
+
+    private async Task UpdateDateFilterEnabled(bool value)
+    {
+        CalendarFilter.DateFilterEnabled = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateMedicineFilterEnabled(bool value)
+    {
+        CalendarFilter.MedicineFilterEnabled = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateSymptomFilterEnabled(bool value)
+    {
+        CalendarFilter.SymptomFilterEnabled = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateDateFilterFrom(DateOnly value)
+    {
+        CalendarFilter.DateFilterFrom = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateDateFilterTo(DateOnly value)
+    {
+        CalendarFilter.DateFilterTo = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateMedicine(Medicine value)
+    {
+        CalendarFilter.Medicine = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateSymptom(Symptom value)
+    {
+        CalendarFilter.Symptom = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowInactive(bool value)
+    {
+        CalendarFilter.ShowInactive = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowCreatedMedicines(bool value)
+    {
+        CalendarFilter.ShowCreatedMedicines = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowMedicineReports(bool value)
+    {
+        CalendarFilter.ShowMedicineReports = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowAddedSymptoms(bool value)
+    {
+        CalendarFilter.ShowAddedSymptoms = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowSymptomReports(bool value)
+    {
+        CalendarFilter.ShowSymptomReports = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+}

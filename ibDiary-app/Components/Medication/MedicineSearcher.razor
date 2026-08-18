@@ -1,0 +1,52 @@
+﻿@inject MedicineDatabaseService _medDbService
+
+<div class="medicine-searcher">
+    <div>
+        <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Medicine"/>
+        <button @onclick="@OnClickClear">
+            <span class="material-symbols-outlined">cancel</span>
+        </button>
+    </div>
+    @if (_suggestedMedicines.Count > 0)
+    {
+        <div>
+            @foreach (var medicine in _suggestedMedicines)
+            {
+                <MedicineSmallCard Medicine="medicine" MedicineClicked="@OnMedicineClicked"/>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public Medicine Medicine { get; set; } = new();
+    [Parameter] public EventCallback<Medicine> MedicineChanged { get; set; }
+    private List<Medicine> _suggestedMedicines = [];
+    private List<Medicine> _allMedicines = [];
+    private string _searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allMedicines = await _medDbService.GetAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private void OnSearchInputChanged(string value)
+    {
+        _searchString = value;
+        _suggestedMedicines = _allMedicines.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+    }
+
+    private async Task OnMedicineClicked(Medicine medicine)
+    {
+        await MedicineChanged.InvokeAsync(medicine);
+        _suggestedMedicines = [];
+        _searchString = medicine.Name;
+    }
+
+    private async Task OnClickClear()
+    {
+        await MedicineChanged.InvokeAsync(new());
+        _searchString = string.Empty;
+    }
+}

@@ -6,7 +6,7 @@
         <p>@Symptom.Description</p>
     </div>
     <div>
-        <p>Started at: @Symptom.StartedAt</p>
+        <p>Started at: @DateOnly.FromDateTime(Symptom.StartedAt)</p>
     </div>
     <div>
         <p>Added on: @Symptom.CreatedAtDate</p>

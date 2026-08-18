@@ -23,9 +23,6 @@
                 <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
             </div>
             <div>
-                <MedicineScheduleViewer @bind-MedicineSchedule="@Medicine.MedicineSchedule" />
-            </div>
-            <div>
                 <IbdTextInput @bind-Value="@Medicine.PrescribedBy" Title="Prescribed By" />
             </div>
             <div>
@@ -33,6 +30,9 @@
             </div>
             <div>
                 <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
+            </div>
+            <div>
+                <MedicineScheduleViewer @bind-MedicineSchedule="@Medicine.MedicineSchedule" />
             </div>
         }
         @if (_historyVisible)

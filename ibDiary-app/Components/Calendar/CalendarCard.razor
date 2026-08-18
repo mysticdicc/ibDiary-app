@@ -5,51 +5,35 @@
     <div>
         @if (null != Day)
         {
-            if ((Day.MedicineReports.Count + Day.MedicineStateChanges.Count + Day.SymptomReports.Count + 
-                Day.SymptomStateChanges.Count + Day.CreatedMedicines.Count + Day.CreatedSymptoms.Count) == 0)
+            if (_dayUpdates.Count == 0)
             {
                 <p>No activity.</p>
             }
             else
             {
-                if (Day.MedicineReports.Count > 0)
+                foreach (var update in _dayUpdates)
                 {
-                    foreach (var report in Day.MedicineReports)
+                    if (update is MedicineReport medReport)
                     {
-                        <p>You took @report.Dose of @report.Medicine.Name at @(report.MedicineTakenAt.Hour):@(report.MedicineTakenAt.Minute).</p>
+                        <p>You took @medReport.Dose of @medReport.Medicine.Name at @(medReport.MedicineTakenAt.Hour):@(medReport.MedicineTakenAt.Minute.ToString("D2")).</p>
                     }
-                }
-                if (Day.MedicineStateChanges.Count > 0)
-                {
-                    foreach (var medChange in Day.MedicineStateChanges)
+                    else if (update is MedicineStateChange medChange)
                     {
                         <MedicineStateChangeRow StateChange="@medChange" />
                     }
-                }
-                if (Day.CreatedMedicines.Count > 0)
-                {
-                    foreach (var medicine in Day.CreatedMedicines)
+                    else if (update is Medicine medicine)
                     {
                         <p>You were prescribed @medicine.Dose of @medicine.Name by @(medicine.PrescribedBy).</p>
                     }
-                }
-                if (Day.SymptomReports.Count > 0)
-                {
-                    foreach (var report in Day.SymptomReports)
+                    else if (update is SymptomReport sympReport)
                     {
-                        <p>You reported that your @report.Symptom.Title symptom was severity @report.Severity at @report.SubmittedFor.ToString("hh:mm").</p>
+                        <p>You reported that your @sympReport.Symptom.Title symptom was severity @sympReport.Severity at @sympReport.SubmittedFor.ToString("hh:mm").</p>
                     }
-                }
-                if (Day.SymptomStateChanges.Count > 0)
-                {
-                    foreach (var sympChange in Day.SymptomStateChanges)
+                    else if (update is SymptomStateChange sympChange)
                     {
                         <SymptomStateChangeRow StateChange="@sympChange" />
                     }
-                }
-                @if (Day.CreatedSymptoms.Count > 0)
-                {
-                    foreach (var symptom in Day.CreatedSymptoms)
+                    else if (update is Symptom symptom)
                     {
                         <p>You added @symptom.Title to your active symptoms.</p>
                     }
@@ -67,4 +51,25 @@
 @code {
     [Parameter] required public DateOnly Date { get; set; }
     [Parameter] public CalendarDay? Day { get; set; }
+    private List<ICalendarUpdate> _dayUpdates = [];
+
+    protected override Task OnParametersSetAsync()
+    {
+        _dayUpdates.Clear();
+
+        if (null != Day)
+        {
+            _dayUpdates.AddRange(Day.SymptomStateChanges);
+            _dayUpdates.AddRange(Day.CreatedSymptoms);
+            _dayUpdates.AddRange(Day.SymptomReports);
+            _dayUpdates.AddRange(Day.CreatedMedicines);
+            _dayUpdates.AddRange(Day.MedicineStateChanges);
+            _dayUpdates.AddRange(Day.MedicineReports);
+
+            _dayUpdates = _dayUpdates.OrderByDescending(x => x.GetDate()).ToList();
+        }
+        else _dayUpdates = [];
+
+        return base.OnParametersSetAsync();
+    }
 }

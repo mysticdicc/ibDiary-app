@@ -22,7 +22,7 @@ namespace ibDiary_app.Services
 
         public async Task<List<MedicineReport>> GetAllAsync()
         {
-            return await _dbService.MedicineReports.ToListAsync();
+            return await _dbService.MedicineReports.Include(x => x.Medicine).ToListAsync();
         }
 
         public async Task<MedicineReport?> GetByIdAsync(int id)
@@ -65,8 +65,10 @@ namespace ibDiary_app.Services
         {
             var items = 
                 await _dbService.MedicineReports
-                .Where(x => x.Medicine == medicine && x.MedicineTakenAtDate == date)
+                .Where(x => x.Medicine == medicine)
                 .ToListAsync();
+
+            items = items.Where(x => x.MedicineTakenAtDate == date).ToList();
 
             return items;
         }

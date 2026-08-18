@@ -90,11 +90,39 @@ namespace ibDiary_app.Services.Medication
                 if (null == schedule.Medicine) return null;
                 var reports = await _reportService.GetReportsForMedicineOnDateAsync(schedule.Medicine, DateOnly.FromDateTime(DateTime.UtcNow));
                
-                if (schedule.IntervalType == MedicineScheduleIntervalType.PerDay && reports.Count < schedule.IntervalValue)
+                if (reports.Count < schedule.AmountPerDay)
                 {
-                    var intervalHours = 24 / schedule.IntervalValue;
-                    var dueDate = lastReport.MedicineTakenAt.AddHours(intervalHours);
-                    return dueDate;
+                    DateTime? nextDue = null;
+                    if (lastReport == null)
+                    {
+                        nextDue = new DateTime(
+                            DateTime.UtcNow.Year,
+                            DateTime.UtcNow.Month,
+                            DateTime.UtcNow.Day,
+                            schedule.StartedAt.Hour,
+                            schedule.StartedAt.Minute,
+                            schedule.StartedAt.Second,
+                            DateTimeKind.Utc
+                        );
+                    }
+                    else if (DateOnly.FromDateTime(lastReport.MedicineTakenAt) < DateOnly.FromDateTime(DateTime.UtcNow))
+                    {
+                        nextDue = new DateTime(
+                            DateTime.UtcNow.Year,
+                            DateTime.UtcNow.Month,
+                            DateTime.UtcNow.Day,
+                            schedule.StartedAt.Hour,
+                            schedule.StartedAt.Minute,
+                            schedule.StartedAt.Second,
+                            DateTimeKind.Utc
+                        );
+                    }
+                    else
+                    {
+                        nextDue = lastReport.MedicineTakenAt.AddHours(schedule.IntervalValue);
+                    }
+
+                    return nextDue;
                 }
             }
 

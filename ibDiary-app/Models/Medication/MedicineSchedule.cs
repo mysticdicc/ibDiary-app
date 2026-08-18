@@ -15,6 +15,7 @@ namespace ibDiary_app.Models.Medication
         public MedicineScheduleType Type { get; set; }
         public MedicineScheduleIntervalType IntervalType { get; set; }
         public int IntervalValue { get; set; }
+        public int AmountPerDay { get; set; }
         public DateTime StartedAt { get; set; }
         public bool IsNew { get; set; }
 
@@ -22,6 +23,9 @@ namespace ibDiary_app.Models.Medication
         {
             Id = 0;
             IsNew = true;
+            StartedAt = DateTime.UtcNow;
+            Type = MedicineScheduleType.DailyLimit;
+            IntervalType = MedicineScheduleIntervalType.Hours;
         }
 
         public void UpdateProperties(MedicineSchedule schedule)
@@ -30,6 +34,8 @@ namespace ibDiary_app.Models.Medication
             Type = schedule.Type;
             IntervalType = schedule.IntervalType;
             IntervalValue = schedule.IntervalValue;
+            AmountPerDay = schedule.AmountPerDay;
+            StartedAt = schedule.StartedAt;
         }
     }
 
@@ -38,8 +44,7 @@ namespace ibDiary_app.Models.Medication
         Minutes,
         Hours,
         Days,
-        Months,
-        PerDay
+        Months
     }
 
     public enum MedicineScheduleType

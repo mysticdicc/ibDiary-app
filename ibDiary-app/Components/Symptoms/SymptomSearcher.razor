@@ -1,0 +1,52 @@
+﻿@inject SymptomDatabaseService _sympDbService
+
+<div class="symptom-searcher">
+    <div>
+        <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Symptoms"/>
+        <button @onclick="@OnClickClear">
+            <span class="material-symbols-outlined">cancel</span>
+        </button>
+    </div>
+    @if (_suggestedSymptoms.Count > 0)
+    {
+        <div>
+            @foreach (var symptom in _suggestedSymptoms)
+            {
+                <SymptomSmallCard Symptom="symptom" SymptomClicked="@OnSymptomClicked"/>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public Symptom Symptom { get; set; } = new();
+    [Parameter] public EventCallback<Symptom> SymptomChanged { get; set; }
+    private List<Symptom> _allSymptoms = [];
+    private List<Symptom> _suggestedSymptoms = [];
+    private string _searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allSymptoms = await _sympDbService.GetAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private void OnSearchInputChanged(string value)
+    {
+        _searchString = value;
+        _suggestedSymptoms = _allSymptoms.Where(x => x.Title.Contains(value, StringComparison.CurrentCultureIgnoreCase)).ToList();
+    }
+
+    private async Task OnSymptomClicked(Symptom symptom)
+    {
+        await SymptomChanged.InvokeAsync(symptom);
+        _suggestedSymptoms = [];
+        _searchString = symptom.Title;
+    }
+
+    private async Task OnClickClear()
+    {
+        await SymptomChanged.InvokeAsync(new());
+        _searchString = string.Empty;
+    }
+}

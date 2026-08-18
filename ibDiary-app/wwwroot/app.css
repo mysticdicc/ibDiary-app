@@ -140,11 +140,11 @@ button:active {
         display: flex;
         flex-direction: row;
 
-        button:first-child {
+        button:has(.material-symbols-outlined) {
             flex: 0;
         }
 
-        button:not(:first-child) {
+        button:not(:has(.material-symbols-outlined)) {
             flex: 1;
         }
 
@@ -234,7 +234,7 @@ button:active {
 
     > input:focus, textarea:focus {
         outline: none;
-        background-color: var(--background-light);
+        background-color: var(--background);
     }
 }
 
@@ -382,7 +382,7 @@ button:active {
         display: flex;
         flex-direction: row;
 
-        button {
+        > button {
             flex: 1;
             background-color: rgba(0,0,0,0);
         }
@@ -392,28 +392,45 @@ button:active {
 .medicine-schedule-viewer {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    padding: 5px;
+    border-color: var(--text);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
 
     > header {
         display: flex;
         flex-direction: row;
+        width: 100%;
 
-        .ibd-select {
-            justify-self: flex-end;
+        .ibd-input {
+            margin-left: auto;
+        }
+        
+        button {
+            background-color: rgba(0,0,0,0);
+            height: 1rem;
+            padding: 3px;
+            margin-right: 5rem;
+            display: flex;
+
+            span {
+                margin: auto;
+                font-size: 1rem;
+            }
         }
     }
 
-    > div:first-child {
-        display: flex;
-        flex-direction: column;
-
-        > p {
-            margin: 0;
-        }
-    }
-
-    > div:last-child {
+    > div {
         display: flex;
         flex-direction: row;
+
+        .ibd-input {
+            flex: none;
+        }
     }
 }
 
@@ -513,8 +530,29 @@ button:active {
     overflow-y: auto;
     height: 100%;
 
+    > button {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0);
+        background-color: rgba(0,6,54,0.5);
+        border-radius: 5px;
+        padding: 5px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
     .calendar-card:last-of-type {
         margin-bottom: 1rem;
+    }
+
+    .loading-spinner-container {
+        margin-top: 3rem;
+    }
+}
+
+.scrolling-calendar.top {
+    > button {
+        display: none;
     }
 }
 
@@ -607,5 +645,56 @@ button:active {
 
     h3 {
         margin: 0;
+    }
+}
+
+.calendar-filter {
+    border-style: solid;
+    border-color: var(--text);
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+
+    > div {
+        display: flex;
+        flex-direction: row;
+
+        .ibd-datetime-input {
+            flex: none;
+            width: 50%;
+
+            input {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.medicine-searcher, .symptom-searcher {
+    width: 100%;
+
+    > div {
+        display: flex;
+        flex-direction: row;
+
+        button {
+            background-color: rgba(0,0,0,0);
+            padding: 5px;
+            margin-top: auto;
+            margin-bottom: 5px;
+
+            span {
+                font-size: 1.3rem;
+            }
+        }
+
+        .small-card {
+            width: 100%;
+
+            button {
+                display: none;
+            }
+        }
     }
 }

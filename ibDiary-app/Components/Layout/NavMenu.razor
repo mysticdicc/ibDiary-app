@@ -9,6 +9,7 @@
         <button @onclick="@OnClickOpenHistory">History</button>
         <button @onclick="@OnClickOpenSymptoms">Symptoms</button>
         <button @onclick="@OnClickOpenMedicine">Medicines</button>
+        <button @onclick="@OnClickOpenSettings"><span class="material-symbols-outlined">settings</span></button>
     </div>
 </div>
 
@@ -31,5 +32,10 @@
     private void OnClickOpenHistory()
     {
         NavManager.NavigateTo("/history");
+    }
+
+    private void OnClickOpenSettings()
+    {
+        NavManager.NavigateTo("/settings");
     }
 }

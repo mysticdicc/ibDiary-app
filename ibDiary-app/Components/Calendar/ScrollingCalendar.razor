@@ -1,17 +1,51 @@
 ﻿@inject CalendarDatabaseService _calDbService;
+@inject IJSRuntime _jsRuntime;
 
-<div class="scrolling-calendar">
-    @foreach (var day in _calendarData)
+<div class="scrolling-calendar top" @ref="@_scrollContainer">
+    <header>
+        <button @onclick="@OnClickShowFilter">
+            <span class="material-symbols-outlined">filter_alt</span>
+        </button>
+    </header>
+    @if (_filterVisible)
+    {
+        <div>
+            <Filter CalendarFilter="@_filter" OnFilterChanged="@FilterChanged"/>
+        </div>
+    }
+    <button @onclick="@ScrollToTopAsync">
+        Back To Top
+    </button>
+    @foreach (var day in GetFilteredCalendarData())
     {
         <CalendarCard Date="@day.Key" Day="@day.Value"/>
+    }
+    @if (_loading)
+    {
+        <LoadingSpinner/>
     }
 </div>
 
 @code {
+    private int _dayOffset = 365;
     private DateOnly _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-365));
     private DateOnly _today = DateOnly.FromDateTime(DateTime.UtcNow);
     private Dictionary<DateOnly, CalendarDay?> _calendarData = new();
-    private Guid _refreshKey = new();
+
+    private ElementReference _scrollContainer;
+    private bool _loading = false;
+
+    private bool _filterVisible = false;
+    private CalendarFilter _filter = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _jsRuntime.InvokeVoidAsync("setupScrollListener", _scrollContainer, DotNetObjectReference.Create(this));
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -28,7 +62,7 @@
     private async Task LoadCalendarDataAsync()
     {
         _today = DateOnly.FromDateTime(DateTime.UtcNow);
-        _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-365));
+        _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-_dayOffset));
 
         var days = await _calDbService.GetFromDateAsync(_oldDate);
         var lookup = days.ToDictionary(x => x.Date);
@@ -42,5 +76,121 @@
             date => date,
             date => lookup.TryGetValue(date, out var data) ? data : null
         );
+    }
+
+    [JSInvokable]
+    public async Task OnScrollReachedBottom()
+    {
+        if (_loading) return;
+        await LoadMoreCalendarDataAsync();
+    }
+
+    private async Task LoadMoreCalendarDataAsync()
+    {
+        _loading = true;
+
+        var newOldDate = _oldDate.AddDays(-_dayOffset);
+        var days = await _calDbService.GetFromDateAsync(newOldDate);
+        var lookup = days.ToDictionary(x => x.Date);
+
+        var newEntries = new Dictionary<DateOnly, CalendarDay?>();
+
+        var newDates = Enumerable
+                    .Range(0, (_oldDate.DayNumber - newOldDate.DayNumber))
+                    .Select(offset => newOldDate.AddDays(offset))
+                    .OrderByDescending(d => d)
+                    .ToList();
+
+        foreach (var date in newDates)
+        {
+            newEntries[date] = lookup.TryGetValue(date, out var data) ? data : null;
+        }
+
+        _calendarData = newEntries.Concat(_calendarData).OrderByDescending(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+
+        _oldDate = newOldDate;
+        StateHasChanged();
+        _loading = false;
+    }
+
+    private async Task ScrollToTopAsync()
+    {
+        await _jsRuntime.InvokeVoidAsync("setScrollToTop", _scrollContainer);
+    }
+
+    private void OnClickShowFilter()
+    {
+        _filterVisible = !_filterVisible;
+    }
+
+    private void FilterChanged()
+    {
+        StateHasChanged();
+    }
+
+    private bool ApplyFilter(CalendarDay? day)
+    {
+        if (day == null && _filter.ShowInactive) return true;
+        else if (day == null && !_filter.ShowInactive) return false;
+        if (day == null) return true;
+
+        if (_filter.DateFilterEnabled)
+        {
+            if (!(day.Date > _filter.DateFilterFrom) && !(day.Date < _filter.DateFilterTo)) return false;
+        }
+
+        if (_filter.MedicineFilterEnabled)
+        {
+            day.MedicineReports = day.MedicineReports.Where(x => x.Medicine == _filter.Medicine).ToList();
+            day.CreatedMedicines = day.CreatedMedicines.Where(x => x == _filter.Medicine).ToList();
+        }
+
+        if (_filter.SymptomFilterEnabled)
+        {
+            day.SymptomReports = day.SymptomReports.Where(x => x.Symptom == _filter.Symptom).ToList();
+            day.CreatedSymptoms = day.CreatedSymptoms.Where(x => x == _filter.Symptom).ToList();
+        }
+
+        if (!_filter.ShowMedicineReports)
+        {
+            day.MedicineReports = [];
+        }
+
+        if (!_filter.ShowSymptomReports)
+        {
+            day.SymptomReports = [];
+        }
+
+        if (!_filter.ShowAddedSymptoms)
+        {
+            day.CreatedSymptoms = [];
+        }
+
+        if (!_filter.ShowCreatedMedicines)
+        {
+            day.CreatedMedicines = [];
+        }
+
+        return true;
+    }
+
+    private Dictionary<DateOnly, CalendarDay?> GetFilteredCalendarData()
+    {
+        var filtered = new Dictionary<DateOnly, CalendarDay?>();
+
+        foreach (var kvp in _calendarData)
+        {
+            if (ApplyFilter(kvp.Value))
+                filtered[kvp.Key] = kvp.Value;
+        }
+
+        return filtered;
+    }
+
+    private class ScrollData
+    {
+        public double ScrollTop { get; set; }
+        public double ScrollHeight { get; set; }
+        public double ClientHeight { get; set; }
     }
 }

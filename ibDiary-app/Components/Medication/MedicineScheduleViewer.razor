@@ -1,49 +1,54 @@
 ﻿<div class="medicine-schedule-viewer" @key="@MedicineSchedule.Id">
     <header>
-        <div>
-            <p>Schedule</p>
-            <button @onclick="@OnClickHelp">
-                <span class="material-symbols-outlined">help</span>
-            </button>
-            <IbdSelect Options="@_typeOptions" Title="Schedule Type" Value="@_selectedType" ValueChanged="@OnTypeChanged" />
-        </div>
+        <p>Schedule</p>
+        <button @onclick="@OnClickHelp">
+            <span class="material-symbols-outlined">help</span>
+        </button>
+        <IbdSelect Options="@_typeOptions" Title="Schedule Type" Value="@_selectedType" ValueChanged="@OnTypeChanged" />
     </header>
     <div>
         @if (_helpVisible)
-        {
-            <p>
-                There are 3 different schedule types for medicine depending on how you take it, largely these impact how often
-                you will be prompted to generate reports for taking them. You can always choose to generate a medicine report regardless of
-                notifications.
-            </p>
-            <p>
-                Number per Day: This is how most medicines are prescribed, you are set a number of day you are allowed or should take
-                and then an interval between them. You will be reminded to create a report every time the interval is reached up to the number
-                per day you set a limit on.
-            </p>
-            <p>
-                Interval: This is for when you have to take medicine on a set schedule (eg. every 4 hours). You will be prompted to create
-                a medicine report every time the interval is reached.
-            </p>
-            <p>
-                As Needed: This is for when you have medicine that you just take as an when you need it rather than on any kind of schedule.
-                You will never be prompted to create a report for these (though you can choose to make one at any time).
-            </p>
+        {  
+            @if (MedicineSchedule.Type == MedicineScheduleType.AsNeeded)
+            {
+                <p>
+                    As Needed: This is for when you have medicine that you just take as an when you need it rather than on any kind of schedule.
+                    You will never be prompted to create a report for these.
+                </p>
+            }
+            else if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit)
+            {
+                <p>
+                    Number per Day: You set a total amount per day to take and the interval between them, you will be prompted to
+                    create a report every time the interval is reached up to the total amount for the day.
+                </p>
+            }
+            else if (MedicineSchedule.Type == MedicineScheduleType.Interval)
+            {
+                <p>
+                    Interval: This is for when you have to take medicine on a set schedule (eg. every 4 hours). You will be prompted to create
+                    a medicine report every time the interval is reached but there is no limit to the number of reports per day.
+                </p>
+            }
         }
     </div>
-    <div>
-        @if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit)
-        {
-            <IbdDateTimeInput @bind-Value="@MedicineSchedule.StartedAt" Title="Started At" />
-            <IbdIntInput @bind-Value="@MedicineSchedule.IntervalValue" Title="Amount Per Day" />
-        }
-        else if (MedicineSchedule.Type == MedicineScheduleType.Interval)
-        {
+    @if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit)
+    {
+        <div>
+            <IbdDateTimeInput @bind-Value="@MedicineSchedule.StartedAt" Title="Start At" />
+        </div>
+        <div>
+            <IbdIntInput @bind-Value="@MedicineSchedule.IntervalValue" Title="@_intervalTitle" />
+            <IbdIntInput @bind-Value="@MedicineSchedule.AmountPerDay" Title="Total" />
+        </div>
+    }
+    else if (MedicineSchedule.Type == MedicineScheduleType.Interval)
+    {
+        <div>
             <IbdSelect Options="@_scheduleOptions" Title="Interval Length" Value="@_selectedInterval" ValueChanged="@OnIntervalTypeChanged" />
             <IbdIntInput @bind-Value="@MedicineSchedule.IntervalValue" Title="@_intervalTitle" />
-        }
-    </div>
-
+        </div>
+    }
 </div>
 
 @code {
@@ -80,8 +85,8 @@
     {
         if (e.Value is not MedicineScheduleType type || e.Value == null) return;
         MedicineSchedule.Type = type;
-
-        if (type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = MedicineScheduleIntervalType.PerDay;
+        if (type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = MedicineScheduleIntervalType.Hours;
+        UpdateIntervalTitle();
         await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
     }
 
