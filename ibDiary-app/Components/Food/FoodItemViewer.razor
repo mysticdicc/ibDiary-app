@@ -1,0 +1,58 @@
+﻿@inject FoodItemClientService _foodService
+
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged">
+    <div class="food-item-viewer">
+        <div>
+            <IbdTextInput @bind-Value="@Food.Name" Title="Name"/>
+        </div>
+        <div>
+            <IbdTextArea @bind-Value="@Food.Description" Title="Description"/>
+        </div>
+        <div>
+            <button @onclick="@OnClickCancel">
+                Cancel
+            </button>
+            <button @onclick="@OnClickSave">
+                Save
+            </button>
+        </div>
+    </div>
+</Popup>
+
+@code {
+    [Parameter] public FoodItem Food { get; set; } = new();
+    [Parameter] public EventCallback<FoodItem> FoodChanged { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
+    }
+
+    private async Task OnClickCancel()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+
+    private async Task OnClickSave()
+    {
+        bool result = false;
+
+        if (Food.IsNew)
+        {
+            result = await _foodService.AddAsync(Food) > 0;
+        }
+        else
+        {
+            result = await _foodService.UpdateAsync(Food);
+        }
+
+        if (result)
+        {
+            await FoodChanged.InvokeAsync(Food);
+            await OnClickCancel();
+        }
+    }
+}

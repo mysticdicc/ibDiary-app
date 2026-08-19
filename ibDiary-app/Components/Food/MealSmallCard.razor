@@ -1,0 +1,31 @@
+﻿<div class="meal-card small-card" @onclick="@OnClickCard">
+    <header>
+        <h3>@Meal.Name</h3>
+    </header>
+    <div>
+        <p>@Meal.Notes</p>
+    </div>
+    <div>
+        <p>Added on: @Meal.CreatedAtDate</p>
+        <button @onclick="@OnClickCreateReport" @onclick:stopPropagation="true">
+            Create Report
+            <span class="material-symbols-outlined">article</span>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Meal Meal { get; set; } = new();
+    [Parameter] public EventCallback<Meal> MealClicked { get; set; }
+    [Parameter] public EventCallback<Meal> MealReportClicked { get; set; }
+
+    private async Task OnClickCard()
+    {
+        await MealClicked.InvokeAsync(Meal);
+    }
+
+    private async Task OnClickCreateReport()
+    {
+        await MealReportClicked.InvokeAsync(Meal);
+    }
+}

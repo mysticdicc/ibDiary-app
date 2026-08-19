@@ -39,7 +39,7 @@
     {
         bool result = false;
 
-        if (MedicineReport.Id == 0)
+        if (MedicineReport.IsNew)
         {
             result = await _medDbService.AddAsync(MedicineReport) > 0;
         }

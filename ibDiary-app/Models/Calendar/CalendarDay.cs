@@ -1,4 +1,5 @@
-﻿using ibDiary_app.Models.Medication;
+﻿using ibDiary_app.Models.Food;
+using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,10 @@ namespace ibDiary_app.Models.Calendar
         public List<SymptomStateChange> SymptomStateChanges { get; set; }
         public List<Medicine> CreatedMedicines { get; set; }
         public List<Symptom> CreatedSymptoms { get; set; }
+        public List<FoodItem> CreatedFoods { get; set; }
+        public List<FoodItemReport> FoodReports { get; set; }
+        public List<Meal> CreatedMeals { get; set; }
+        public List<MealReport> MealReports { get; set; }
         public bool IsNew { get; set; }
 
         public CalendarDay()
@@ -31,6 +36,10 @@ namespace ibDiary_app.Models.Calendar
             SymptomStateChanges = [];
             CreatedMedicines = [];
             CreatedSymptoms = [];
+            CreatedFoods = [];
+            FoodReports = [];
+            CreatedMeals = [];
+            MealReports = [];
             IsNew = true;
         }
 
@@ -43,6 +52,10 @@ namespace ibDiary_app.Models.Calendar
             SymptomStateChanges = [];
             CreatedMedicines = [];
             CreatedSymptoms = [];
+            CreatedFoods = [];
+            FoodReports = [];
+            CreatedMeals = [];
+            MealReports = [];
             IsNew = true;
         }
 
@@ -55,6 +68,10 @@ namespace ibDiary_app.Models.Calendar
             SymptomStateChanges = day.SymptomStateChanges;
             CreatedSymptoms = day.CreatedSymptoms;
             CreatedMedicines = day.CreatedMedicines;
+            CreatedFoods = day.CreatedFoods;
+            FoodReports = day.FoodReports;
+            CreatedMeals = day.CreatedMeals;
+            MealReports = day.MealReports;
         }
 
         public bool HasChangedState(CalendarDay old)
@@ -65,7 +82,11 @@ namespace ibDiary_app.Models.Calendar
                 SymptomReports != old.SymptomReports ||
                 SymptomStateChanges != old.SymptomStateChanges ||
                 CreatedMedicines != old.CreatedMedicines ||
-                CreatedSymptoms != old.CreatedSymptoms;
+                CreatedSymptoms != old.CreatedSymptoms ||
+                CreatedFoods != old.CreatedFoods ||
+                FoodReports != old.FoodReports ||
+                CreatedMeals != old.CreatedMeals ||
+                MealReports != old.MealReports;
         }
 
         public CalendarDay Clone()

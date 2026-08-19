@@ -1,4 +1,5 @@
 ﻿using ibDiary_app.Models.Calendar;
+using ibDiary_app.Models.Food;
 using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,10 @@ namespace ibDiary_app.Data
         public DbSet<SymptomStateChange> SymptomStateChanges { get; set; }
         public DbSet<MedicineStateChange> MedicineStateChanges { get; set; }
         public DbSet<CalendarDay> CalendarDays { get; set; }
+        public DbSet<Meal> Meals { get; set; }
+        public DbSet<MealReport> MealReports { get; set; }
+        public DbSet<FoodItem> FoodItems { get; set; }
+        public DbSet<FoodItemReport> FoodReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

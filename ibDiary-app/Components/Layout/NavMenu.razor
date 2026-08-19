@@ -7,6 +7,7 @@
     <div>
         <button @onclick="@OnClickHome"><span class="material-symbols-outlined">home</span></button>
         <button @onclick="@OnClickOpenHistory">History</button>
+        <button @onclick="@OnClickOpenFoods">Foods</button>
         <button @onclick="@OnClickOpenSymptoms">Symptoms</button>
         <button @onclick="@OnClickOpenMedicine">Medicines</button>
         <button @onclick="@OnClickOpenSettings"><span class="material-symbols-outlined">settings</span></button>
@@ -37,5 +38,10 @@
     private void OnClickOpenSettings()
     {
         NavManager.NavigateTo("/settings");
+    }
+
+    private void OnClickOpenFoods()
+    {
+        NavManager.NavigateTo("/foods");
     }
 }

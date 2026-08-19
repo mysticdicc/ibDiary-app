@@ -1,0 +1,79 @@
+﻿@inject MealClientService _mealService
+
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged">
+    <div class="meal-viewer">
+        <div>
+            <IbdTextInput @bind-Value="@Meal.Name" Title="Name"/>
+        </div>
+        <div>
+            <IbdTextArea @bind-Value="@Meal.Notes" Title="Notes"/>
+        </div>
+        <div>
+            <header>
+                <h3>Food Items</h3>
+                <FoodSearcher Food="@_selectedFood" FoodChanged="@OnFoodItemChanged"/>
+            </header>
+            @foreach (var food in Meal.FoodItems)
+            {
+                <FoodItemSmallCard Food="food" DeleteClicked="@OnFoodItemDeleted"/>
+            }
+        </div>
+        <div>
+            <button @onclick="@OnClickCancel">
+                Cancel
+            </button>
+            <button @onclick="@OnClickSave">
+                Save
+            </button>
+        </div>
+    </div>
+</Popup>
+
+@code {
+    [Parameter] public Meal Meal { get; set; } = new();
+    [Parameter] public EventCallback<Meal> MealChanged { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private FoodItem _selectedFood = new();
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
+    }
+
+    private async Task OnClickCancel()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+
+    private async Task OnClickSave()
+    {
+        bool result = false;
+
+        if (Meal.IsNew)
+        {
+            result = await _mealService.AddAsync(Meal) > 0;
+        }
+        else
+        {
+            result = await _mealService.UpdateAsync(Meal);
+        }
+
+        if (result)
+        {
+            await MealChanged.InvokeAsync(Meal);
+            await OnClickCancel();
+        }
+    }
+
+    private void OnFoodItemChanged(FoodItem foodItem)
+    {
+        if (!Meal.FoodItems.Contains(foodItem)) Meal.FoodItems.Add(foodItem);
+    }
+
+    private void OnFoodItemDeleted(FoodItem foodItem)
+    {
+        if (Meal.FoodItems.Contains(foodItem)) Meal.FoodItems.Remove(foodItem);
+    }
+}

@@ -15,7 +15,6 @@
     [Parameter] public EventCallback<string> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
-    private bool _headerVisible = false;
 
     private async Task OnInputChanged(ChangeEventArgs e)
     {

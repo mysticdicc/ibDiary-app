@@ -1,0 +1,40 @@
+﻿<div class="food-item-card small-card" @onclick="@OnClickCard">
+    <header>
+        <h3>@Food.Name</h3>
+        <button @onclick="@OnDeleteClicked" @onclick:stopPropagation="true">
+            <span class="material-symbols-outlined">delete</span>
+        </button>
+    </header>
+    <div>
+        <p>@Food.Description</p>
+    </div>
+    <div>
+        <p>Added on: @Food.CreatedAtDate</p>
+        <button @onclick="@OnClickCreateReport" @onclick:stopPropagation="true">
+            Create Report
+            <span class="material-symbols-outlined">article</span>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public FoodItem Food { get; set; } = new();
+    [Parameter] public EventCallback<FoodItem> FoodClicked { get; set; }
+    [Parameter] public EventCallback<FoodItem> FoodReportClicked { get; set; }
+    [Parameter] public EventCallback<FoodItem> DeleteClicked { get; set; }
+
+    private async Task OnClickCard()
+    {
+        await FoodClicked.InvokeAsync(Food);
+    }
+
+    private async Task OnClickCreateReport()
+    {
+        await FoodReportClicked.InvokeAsync(Food);
+    }
+
+    private async Task OnDeleteClicked()
+    {
+        await DeleteClicked.InvokeAsync(Food);
+    }
+}

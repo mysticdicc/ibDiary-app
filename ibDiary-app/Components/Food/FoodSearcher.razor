@@ -1,0 +1,52 @@
+﻿@inject FoodItemClientService _foodService
+
+<div class="food-item-searcher">
+    <div>
+        <IbdTextArea Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Food"/>
+        <button @onclick="@OnClickClear">
+            <span class="material-symbols-outlined">cancel</span>
+        </button>
+    </div>
+    @if (_suggestedFoods.Count > 0)
+    {
+        <div>
+            @foreach (var food in _suggestedFoods)
+            {
+                <FoodItemSmallCard Food="food" FoodClicked="@OnFoodClicked"/>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public FoodItem Food { get; set; } = new();
+    [Parameter] public EventCallback<FoodItem> FoodChanged { get; set; }
+    private List<FoodItem> _suggestedFoods = [];
+    private List<FoodItem> _allFoods = [];
+    private string _searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allFoods = await _foodService.GetAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private void OnSearchInputChanged(string value)
+    {
+        _searchString = value;
+        _suggestedFoods = _allFoods.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+    }
+
+    private async Task OnFoodClicked(FoodItem food)
+    {
+        await FoodChanged.InvokeAsync(food);
+        _suggestedFoods = [];
+        _searchString = food.Name;
+    }
+
+    private async Task OnClickClear()
+    {
+        await FoodChanged.InvokeAsync(new());
+        _searchString = string.Empty;
+    }
+}

@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="ibDiary-app/ibDiary-app.csproj">
-    <Deploy Solution="Debug|*" />
+    <Deploy />
   </Project>
 </Solution>

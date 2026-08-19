@@ -1,0 +1,68 @@
+﻿@inject FoodItemClientService _foodService
+@inject MealClientService _mealService
+@page "/foods"
+
+<article class="food-page">
+    <header>
+        <button>
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </header>
+    <div class="food-list">
+        <h2>Foods</h2>
+        @if (_allFoods.Count > 0)
+        {
+            @foreach (var food in _allFoods)
+            {
+                <FoodItemSmallCard Food="food" FoodClicked="@OnFoodItemClicked"/>
+            }
+        }
+        else
+        {
+            <p>You have not created any foods. Press the + button to get started.</p>
+        }
+        <h2>Meals</h2>
+        @if (_allMeals.Count > 0)
+        {
+            @foreach (var meal in _allMeals)
+            {
+                <MealSmallCard Meal="meal" MealClicked="@OnMealClicked"/>
+            }
+        }
+        else
+        {
+            <p>You have not created any meals. Press the + button to get started.</p>
+        }
+    </div>
+</article>
+
+<FoodItemViewer @bind-Food="@_selectedFood" @bind-Visible="@_foodViewerVisible"/>
+<MealViewer @bind-Meal="@_selectedMeal" @bind-Visible="@_mealViewerVisible"/>
+
+@code {
+    private List<FoodItem> _allFoods = [];
+    private FoodItem _selectedFood = new();
+    private bool _foodViewerVisible = false;
+    private List<Meal> _allMeals = [];
+    private Meal _selectedMeal = new();
+    private bool _mealViewerVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allFoods = await _foodService.GetAllAsync();
+        _allMeals = await _mealService.GetAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private void OnFoodItemClicked(FoodItem item)
+    {
+        _selectedFood = item;
+        _foodViewerVisible = true;
+    }
+
+    private void OnMealClicked(Meal meal)
+    {
+        _selectedMeal = meal;
+        _mealViewerVisible = true;
+    }
+}

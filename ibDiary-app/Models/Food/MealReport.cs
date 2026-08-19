@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ibDiary_app.Models.Calendar;
+using ibDiary_app.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +8,7 @@ using System.Text;
 
 namespace ibDiary_app.Models.Food
 {
-    public class MealReport
+    public class MealReport : ICalendarUpdate
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
         public Meal Meal { get; set; }
@@ -31,6 +33,28 @@ namespace ibDiary_app.Models.Food
             CreatedAt = DateTime.UtcNow;
             AteMealAt = CreatedAt;
             Notes = string.Empty;
+        }
+
+        public void UpdateProperties(MealReport report)
+        {
+            Meal = report.Meal;
+            AteMealAt = report.AteMealAt;
+            Notes = report.Notes;
+        }
+
+        public DateOnly GetDate() => CreatedAtDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            if (!day.MealReports.Contains(this)) day.MealReports.Add(this);
+        }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            var minute = AteMealAt.Minute.ToString("D2");
+            list.Add($"You ate food item {Meal.Name} at {AteMealAt.Hour}:{minute}.");
+            return list;
         }
     }
 }

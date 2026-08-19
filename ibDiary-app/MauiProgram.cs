@@ -4,6 +4,7 @@ using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
 using ibDiary_app.Services;
 using ibDiary_app.Services.Calendar;
+using ibDiary_app.Services.Food;
 using ibDiary_app.Services.Medication;
 using ibDiary_app.Services.Symptoms;
 using ibDiary_app.Services.System;
@@ -61,6 +62,18 @@ namespace ibDiary_app
             builder.Services.AddSingleton<SymptomClientService>();
 
             builder.Services.AddSingleton<PendingMedicineReportService>();
+
+            builder.Services.AddSingleton<FoodItemRepository>();
+            builder.Services.AddSingleton<FoodItemClientService>();
+
+            builder.Services.AddSingleton<FoodItemReportRepository>();
+            builder.Services.AddSingleton<FoodItemReportClientService>();
+
+            builder.Services.AddSingleton<MealRepository>();
+            builder.Services.AddSingleton<MealClientService>();
+
+            builder.Services.AddSingleton<MealReportRepository>();
+            builder.Services.AddSingleton<MealReportClientService>();
 
             builder
                 .UseMauiApp<App>()
