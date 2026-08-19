@@ -1,4 +1,5 @@
 ﻿using ibDiary_app.Models.Medication;
+using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,12 +10,12 @@ namespace ibDiary_app.Services.Medication
     {
         private readonly MedicineReportRepository _reportService;
         private readonly MedicineRepository _medicineService;
-        private readonly NotificationService _notifier;
+        private readonly ClientNotificationService _notifier;
 
         public PendingMedicineReportService(
             MedicineReportRepository reportService,
             MedicineRepository medicineService,
-            NotificationService notifier)
+            ClientNotificationService notifier)
         {
             _reportService = reportService;
             _medicineService = medicineService;

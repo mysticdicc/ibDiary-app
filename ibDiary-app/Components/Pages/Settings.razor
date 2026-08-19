@@ -1,15 +1,71 @@
 ﻿@page "/settings"
+@inject MedicineClientService _medService
+@inject MedicineStateChangeClientService _medStateChangeService
+@inject MedicineReportClientService _medReportService
+@inject SymptomClientService _sympService
+@inject SymptomStateChangeClientService _sympStateChangeService
+@inject SymptomReportClientService _sympReportService
+@inject CalendarClientService _calService
+@inject ClientNotificationService _notifier
+@using System.Text.Json
 
 <article class="settings-page">
     <div>
         <header>
             <h2>Backups</h2>
         </header>
-        <button>Download Backup</button>
+        <button @onclick="@OnClickDownloadBackup">Download Backup</button>
         <button>Upload Backup</button>
+        <button>Download History</button>
+    </div>
+    <div>
+        <header>
+            <h2>Database</h2>
+        </header>
+        <button @onclick="@OnClickDeleteDatabase">Delete Database</button>
     </div>
 </article>
 
 @code {
+    private async Task OnClickDownloadBackup()
+    {
+        var backup = new BackupDto();
+        backup.CalendarDays = await _calService.GetAllAsync();
+        backup.MedicineReports = await _medReportService.GetAllAsync();
+        backup.Medicines = await _medService.GetAllAsync();
+        backup.MedicineStateChanges = await _medStateChangeService.GetAllAsync();
+        backup.SymptomReports = await _sympReportService.GetAllAsync();
+        backup.Symptoms = await _sympService.GetAllAsync();
+        backup.SymptomStateChanges = await _sympStateChangeService.GetAllAsync();
 
+        var json = JsonSerializer.Serialize(backup);
+
+        try
+        {
+            FileDownloadService.SaveToDownloads(json, "backup.json");
+            _notifier.ShowNotification("Backup Downloaded", "Backup successfully saved to downloads folder.");
+        }
+        catch (Exception ex)
+        {
+            _notifier.ShowNotification("Error Downloading Backup", ex.Message);
+        }
+    }
+
+    private void OnClickDeleteDatabase()
+    {
+        string dbPath = Path.Combine(FileSystem.AppDataDirectory, "ibdiary_db.db");
+        if (File.Exists(dbPath))
+        {
+            try
+            {
+                File.Delete(dbPath);
+                _notifier.ShowNotification("Database Deleted", $"Database successfully file deleted from {dbPath}");
+            }
+            catch (Exception ex)
+            {
+                _notifier.ShowNotification("Error Deleting Database", ex.Message);
+            }
+        }
+        else _notifier.ShowNotification("Error Deleting Database", "Could not find database file to delete.");
+    }
 }

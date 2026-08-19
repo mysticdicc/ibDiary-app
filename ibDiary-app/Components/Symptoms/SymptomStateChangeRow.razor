@@ -3,17 +3,9 @@
         <p>@StateChange.ChangedAtDate</p>
     </div>
     <div class="right">
-        @if (StateChange.SymptomBefore.Active != StateChange.SymptomAfter.Active) 
+        @foreach (var update in StateChange.GetCalendarUpdate())
         {
-            <p>@StateChange.SymptomAfter.Title active was changed to @(StateChange.SymptomAfter.Active).</p>
-        }
-        @if (StateChange.SymptomBefore.Description != StateChange.SymptomAfter.Description) 
-        {
-            <p>@StateChange.SymptomAfter.Title description was changed to @(StateChange.SymptomAfter.Description).</p>
-        }
-        @if (StateChange.SymptomBefore.Title != StateChange.SymptomAfter.Title)
-        {
-            <p>@StateChange.SymptomBefore.Title name was changed to @(StateChange.SymptomAfter.Title).</p>
+            <p>@update</p>
         }
     </div>
 </div>

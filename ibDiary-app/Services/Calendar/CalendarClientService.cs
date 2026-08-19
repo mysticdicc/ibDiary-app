@@ -1,14 +1,15 @@
 ﻿using ibDiary_app.Models.Calendar;
+using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ibDiary_app.Services.Calendar
 {
-    public class CalendarDatabaseService(CalendarRepositoryService repo, NotificationService notifier)
+    public class CalendarClientService(CalendarRepositoryService repo, ClientNotificationService notifier)
     {
         private readonly CalendarRepositoryService _repo = repo;
-        private readonly NotificationService _notifier = notifier;
+        private readonly ClientNotificationService _notifier = notifier;
 
         public async Task<bool> AddAsync(CalendarDay item)
         {

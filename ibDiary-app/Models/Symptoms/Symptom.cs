@@ -90,5 +90,12 @@ namespace ibDiary_app.Models.Symptoms
             if (GetDate() != day.Date) return;
             if (!day.CreatedSymptoms.Contains(this)) day.CreatedSymptoms.Add(this);
         }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            list.Add($"You added {Title} to your active symptoms.");
+            return list;
+        }
     }
 }

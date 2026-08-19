@@ -111,5 +111,12 @@ namespace ibDiary_app.Models.Medication
             if (GetDate() != day.Date) return;
             if (!day.CreatedMedicines.Contains(this)) day.CreatedMedicines.Add(this);
         }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            list.Add($"You were prescribed {Dose} of {Name} by {PrescribedBy}.");
+            return list;
+        }
     }
 }

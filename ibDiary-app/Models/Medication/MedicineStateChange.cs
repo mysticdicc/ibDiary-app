@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using static JetBrains.Annotations.Async;
 
 namespace ibDiary_app.Models.Medication
 {
@@ -43,6 +44,36 @@ namespace ibDiary_app.Models.Medication
         {
             if (GetDate() != day.Date) return;
             if (!day.MedicineStateChanges.Contains(this)) day.MedicineStateChanges.Add(this);
+        }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            if(MedicineBefore.Active != MedicineAfter.Active)
+            {
+                list.Add($"{MedicineAfter.Name} active was changed to {MedicineAfter.Active}.");
+            }
+            if(MedicineBefore.Name != MedicineAfter.Name)
+            {
+                list.Add($"{MedicineBefore.Name} was changed to {MedicineAfter.Name}.");
+            }
+            if(MedicineBefore.Dose != MedicineAfter.Dose)
+            {
+                list.Add($"{MedicineAfter.Name} dose was changed to {MedicineAfter.Dose}.");
+            }
+            if(MedicineBefore.MedicineSchedule != MedicineAfter.MedicineSchedule)
+            {
+                list.Add($"{MedicineAfter.Name} schedule was updated.");
+            }
+            if(MedicineBefore.PrescribedBy != MedicineAfter.PrescribedBy)
+            {
+                list.Add($"{MedicineAfter.Name} prescribed by was changed to {MedicineAfter.PrescribedBy}.");
+            }
+            if(MedicineBefore.PrescribedAt != MedicineAfter.PrescribedAt)
+            {
+                list.Add($"{MedicineAfter.Name} prescribed at was updated to {MedicineAfter.PrescribedAtDate}.");
+            }
+            return list;
         }
     }
 }

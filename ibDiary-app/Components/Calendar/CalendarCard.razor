@@ -11,35 +11,14 @@
             }
             else
             {
-                foreach (var update in _dayUpdates)
+                foreach (var dayUpdate in _dayUpdates)
                 {
-                    if (update is MedicineReport medReport)
+                    foreach (var update in dayUpdate.GetCalendarUpdate())
                     {
-                        <p>You took @medReport.Dose of @medReport.Medicine.Name at @(medReport.MedicineTakenAt.Hour):@(medReport.MedicineTakenAt.Minute.ToString("D2")).</p>
-                    }
-                    else if (update is MedicineStateChange medChange)
-                    {
-                        <MedicineStateChangeRow StateChange="@medChange" />
-                    }
-                    else if (update is Medicine medicine)
-                    {
-                        <p>You were prescribed @medicine.Dose of @medicine.Name by @(medicine.PrescribedBy).</p>
-                    }
-                    else if (update is SymptomReport sympReport)
-                    {
-                        <p>You reported that your @sympReport.Symptom.Title symptom was severity @sympReport.Severity at @sympReport.SubmittedFor.ToString("hh:mm").</p>
-                    }
-                    else if (update is SymptomStateChange sympChange)
-                    {
-                        <SymptomStateChangeRow StateChange="@sympChange" />
-                    }
-                    else if (update is Symptom symptom)
-                    {
-                        <p>You added @symptom.Title to your active symptoms.</p>
+                        <p>@update</p>
                     }
                 }
             }
-
         }
         else
         {

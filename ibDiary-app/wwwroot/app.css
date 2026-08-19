@@ -132,7 +132,7 @@ button:active {
         h1 {
             color: var(--text);
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
     }
 
@@ -142,10 +142,18 @@ button:active {
 
         button:has(.material-symbols-outlined) {
             flex: 0;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+
+            span {
+                font-size: 1.2rem;
+            }
         }
 
         button:not(:has(.material-symbols-outlined)) {
             flex: 1;
+            font-size: 1.1rem;
         }
 
         button {
@@ -278,6 +286,10 @@ button:active {
 }
 
 .home-page {
+    .scrolling-calendar {
+        max-height: 50%;
+    }
+
     > div {
         border-style: solid;
         border-width: 1px;
@@ -530,6 +542,21 @@ button:active {
     overflow-y: auto;
     height: 100%;
 
+    > header {
+        background-color: var(--text);
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
+        button {
+            background-color: var(--text);
+
+            span {
+                color: var(--background);
+            }
+        }
+    }
+
     > button {
         position: absolute;
         left: 50%;
@@ -655,10 +682,16 @@ button:active {
     border-radius: 5px;
     padding: 5px;
     margin: 5px;
+    gap: 5px;
 
     > div {
         display: flex;
         flex-direction: row;
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 0;
+        }
 
         .ibd-datetime-input {
             flex: none;
@@ -695,6 +728,35 @@ button:active {
             button {
                 display: none;
             }
+        }
+    }
+}
+
+.settings-page {
+    > div {
+        display: flex;
+        flex-direction: column;
+        border-style: solid;
+        border-color: var(--text);
+        border-width: 1px;
+        border-radius: 5px;
+        margin: 5px;
+        padding: 5px;
+        gap: 5px;
+
+        header {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+            h2 {
+                margin: 0;
+            }
+        }
+
+        button {
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 5px;
         }
     }
 }

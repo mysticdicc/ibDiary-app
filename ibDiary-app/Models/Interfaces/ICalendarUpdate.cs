@@ -9,5 +9,6 @@ namespace ibDiary_app.Models.Interfaces
     {
         public DateOnly GetDate();
         public void AddToCalendarDay(CalendarDay day);
+        public List<string> GetCalendarUpdate();
     }
 }

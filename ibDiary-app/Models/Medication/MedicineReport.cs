@@ -65,5 +65,13 @@ namespace ibDiary_app.Models.Medication
             if (GetDate() != day.Date) return;
             if (!day.MedicineReports.Contains(this)) day.MedicineReports.Add(this);
         }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            var minute = MedicineTakenAt.Minute.ToString("D2");
+            list.Add($"You took {Dose} of {Medicine.Name} at {MedicineTakenAt.Hour}:{minute}.");
+            return list;
+        }
     }
 }

@@ -1,17 +1,18 @@
 ﻿using ibDiary_app.Models.Interfaces;
-using ibDiary_app.Models.Medication;
+using ibDiary_app.Models.Symptoms;
+using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ibDiary_app.Services.Medication
+namespace ibDiary_app.Services.Symptoms
 {
-    public class MedicineDatabaseService(MedicineRepository repo, NotificationService notifService) : IDatabaseService<Medicine>
+    public class SymptomReportClientService(SymptomReportRepository repo, ClientNotificationService notifService) : IDatabaseService<SymptomReport>
     {
-        private readonly MedicineRepository _repo = repo;
-        private readonly NotificationService _notifier = notifService;
+        private readonly SymptomReportRepository _repo = repo;
+        private readonly ClientNotificationService _notifier = notifService;
 
-        public async Task<List<Medicine>> GetAllAsync()
+        public async Task<List<SymptomReport>> GetAllAsync()
         {
             try
             {
@@ -25,7 +26,7 @@ namespace ibDiary_app.Services.Medication
             }
         }
 
-        public async Task<Medicine?> GetByIdAsync(int id)
+        public async Task<SymptomReport?> GetByIdAsync(int id)
         {
             try
             {
@@ -39,14 +40,14 @@ namespace ibDiary_app.Services.Medication
             }
         }
 
-        public async Task<bool> UpdateAsync(Medicine medicine)
+        public async Task<bool> UpdateAsync(SymptomReport report)
         {
             try
             {
-                var result = await _repo.UpdateAsync(medicine);
+                var result = await _repo.UpdateAsync(report);
 
-                if (!result) _notifier.ShowNotification("Update Medicine", "No changes were made to the medicine.");
-                else _notifier.ShowNotification("Update Medicine", "Updated successfully.");
+                if (!result) _notifier.ShowNotification("Update Report", "No changes were made to the report.");
+                else _notifier.ShowNotification("Update Report", "Updated successfully.");
 
                 return result;
             }
@@ -57,14 +58,14 @@ namespace ibDiary_app.Services.Medication
             }
         }
 
-        public async Task<int> AddAsync(Medicine medicine)
+        public async Task<int> AddAsync(SymptomReport report)
         {
             try
             {
-                var result = await _repo.AddAsync(medicine);
+                var result = await _repo.AddAsync(report);
 
                 if (result == 0) _notifier.ShowNotification("Unpsecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Medicine Added", "Added successfully.");
+                else _notifier.ShowNotification("Report Added", "Added successfully.");
 
                 return result;
             }
@@ -75,14 +76,14 @@ namespace ibDiary_app.Services.Medication
             }
         }
 
-        public async Task<bool> DeleteAsync(Medicine medicine)
+        public async Task<bool> DeleteAsync(SymptomReport report)
         {
             try
             {
-                var result = await _repo.DeleteAsync(medicine);
+                var result = await _repo.DeleteAsync(report);
 
                 if (!result) _notifier.ShowNotification("Unpsecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Delete Medicine", "Deleted successfully.");
+                else _notifier.ShowNotification("Delete Report", "Deleted successfully.");
 
                 return result;
             }

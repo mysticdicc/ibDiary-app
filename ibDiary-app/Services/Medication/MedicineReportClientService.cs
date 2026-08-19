@@ -1,17 +1,19 @@
 ﻿using ibDiary_app.Models.Interfaces;
+using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
+using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ibDiary_app.Services.Symptoms
+namespace ibDiary_app.Services.Medication
 {
-    public class SymptomReportDatabaseService(SymptomReportRepository repo, NotificationService notifService) : IDatabaseService<SymptomReport>
+    public class MedicineReportClientService(MedicineReportRepository repo, ClientNotificationService notifService) : IDatabaseService<MedicineReport>
     {
-        private readonly SymptomReportRepository _repo = repo;
-        private readonly NotificationService _notifier = notifService;
+        private readonly MedicineReportRepository _repo = repo;
+        private readonly ClientNotificationService _notifier = notifService;
 
-        public async Task<List<SymptomReport>> GetAllAsync()
+        public async Task<List<MedicineReport>> GetAllAsync()
         {
             try
             {
@@ -25,7 +27,7 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<SymptomReport?> GetByIdAsync(int id)
+        public async Task<MedicineReport?> GetByIdAsync(int id)
         {
             try
             {
@@ -39,7 +41,7 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<bool> UpdateAsync(SymptomReport report)
+        public async Task<bool> UpdateAsync(MedicineReport report)
         {
             try
             {
@@ -57,7 +59,7 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<int> AddAsync(SymptomReport report)
+        public async Task<int> AddAsync(MedicineReport report)
         {
             try
             {
@@ -75,7 +77,7 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<bool> DeleteAsync(SymptomReport report)
+        public async Task<bool> DeleteAsync(MedicineReport report)
         {
             try
             {

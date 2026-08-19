@@ -56,5 +56,13 @@ namespace ibDiary_app.Models.Symptoms
             if (GetDate() != day.Date) return;
             if (!day.SymptomReports.Contains(this)) day.SymptomReports.Add(this);
         }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            var minute = SubmittedFor.Minute.ToString("D2");
+            list.Add($"You reported that your {Symptom.Title} was severity {Severity} at {SubmittedFor.Hour}:{minute}");
+            return list;
+        }
     }
 }

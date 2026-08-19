@@ -1,15 +1,16 @@
 ﻿using ibDiary_app.Models.Interfaces;
 using ibDiary_app.Models.Symptoms;
+using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ibDiary_app.Services.Symptoms
 {
-    public class SymptomDatabaseService(SymptomRepository repo, NotificationService notificationService) : IDatabaseService<Symptom>
+    public class SymptomClientService(SymptomRepository repo, ClientNotificationService notificationService) : IDatabaseService<Symptom>
     {
         private readonly SymptomRepository _repo = repo;
-        private readonly NotificationService _notifier = notificationService;
+        private readonly ClientNotificationService _notifier = notificationService;
 
         public async Task<List<Symptom>> GetAllAsync()
         {

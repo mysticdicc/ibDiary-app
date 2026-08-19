@@ -44,5 +44,24 @@ namespace ibDiary_app.Models.Symptoms
             if (GetDate() != day.Date) return;
             if (!day.SymptomStateChanges.Contains(this)) day.SymptomStateChanges.Add(this);
         }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            if (SymptomBefore.Active != SymptomAfter.Active)
+            {
+                list.Add($"{SymptomAfter.Title} active was changed to {SymptomAfter.Active}.");
+            }
+            if (SymptomBefore.Description != SymptomAfter.Description)
+            {
+                list.Add($"{SymptomAfter.Title} description was updated.");
+            }
+            if (SymptomBefore.Title != SymptomAfter.Title)
+            {
+                list.Add($"{SymptomBefore.Title} name was changed to {SymptomAfter.Title}.");
+            }
+
+            return list;
+        }
     }
 }
