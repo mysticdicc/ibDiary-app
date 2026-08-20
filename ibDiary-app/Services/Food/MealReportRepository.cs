@@ -43,6 +43,7 @@ namespace ibDiary_app.Services.Food
 
         public async Task<int> AddAsync(MealReport report)
         {
+            report.IsNew = false;
             await _dbService.MealReports.AddAsync(report);
             await _dbService.SaveChangesAsync();
 

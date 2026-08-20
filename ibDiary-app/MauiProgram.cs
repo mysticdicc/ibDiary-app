@@ -38,6 +38,7 @@ namespace ibDiary_app
             );
 
             builder.Services.AddSingleton<ClientNotificationService>();
+            builder.Services.AddSingleton<ConfirmationService>();
 
             builder.Services.AddSingleton<CalendarRepositoryService>();
             builder.Services.AddSingleton<CalendarClientService>();

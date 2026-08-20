@@ -43,6 +43,7 @@ namespace ibDiary_app.Services.Food
 
         public async Task<int> AddAsync(FoodItemReport report)
         {
+            report.IsNew = false;
             await _dbService.FoodReports.AddAsync(report);
             await _dbService.SaveChangesAsync();
 
@@ -56,7 +57,7 @@ namespace ibDiary_app.Services.Food
             var dbItem = await GetByIdAsync(report.Id);
             if (null == dbItem) return false;
 
-            _dbService.FoodItemReports.Remove(dbItem);
+            _dbService.FoodReports.Remove(dbItem);
             var rows = await _dbService.SaveChangesAsync();
             return rows > 0;
         }

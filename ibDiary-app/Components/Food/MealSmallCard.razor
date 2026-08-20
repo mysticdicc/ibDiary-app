@@ -1,6 +1,9 @@
 ﻿<div class="meal-card small-card" @onclick="@OnClickCard">
     <header>
         <h3>@Meal.Name</h3>
+        <button @onclick="@OnDeleteClicked" @onclick:stopPropagation="true">
+            <span class="material-symbols-outlined">delete</span>
+        </button>
     </header>
     <div>
         <p>@Meal.Notes</p>
@@ -18,6 +21,7 @@
     [Parameter] public Meal Meal { get; set; } = new();
     [Parameter] public EventCallback<Meal> MealClicked { get; set; }
     [Parameter] public EventCallback<Meal> MealReportClicked { get; set; }
+    [Parameter] public EventCallback<Meal> DeleteClicked { get; set; }
 
     private async Task OnClickCard()
     {
@@ -27,5 +31,10 @@
     private async Task OnClickCreateReport()
     {
         await MealReportClicked.InvokeAsync(Meal);
+    }
+
+    private async Task OnDeleteClicked()
+    {
+        await DeleteClicked.InvokeAsync(Meal);
     }
 }

@@ -1,0 +1,56 @@
+﻿@inject FoodItemReportClientService _foodReportService
+
+<Popup Visible="@Visible" VisibleChanged="@VisibleChanged" Title="Food Report">
+    <div class="food-item-report-viewer">
+        <div>
+
+        </div>
+        <div>
+            <button @onclick="@OnClickCancel">
+                Cancel
+            </button>
+            <button @onclick="@OnClickSave">
+                Save
+            </button>
+        </div>
+    </div>
+</Popup>
+
+
+@code {
+    [Parameter] public FoodItemReport Report { get; set; } = new();
+    [Parameter] public EventCallback<FoodItemReport> ReportChanged { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
+    }
+
+    private async Task OnClickCancel()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+
+    private async Task OnClickSave()
+    {
+        bool result = false;
+
+        if (Report.IsNew)
+        {
+            result = await _foodReportService.AddAsync(Report) > 0;
+        }
+        else
+        {
+            result = await _foodReportService.UpdateAsync(Report);
+        }
+
+        if (result)
+        {
+            await ReportChanged.InvokeAsync(Report);
+            await OnClickCancel();
+        }
+    }
+}

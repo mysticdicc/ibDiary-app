@@ -50,6 +50,7 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadCalendarDataAsync();
+        _filter = new();
         await base.OnInitializedAsync();
     }
 
@@ -180,8 +181,9 @@
 
         foreach (var kvp in _calendarData)
         {
-            if (ApplyFilter(kvp.Value))
-                filtered[kvp.Key] = kvp.Value;
+            var clone = kvp.Value?.Clone();
+            if (ApplyFilter(clone))
+                filtered[kvp.Key] = clone;
         }
 
         return filtered;

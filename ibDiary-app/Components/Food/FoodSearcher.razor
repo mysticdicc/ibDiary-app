@@ -2,7 +2,7 @@
 
 <div class="food-item-searcher">
     <div>
-        <IbdTextArea Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Food"/>
+        <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Food"/>
         <button @onclick="@OnClickClear">
             <span class="material-symbols-outlined">cancel</span>
         </button>
@@ -15,6 +15,10 @@
                 <FoodItemSmallCard Food="food" FoodClicked="@OnFoodClicked"/>
             }
         </div>
+    }
+    else
+    {
+        <p>No results.</p>
     }
 </div>
 

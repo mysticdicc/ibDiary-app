@@ -1,0 +1,56 @@
+﻿@inject MealClientService _mealService
+
+<div class="meal-searcher">
+    <div>
+        <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Meals"/>
+        <button @onclick="@OnClickClear">
+            <span class="material-symbols-outlined">cancel</span>
+        </button>
+    </div>
+    @if (_suggestedMeals.Count > 0)
+    {
+        <div>
+            @foreach (var meal in _suggestedMeals)
+            {
+                <MealSmallCard Meal="meal" MealClicked="@OnMealClicked"/>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No results.</p>
+    }
+</div>
+
+@code {
+    [Parameter] public Meal Meal { get; set; } = new();
+    [Parameter] public EventCallback<Meal> MealChanged { get; set; }
+    private List<Meal> _suggestedMeals = [];
+    private List<Meal> _allMeals = [];
+    private string _searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allMeals = await _mealService.GetAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private void OnSearchInputChanged(string value)
+    {
+        _searchString = value;
+        _suggestedMeals = _allMeals.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+    }
+
+    private async Task OnMealClicked(Meal meal)
+    {
+        await MealChanged.InvokeAsync(meal);
+        _suggestedMeals = [];
+        _searchString = meal.Name;
+    }
+
+    private async Task OnClickClear()
+    {
+        await MealChanged.InvokeAsync(new());
+        _searchString = string.Empty;
+    }
+}

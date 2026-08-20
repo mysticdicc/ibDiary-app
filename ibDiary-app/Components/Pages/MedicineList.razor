@@ -1,4 +1,5 @@
-﻿@inject MedicineClientService _medDbService;
+﻿@inject MedicineClientService _medDbService
+@inject ConfirmationService _confirmService
 @page "/medicines"
 
 <article class="medicine-page">
@@ -16,7 +17,8 @@
             <h2>Active</h2>
             @foreach (var active in _activeMedicines)
             {
-                <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked"/>
+                <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked" 
+                    DeleteClicked="@OnMedicineDeleted" MedicineReportClicked="@OnMedicineReportClicked"/>
             }
         }
 
@@ -25,7 +27,8 @@
             <h2>Inactive</h2>
             @foreach (var inactive in _inactiveMedicines)
             {
-                <MedicineSmallCard Medicine="inactive" MedicineClicked="@OnMedicineRowClicked" />
+                <MedicineSmallCard Medicine="inactive" MedicineClicked="@OnMedicineRowClicked" 
+                    DeleteClicked="@OnMedicineDeleted" MedicineReportClicked="@OnMedicineReportClicked" />
             }
         }
 
@@ -37,6 +40,7 @@
 </article>
 
 <MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible" MedicineChanged="@OnMedicineChanged"/>
+<MedicineReportViewer @bind-MedicineReport="@_currentMedReport" @bind-Visible="@_medicineReportViewerVisible"/>
 <MedicineHelpPopup @bind-Visible="@_helpVisible"/>
 
 @code {
@@ -45,6 +49,8 @@
     private Medicine _currentMedicine = new();
     private bool _medicineViewerVisible = false;
     private bool _helpVisible = false;
+    private bool _medicineReportViewerVisible = false;
+    private MedicineReport _currentMedReport = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,5 +85,26 @@
     private void OnClickHelp()
     {
         _helpVisible = true;
+    }
+
+    private async Task OnMedicineDeleted(Medicine medicine)
+    {
+        var request = new ConfirmationRequest();
+        request.Message = $"Are you sure you want to delete {medicine.Name}?";
+        request.TrueOption = new(true, "Yes");
+        request.FalseOption = new(false, "No");
+        var result = await _confirmService.ShowAsync(request);
+
+        if (result.Result)
+        {
+            var success = await _medDbService.DeleteAsync(medicine);
+            if (success) await RefreshMedicinesAsync();
+        }
+    }
+
+    private void OnMedicineReportClicked(Medicine medicine)
+    {
+        _currentMedReport = new(medicine, DateTime.UtcNow);
+        _medicineReportViewerVisible = true;
     }
 }

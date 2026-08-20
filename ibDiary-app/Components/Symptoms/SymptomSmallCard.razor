@@ -1,6 +1,9 @@
 ﻿<div class="symptom-card small-card" @onclick="@OnClickRow">
     <header>
         <h3>@Symptom.Title</h3>
+        <button @onclick="@OnDeleteClicked" @onclick:stopPropagation="true">
+            <span class="material-symbols-outlined">delete</span>
+        </button>
     </header>
     <div>
         <p>@Symptom.Description</p>
@@ -21,6 +24,7 @@
     [Parameter] required public Symptom Symptom { get; set; }
     [Parameter] public EventCallback<Symptom> SymptomClicked { get; set; }
     [Parameter] public EventCallback<Symptom> SymptomReportClicked { get; set; }
+    [Parameter] public EventCallback<Symptom> DeleteClicked { get; set; }
 
     private async Task OnClickRow()
     {
@@ -30,5 +34,10 @@
     private async Task OnClickOpenReport()
     {
         await SymptomReportClicked.InvokeAsync(Symptom);
+    }
+
+    private async Task OnDeleteClicked()
+    {
+        await DeleteClicked.InvokeAsync(Symptom);
     }
 }

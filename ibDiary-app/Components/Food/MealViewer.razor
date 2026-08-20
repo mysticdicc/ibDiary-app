@@ -1,6 +1,6 @@
 ﻿@inject MealClientService _mealService
 
-<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged">
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
     <div class="meal-viewer">
         <div>
             <IbdTextInput @bind-Value="@Meal.Name" Title="Name"/>
@@ -35,6 +35,14 @@
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     private FoodItem _selectedFood = new();
+    string _title = string.Empty;
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (Meal.IsNew) _title = "Add Meal";
+        else _title = Meal.Name;
+        return base.OnParametersSetAsync();
+    }
 
     private async Task OnVisibleChamged(bool visible)
     {

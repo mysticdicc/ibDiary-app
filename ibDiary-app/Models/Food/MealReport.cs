@@ -16,6 +16,7 @@ namespace ibDiary_app.Models.Food
         [NotMapped] public DateOnly CreatedAtDate { get => DateOnly.FromDateTime(CreatedAt); }
         public DateTime AteMealAt { get; set; }
         public string Notes { get; set; }
+        public bool IsNew { get; set; }
 
         public MealReport()
         {
@@ -24,6 +25,7 @@ namespace ibDiary_app.Models.Food
             CreatedAt = DateTime.UtcNow;
             AteMealAt = CreatedAt;
             Notes = string.Empty;
+            IsNew = true;
         }
 
         public MealReport(Meal meal)
@@ -33,6 +35,7 @@ namespace ibDiary_app.Models.Food
             CreatedAt = DateTime.UtcNow;
             AteMealAt = CreatedAt;
             Notes = string.Empty;
+            IsNew = true;
         }
 
         public void UpdateProperties(MealReport report)

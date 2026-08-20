@@ -65,6 +65,10 @@ namespace ibDiary_app.Services.Calendar
                     .Include(x => x.MedicineStateChanges)
                     .Include(x => x.SymptomReports)
                     .Include(x => x.SymptomStateChanges)
+                    .Include(x => x.CreatedFoods)
+                    .Include(x => x.FoodReports)
+                    .Include(x => x.CreatedMeals)
+                    .Include(x => x.MealReports)
                     .ToListAsync();
 
             return list;
@@ -78,6 +82,10 @@ namespace ibDiary_app.Services.Calendar
                     .Include(x => x.MedicineStateChanges)
                     .Include(x => x.SymptomReports)
                     .Include(x => x.SymptomStateChanges)
+                    .Include(x => x.CreatedFoods)
+                    .Include(x => x.FoodReports)
+                    .Include(x => x.CreatedMeals)
+                    .Include(x => x.MealReports)
                     .FirstOrDefaultAsync(x => x.Date == date);
 
             return day;
@@ -91,7 +99,10 @@ namespace ibDiary_app.Services.Calendar
                 .Include(x => x.MedicineStateChanges)
                 .Include(x => x.SymptomReports)
                 .Include(x => x.SymptomStateChanges)
-                .OrderBy(d => d.Date)
+                .Include(x => x.CreatedFoods)
+                .Include(x => x.FoodReports)
+                .Include(x => x.CreatedMeals)
+                .Include(x => x.MealReports)
                 .ToListAsync();
         }
 

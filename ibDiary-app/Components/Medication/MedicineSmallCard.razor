@@ -1,8 +1,13 @@
 ﻿<div class="medicine-card small-card" @onclick="@OnClickRow">
     <header>
         <h3>@Medicine.Name</h3>
-        <p>@Medicine.Dose</p>
+        <button @onclick="@OnDeleteClicked" @onclick:stopPropagation="true">
+            <span class="material-symbols-outlined">delete</span>
+        </button>
     </header>
+    <div>
+        <p>Dose: @Medicine.Dose</p>
+    </div>
     <div>
         <p>Prescribed at: @Medicine.PrescribedAtDate</p>
     </div>
@@ -19,6 +24,7 @@
     [Parameter] required public Medicine Medicine { get; set; }
     [Parameter] public EventCallback<Medicine> MedicineClicked { get; set; }
     [Parameter] public EventCallback<Medicine> MedicineReportClicked { get; set; }
+    [Parameter] public EventCallback<Medicine> DeleteClicked { get; set; }
 
     private async Task OnClickRow()
     {
@@ -28,5 +34,10 @@
     private async Task OnClickOpenReport()
     {
         await MedicineReportClicked.InvokeAsync(Medicine);
+    }
+
+    private async Task OnDeleteClicked()
+    {
+        await DeleteClicked.InvokeAsync(Medicine);
     }
 }

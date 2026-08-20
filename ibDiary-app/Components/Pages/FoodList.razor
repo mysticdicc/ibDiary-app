@@ -1,10 +1,14 @@
 ﻿@inject FoodItemClientService _foodService
 @inject MealClientService _mealService
+@inject ConfirmationService _confirmService
 @page "/foods"
 
 <article class="food-page">
     <header>
-        <button>
+        <button @onclick="@OnClickShowHelp">
+            <span class="material-symbols-outlined">help</span>
+        </button>
+        <button @onclick="@OnClickAdd">
             <span class="material-symbols-outlined">add</span>
         </button>
     </header>
@@ -14,7 +18,7 @@
         {
             @foreach (var food in _allFoods)
             {
-                <FoodItemSmallCard Food="food" FoodClicked="@OnFoodItemClicked"/>
+                <FoodItemSmallCard Food="food" FoodClicked="@OnFoodItemClicked" DeleteClicked="@OnClickDeleteFood"/>
             }
         }
         else
@@ -26,7 +30,7 @@
         {
             @foreach (var meal in _allMeals)
             {
-                <MealSmallCard Meal="meal" MealClicked="@OnMealClicked"/>
+                <MealSmallCard Meal="meal" MealClicked="@OnMealClicked" DeleteClicked="@OnClickDeleteMeal"/>
             }
         }
         else
@@ -36,8 +40,9 @@
     </div>
 </article>
 
-<FoodItemViewer @bind-Food="@_selectedFood" @bind-Visible="@_foodViewerVisible"/>
-<MealViewer @bind-Meal="@_selectedMeal" @bind-Visible="@_mealViewerVisible"/>
+<FoodItemViewer Food="@_selectedFood" FoodChanged="@OnFoodItemChanged" @bind-Visible="@_foodViewerVisible"/>
+<MealViewer Meal="@_selectedMeal" MealChanged="@OnMealChanged" @bind-Visible="@_mealViewerVisible"/>
+<FoodHelpPopup @bind-Visible="@_helpVisible"/>
 
 @code {
     private List<FoodItem> _allFoods = [];
@@ -46,6 +51,7 @@
     private List<Meal> _allMeals = [];
     private Meal _selectedMeal = new();
     private bool _mealViewerVisible = false;
+    private bool _helpVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,5 +70,70 @@
     {
         _selectedMeal = meal;
         _mealViewerVisible = true;
+    }
+
+    private async Task OnClickAdd()
+    {
+        var request = new ConfirmationRequest();
+        request.Message = "Do you want to create a meal or a food item?";
+        request.TrueOption = new(true, "Food Item");
+        request.FalseOption = new(false, "Meal");
+        var result = await _confirmService.ShowAsync(request);
+
+        if (result.Result) 
+        {
+            _selectedFood = new();
+            _foodViewerVisible = true;
+        }
+        else
+        {
+            _selectedMeal = new();
+            _mealViewerVisible = true;
+        }
+    }
+
+    private async Task OnClickDeleteFood(FoodItem food)
+    {
+        var request = new ConfirmationRequest();
+        request.Message = $"Are you sure you want to delete {food.Name}?";
+        request.TrueOption = new(true, "Yes");
+        request.FalseOption = new(false, "No");
+        var result = await _confirmService.ShowAsync(request);
+
+        if (result.Result)
+        {
+            var success = await _foodService.DeleteAsync(food);
+            if (success) await OnInitializedAsync();
+        }
+    }
+
+    private async Task OnClickDeleteMeal(Meal meal)
+    {
+        var request = new ConfirmationRequest();
+        request.Message = $"Are you sure you want to delete {meal.Name}?";
+        request.TrueOption = new(true, "Yes");
+        request.FalseOption = new(false, "No");
+        var result = await _confirmService.ShowAsync(request);
+
+        if (result.Result)
+        {
+            var success = await _mealService.DeleteAsync(meal);
+            if (success) await OnInitializedAsync();
+        }
+    }
+
+    private async Task OnFoodItemChanged(FoodItem foodItem)
+    {
+        await OnInitializedAsync();
+    }
+
+    private async Task OnMealChanged(Meal meal)
+    {
+        await OnInitializedAsync();
+    }
+
+    private void OnClickShowHelp()
+    {
+        _helpVisible = true;
     }
 }

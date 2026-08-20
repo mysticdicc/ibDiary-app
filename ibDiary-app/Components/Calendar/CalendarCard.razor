@@ -44,6 +44,10 @@
             _dayUpdates.AddRange(Day.CreatedMedicines);
             _dayUpdates.AddRange(Day.MedicineStateChanges);
             _dayUpdates.AddRange(Day.MedicineReports);
+            _dayUpdates.AddRange(Day.CreatedFoods);
+            _dayUpdates.AddRange(Day.FoodReports);
+            _dayUpdates.AddRange(Day.CreatedMeals);
+            _dayUpdates.AddRange(Day.MealReports);
 
             _dayUpdates = _dayUpdates.OrderByDescending(x => x.GetDate()).ToList();
         }

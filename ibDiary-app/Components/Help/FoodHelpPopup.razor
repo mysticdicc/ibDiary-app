@@ -1,0 +1,21 @@
+﻿<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Food Help">
+    <h2>Food Items</h2>
+    <p>
+        Foods are categorised into food items and meals, food items are the individual food items that you might eat throughout the day.
+        This can be ingredients for meals or other food items you eat by themselves such as a packet of crisps.
+    </p>
+    <h2>Meals</h2>
+    <p>
+        Meals exist for you to group food items together into meals so you do not have to individually submit each food item for a meal.
+    </p>
+</Popup>
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
+    }
+}

@@ -1,4 +1,5 @@
-﻿@inject SymptomClientService _symDbService;
+﻿@inject SymptomClientService _symDbService
+@inject ConfirmationService _confirmService
 @page "/symptoms"
 
 <article class="symptom-page">
@@ -16,7 +17,8 @@
             <h2>Active</h2>
             @foreach (var active in _activeSymptoms)
             {
-                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" SymptomReportClicked="@OnAddSymptomReportClicked"/>
+                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" 
+                    SymptomReportClicked="@OnAddSymptomReportClicked" DeleteClicked="@OnSymptomDeleted"/>
             }
         }
 
@@ -25,7 +27,8 @@
             <h2>Inactive</h2>
             @foreach (var inactive in _inactiveSymptoms)
             {
-                <SymptomSmallCard Symptom="inactive" SymptomClicked="@OnSymptomRowClicked" SymptomReportClicked="@OnAddSymptomReportClicked" />
+                <SymptomSmallCard Symptom="inactive" SymptomClicked="@OnSymptomRowClicked" 
+                    SymptomReportClicked="@OnAddSymptomReportClicked" DeleteClicked="@OnSymptomDeleted"/>
             }
         }
 
@@ -88,5 +91,20 @@
     {
         _currentSymptomReport = new(symptom);
         _symptomReportVisible = true;
+    }
+
+    private async Task OnSymptomDeleted(Symptom symptom)
+    {
+        var request = new ConfirmationRequest();
+        request.Message = $"Are you sure you want to delete {symptom.Title}?";
+        request.TrueOption = new(true, "Yes");
+        request.FalseOption = new(false, "No");
+        var result = await _confirmService.ShowAsync(request);
+
+        if (result.Result)
+        {
+            var success = await _symDbService.DeleteAsync(symptom);
+            if (success) await RefreshSymptomsAsync();
+        }
     }
 }

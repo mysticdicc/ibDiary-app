@@ -1,0 +1,62 @@
+﻿@inject ConfirmationService _confirmService
+
+<Popup Visible="@_visible" VisibleChanged="@OnVisibleChamged">
+    <div class="confirmation-popup">
+        <div>
+            <p>@_request.Message</p>
+        </div>
+        <div>
+            <button @onclick="@OnTrueOption">
+                @_request.TrueOption.DisplayName
+            </button>
+            <button @onclick="@OnFalseOption">
+                @_request.FalseOption.DisplayName
+            </button>
+        </div>
+    </div>
+</Popup>
+
+@code {
+    private bool _visible = false;
+    private ConfirmationRequest _request = new();
+    private TaskCompletionSource<bool>? _tcs;
+
+    protected override void OnInitialized()
+    {
+        _confirmService.RegisterShowCallback(ShowPopup);
+        base.OnInitialized();
+    }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        _visible = visible;
+    }
+
+    private async Task ShowPopup(ConfirmationRequest request)
+    {
+        _request = request;
+        _tcs = new TaskCompletionSource<bool>();
+        _visible = true;
+        StateHasChanged();
+
+        await _tcs.Task;
+    }
+
+    private void OnTrueOption()
+    {
+        _request.Result = true;
+        ClosePopup();
+    }
+
+    private void OnFalseOption()
+    {
+        _request.Result = false;
+        ClosePopup();
+    }
+
+    private void ClosePopup()
+    {
+        _visible = false;
+        _tcs?.SetResult(true);
+    }
+}

@@ -115,6 +115,10 @@ button:active {
                 border-width: 1px;
                 width: 100%;
                 justify-content: flex-end;
+
+                button {
+                    background-color: rgba(0,0,0,0);
+                }
             }
         }
     }
@@ -640,8 +644,13 @@ button:active {
         padding: 5px;
         margin-bottom: 5px;
 
-        p {
+        button {
             margin-left: auto;
+            background-color: var(--text);
+
+            span {
+                color: var(--background);
+            }
         }
     }
 
@@ -704,7 +713,7 @@ button:active {
     }
 }
 
-.medicine-searcher, .symptom-searcher {
+.medicine-searcher, .symptom-searcherm, .food-item-searcher, .meal-searcher {
     width: 100%;
 
     > div {
@@ -759,4 +768,56 @@ button:active {
             border-radius: 5px;
         }
     }
+}
+
+.food-item-viewer, .meal-viewer {
+    padding: 5px;
+
+    > div {
+        display: flex; 
+        flex-direction: row;
+
+        > button {
+            background-color: rgba(0,0,0,0);
+            flex: 1;
+        }
+    }
+}
+
+.meal-viewer {
+    > div:has(header) {
+        display: flex;
+        flex-direction: column;
+
+        .food-item-card {
+            > div {
+                button {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+.confirmation-popup {
+    padding: 5px;
+
+    > div {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        p {
+            color: var(--text);
+        }
+
+        button {
+            flex: 1;
+            background-color: rgba(0,0,0,0);
+        }
+    }
+}
+
+.food-list, .medicine-list {
+    padding: 5px;
 }
