@@ -19,5 +19,12 @@
                 throw;
             }
         }
+
+        protected override async void OnStart()
+        {
+            base.OnStart();
+            await MauiProgram.RequestNotificationPermission();
+            MauiProgram.SetupMedicineReminders();
+        }
     }
 }

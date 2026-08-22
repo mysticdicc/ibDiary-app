@@ -11,12 +11,17 @@
     }
 </div>
 
+<MedicineReportViewer MedicineReport="@MedicineReport" @bind-Visible="@_reportViewerVisible"/>
+
 @code {
     [Parameter] required public MedicineReport MedicineReport { get; set; }
     [Parameter] public EventCallback<MedicineReport> MedicineReportClicked { get; set; }
+    [Parameter] public bool ShouldCallback { get; set; } = false;
+    private bool _reportViewerVisible = false;
 
     private async Task OnClickRow()
     {
-        await MedicineReportClicked.InvokeAsync(MedicineReport);
+        if (ShouldCallback) await MedicineReportClicked.InvokeAsync(MedicineReport);
+        else _reportViewerVisible = true;
     }
 }

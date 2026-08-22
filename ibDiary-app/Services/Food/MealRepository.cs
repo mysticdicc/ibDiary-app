@@ -1,6 +1,7 @@
 ﻿using ibDiary_app.Data;
 using ibDiary_app.Models.Food;
 using ibDiary_app.Models.Interfaces;
+using ibDiary_app.Services.Calendar;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,12 @@ namespace ibDiary_app.Services.Food
     public class MealRepository : IDatabaseService<Meal>
     {
         private readonly AppDbContext _dbService;
+        private readonly CalendarDayGenerationService _calService;
 
-        public MealRepository(AppDbContext connection)
+        public MealRepository(AppDbContext connection, CalendarDayGenerationService cal)
         {
             _dbService = connection;
+            _calService = cal;
         }
 
         public async Task<List<Meal>> GetAllAsync()
@@ -43,6 +46,8 @@ namespace ibDiary_app.Services.Food
             meal.IsNew = false;
             await _dbService.Meals.AddAsync(meal);
             await _dbService.SaveChangesAsync();
+
+            await _calService.NotifyUpdateCalendarDayAsync(meal);
 
             return meal.Id;
         }

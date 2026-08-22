@@ -28,6 +28,25 @@ namespace ibDiary_app
             }
         }
 
+        public static void SetupMedicineReminders()
+        {
+            var context = Android.App.Application.Context;
+
+            WorkManager.GetInstance(context).CancelUniqueWork("medicine_reminder_work");
+
+            var workRequest = new PeriodicWorkRequest.Builder(
+                typeof(AndroidNotificationService),
+                TimeSpan.FromMinutes(15)
+            ).Build();
+
+            WorkManager.GetInstance(context)
+                .EnqueueUniquePeriodicWork(
+                    "medicine_reminder_work",
+                    ExistingPeriodicWorkPolicy.CancelAndReenqueue!,
+                    workRequest
+                );
+        }
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -82,20 +101,6 @@ namespace ibDiary_app
                 {
                     fonts.AddFont("Roboto-Regular", "Roboto");
                 });
-
-            var context = Android.App.Application.Context;
-
-            var workRequest = new PeriodicWorkRequest.Builder(
-                typeof(AndroidNotificationService),
-                TimeSpan.FromMinutes(15)
-            ).Build();
-
-            WorkManager.GetInstance(context)
-                .EnqueueUniquePeriodicWork(
-                    "medicine_reminder_work",
-                    ExistingPeriodicWorkPolicy.CancelAndReenqueue!,
-                    workRequest
-                );
 
             builder.Services.AddMauiBlazorWebView();
 

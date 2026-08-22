@@ -20,11 +20,20 @@
     </div>
 </div>
 
+<SymptomReportViewer SymptomReport="@_report" @bind-Visible="@_reportViewerVisible"/>
+
 @code {
     [Parameter] required public Symptom Symptom { get; set; }
     [Parameter] public EventCallback<Symptom> SymptomClicked { get; set; }
-    [Parameter] public EventCallback<Symptom> SymptomReportClicked { get; set; }
     [Parameter] public EventCallback<Symptom> DeleteClicked { get; set; }
+    private bool _reportViewerVisible = false;
+    private SymptomReport _report = new();
+
+    protected override void OnParametersSet()
+    {
+        _report = new(Symptom);
+        base.OnParametersSet();
+    }
 
     private async Task OnClickRow()
     {
@@ -33,7 +42,7 @@
 
     private async Task OnClickOpenReport()
     {
-        await SymptomReportClicked.InvokeAsync(Symptom);
+        _reportViewerVisible = true;
     }
 
     private async Task OnDeleteClicked()

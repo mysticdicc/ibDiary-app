@@ -17,11 +17,20 @@
     </div>
 </div>
 
+<FoodItemReportViewer Report="@_report" @bind-Visible="@_reportVisible"/>
+
 @code {
     [Parameter] public FoodItem Food { get; set; } = new();
     [Parameter] public EventCallback<FoodItem> FoodClicked { get; set; }
-    [Parameter] public EventCallback<FoodItem> FoodReportClicked { get; set; }
     [Parameter] public EventCallback<FoodItem> DeleteClicked { get; set; }
+    private FoodItemReport _report = new();
+    private bool _reportVisible = false;
+
+    protected override Task OnParametersSetAsync()
+    {
+        _report = new(Food);
+        return base.OnParametersSetAsync();
+    }
 
     private async Task OnClickCard()
     {
@@ -30,7 +39,7 @@
 
     private async Task OnClickCreateReport()
     {
-        await FoodReportClicked.InvokeAsync(Food);
+        _reportVisible = true;
     }
 
     private async Task OnDeleteClicked()

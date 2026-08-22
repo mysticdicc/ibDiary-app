@@ -1,56 +1,76 @@
 ﻿@inject SymptomClientService _sympDbService
 
-<div class="symptom-searcher">
-    <div>
-        <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Symptoms"/>
-        <button @onclick="@OnClickClear">
-            <span class="material-symbols-outlined">cancel</span>
-        </button>
-    </div>
-    @if (_suggestedSymptoms.Count > 0)
+<div class="searcher-preview symptom-searcher-preview">
+    <button @onclick="@OnClickSearch">
+        <p>Search Symptoms</p>
+        <span class="material-symbols-outlined">search</span>
+    </button>
+    @if (ShowSelected && !Symptom.IsNew)
     {
-        <div>
-            @foreach (var symptom in _suggestedSymptoms)
-            {
-                <SymptomSmallCard Symptom="symptom" SymptomClicked="@OnSymptomClicked"/>
-            }
-        </div>
-    }
-    else
-    {
-        <p>No results.</p>
+        <SymptomSmallCard Symptom="@Symptom" DeleteClicked="@SymptomDeleteClicked"/>
     }
 </div>
+
+<Popup Visible="@_popupVisible" VisibleChanged="@OnVisibleChanged" Title="Search Symptoms">
+    <div class="symptom-searcher">
+        <div>
+            <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Symptoms" />
+        </div>
+        @if (_suggestedSymptoms.Count > 0)
+        {
+            <div>
+                @foreach (var symptom in _suggestedSymptoms)
+                {
+                    <SymptomSmallCard Symptom="symptom" SymptomClicked="@OnSymptomClicked" />
+                }
+            </div>
+        }
+    </div>
+</Popup>
+
 
 @code {
     [Parameter] public Symptom Symptom { get; set; } = new();
     [Parameter] public EventCallback<Symptom> SymptomChanged { get; set; }
+    [Parameter] public bool ShowSelected { get; set; } = false;
     private List<Symptom> _allSymptoms = [];
     private List<Symptom> _suggestedSymptoms = [];
     private string _searchString = string.Empty;
+    private bool _popupVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
         _allSymptoms = await _sympDbService.GetAllAsync();
+        _suggestedSymptoms = _allSymptoms.Take(5).ToList();
         await base.OnInitializedAsync();
     }
 
     private void OnSearchInputChanged(string value)
     {
         _searchString = value;
-        _suggestedSymptoms = _allSymptoms.Where(x => x.Title.Contains(value, StringComparison.CurrentCultureIgnoreCase)).ToList();
+        _suggestedSymptoms = _allSymptoms.Where(x => x.Title.Contains(value, StringComparison.CurrentCultureIgnoreCase)).Take(5).ToList();
     }
 
     private async Task OnSymptomClicked(Symptom symptom)
     {
         await SymptomChanged.InvokeAsync(symptom);
-        _suggestedSymptoms = [];
-        _searchString = symptom.Title;
+        _suggestedSymptoms = _allSymptoms.Take(5).ToList();
+        _popupVisible = false;
     }
 
-    private async Task OnClickClear()
+    private void OnVisibleChanged(bool visible)
     {
-        await SymptomChanged.InvokeAsync(new());
-        _searchString = string.Empty;
+        _popupVisible = visible;
+    }
+
+    private void OnClickSearch()
+    {
+        _popupVisible = true;
+    }
+
+    private async Task SymptomDeleteClicked()
+    {
+        Symptom = new();
+        await SymptomChanged.InvokeAsync(Symptom);
     }
 }

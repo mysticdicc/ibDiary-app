@@ -3,7 +3,13 @@
 <Popup Visible="@Visible" VisibleChanged="@VisibleChanged" Title="Meal Report">
     <div class="meal-item-report-viewer">
         <div>
-
+            <MealSearcher Meal="@Report.Meal" MealChanged="@OnMealSelected" ShowSelected="true"/>
+        </div>
+        <div>
+            <IbdDateTimeInput @bind-Value="@Report.AteMealAt" Title="Ate At" />
+        </div>
+        <div>
+            <IbdTextArea @bind-Value="@Report.Notes" Title="Notes" />
         </div>
         <div>
             <button @onclick="@OnClickCancel">
@@ -52,5 +58,11 @@
             await ReportChanged.InvokeAsync(Report);
             await OnClickCancel();
         }
+    }
+
+    private async Task OnMealSelected(Meal meal)
+    {
+        Report.Meal = meal;
+        await ReportChanged.InvokeAsync(Report);
     }
 }

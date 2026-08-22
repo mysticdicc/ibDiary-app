@@ -10,7 +10,6 @@ using System.Text;
 
 namespace ibDiary_app.Services.System
 {
-    [BroadcastReceiver(Enabled = true, Exported = true)]
     public class AndroidNotificationService : Worker
     {
         public AndroidNotificationService(Context context, WorkerParameters parameters)

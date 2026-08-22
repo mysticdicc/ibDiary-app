@@ -18,7 +18,7 @@
             @foreach (var active in _activeMedicines)
             {
                 <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked" 
-                    DeleteClicked="@OnMedicineDeleted" MedicineReportClicked="@OnMedicineReportClicked"/>
+                    DeleteClicked="@OnMedicineDeleted"/>
             }
         }
 
@@ -28,7 +28,7 @@
             @foreach (var inactive in _inactiveMedicines)
             {
                 <MedicineSmallCard Medicine="inactive" MedicineClicked="@OnMedicineRowClicked" 
-                    DeleteClicked="@OnMedicineDeleted" MedicineReportClicked="@OnMedicineReportClicked" />
+                    DeleteClicked="@OnMedicineDeleted"/>
             }
         }
 
@@ -40,7 +40,6 @@
 </article>
 
 <MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible" MedicineChanged="@OnMedicineChanged"/>
-<MedicineReportViewer @bind-MedicineReport="@_currentMedReport" @bind-Visible="@_medicineReportViewerVisible"/>
 <MedicineHelpPopup @bind-Visible="@_helpVisible"/>
 
 @code {
@@ -49,8 +48,6 @@
     private Medicine _currentMedicine = new();
     private bool _medicineViewerVisible = false;
     private bool _helpVisible = false;
-    private bool _medicineReportViewerVisible = false;
-    private MedicineReport _currentMedReport = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,11 +97,5 @@
             var success = await _medDbService.DeleteAsync(medicine);
             if (success) await RefreshMedicinesAsync();
         }
-    }
-
-    private void OnMedicineReportClicked(Medicine medicine)
-    {
-        _currentMedReport = new(medicine, DateTime.UtcNow);
-        _medicineReportViewerVisible = true;
     }
 }

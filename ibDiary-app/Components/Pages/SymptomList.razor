@@ -17,8 +17,7 @@
             <h2>Active</h2>
             @foreach (var active in _activeSymptoms)
             {
-                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" 
-                    SymptomReportClicked="@OnAddSymptomReportClicked" DeleteClicked="@OnSymptomDeleted"/>
+                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" DeleteClicked="@OnSymptomDeleted"/>
             }
         }
 
@@ -27,8 +26,7 @@
             <h2>Inactive</h2>
             @foreach (var inactive in _inactiveSymptoms)
             {
-                <SymptomSmallCard Symptom="inactive" SymptomClicked="@OnSymptomRowClicked" 
-                    SymptomReportClicked="@OnAddSymptomReportClicked" DeleteClicked="@OnSymptomDeleted"/>
+                <SymptomSmallCard Symptom="inactive" SymptomClicked="@OnSymptomRowClicked" DeleteClicked="@OnSymptomDeleted"/>
             }
         }
 
@@ -41,7 +39,6 @@
 
 <SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible" SymptomChanged="@OnSymptomChanged"/>
 <SymptomHelpPopup Visible="@_helpVisible"/>
-<SymptomReportViewer SymptomReport="@_currentSymptomReport" @bind-Visible="@_symptomReportVisible"/>
 
 @code {
     private List<Symptom> _activeSymptoms = []; 
@@ -49,8 +46,6 @@
     private Symptom _currentSymptom = new();
     private bool _symptomViewerVisible = false;
     private bool _helpVisible = false;
-    private SymptomReport _currentSymptomReport = new();
-    private bool _symptomReportVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -85,12 +80,6 @@
     private void OnClickHelp()
     {
         _helpVisible = true;
-    }
-
-    private void OnAddSymptomReportClicked(Symptom symptom)
-    {
-        _currentSymptomReport = new(symptom);
-        _symptomReportVisible = true;
     }
 
     private async Task OnSymptomDeleted(Symptom symptom)

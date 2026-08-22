@@ -13,7 +13,7 @@
             <div>
                 @foreach (var report in _pendingReports)
                 {
-                    <MedicineReportRow MedicineReport="report" MedicineReportClicked="@OnMedicineReportClicked"/>
+                    <MedicineReportRow MedicineReport="report"/>
                 }
             </div>
         </div>
@@ -29,7 +29,7 @@
         {
             @foreach (var active in _currentMedicines)
             {
-                <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked" MedicineReportClicked="@OpenMedicineReportClicked"/>
+                <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked"/>
             }
         }
         else
@@ -49,7 +49,7 @@
         {
             @foreach (var active in _currentSymptoms)
             {
-                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" SymptomReportClicked="@OpenSymptomReportClicked"/>
+                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked"/>
             }
         }
         else
@@ -60,17 +60,13 @@
     <ScrollingCalendar @ref="@_calendar"/>
 </article>
 
-<MedicineReportViewer MedicineReport="@_currentMedicineReport" MedicineReportChanged="@OnMedicineReportChanged" @bind-Visible="@_medicineReportViewerVisible"/>
 <MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible" MedicineChanged="@OnCalendarUpdate" />
 <SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible" SymptomChanged="@OnCalendarUpdate" />
-<SymptomReportViewer SymptomReport="@_currentSymptomReport" @bind-Visible="@_symptomReportViewerVisible" SymptomReportChanged="@OnCalendarUpdate" />
 <SymptomHelpPopup @bind-Visible="@_symptomHelpVisible"/>
 <MedicineHelpPopup @bind-Visible="@_medicineHelpVisible"/>
 
 @code {
     private List<MedicineReport> _pendingReports = [];
-    private MedicineReport _currentMedicineReport = new();
-    private bool _medicineReportViewerVisible = false;
 
     private List<Medicine> _currentMedicines = [];
     private Medicine _currentMedicine = new();
@@ -79,9 +75,6 @@
     private List<Symptom> _currentSymptoms = [];
     private Symptom _currentSymptom = new();
     private bool _symptomViewerVisible = false;
-
-    private SymptomReport _currentSymptomReport = new();
-    private bool _symptomReportViewerVisible = false;
 
     private bool _symptomHelpVisible = false;
     private bool _medicineHelpVisible = false;
@@ -101,12 +94,6 @@
         _currentMedicines = meds.Where(x => x.Active).ToList();
         var symps = await _symDbSevrice.GetAllAsync();
         _currentSymptoms = symps.Where(x => x.Active).ToList();
-    }
-
-    private void OnMedicineReportClicked(MedicineReport report)
-    {
-        _currentMedicineReport = report;
-        _medicineReportViewerVisible = true;
     }
 
     private async Task OnMedicineReportChanged(MedicineReport report)
@@ -135,18 +122,6 @@
     private void OnClickCurrentSymptoms()
     {
         if (_currentSymptoms.Count == 0) _navManager.NavigateTo("/symptoms");
-    }
-
-    private void OpenSymptomReportClicked(Symptom symptom)
-    {
-        _currentSymptomReport = new(symptom);
-        _symptomReportViewerVisible = true;
-    }
-
-    private void OpenMedicineReportClicked(Medicine medicine)
-    {
-        _currentMedicineReport = new(medicine, DateTime.UtcNow);
-        _medicineReportViewerVisible = true;
     }
 
     private void ShowSymtpomHelpClicked()

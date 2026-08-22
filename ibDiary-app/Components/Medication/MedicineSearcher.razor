@@ -1,37 +1,47 @@
 ﻿@inject MedicineClientService _medDbService
 
-<div class="medicine-searcher">
-    <div>
-        <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Medicine"/>
-        <button @onclick="@OnClickClear">
-            <span class="material-symbols-outlined">cancel</span>
-        </button>
-    </div>
-    @if (_suggestedMedicines.Count > 0)
+<div class="searcher-preview medicine-searcher-preview">
+    <button @onclick="@OnClickSearch">
+        <p>Search Medicine</p>
+        <span class="material-symbols-outlined">search</span>
+    </button>
+    @if (ShowSelected && !Medicine.IsNew) 
     {
-        <div>
-            @foreach (var medicine in _suggestedMedicines)
-            {
-                <MedicineSmallCard Medicine="medicine" MedicineClicked="@OnMedicineClicked"/>
-            }
-        </div>
-    }
-    else
-    {
-        <p>No results.</p>
+        <MedicineSmallCard Medicine="@Medicine" DeleteClicked="@DeleteClicked"/>
     }
 </div>
+
+<Popup Visible="@_popupVisible" VisibleChanged="@OnVisibleChanged" Title="Search Medicine">
+    <div class="medicine-searcher">
+        <div>
+            <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Medicine" />
+        </div>
+        @if (_suggestedMedicines.Count > 0)
+        {
+            <div>
+                @foreach (var medicine in _suggestedMedicines)
+                {
+                    <MedicineSmallCard Medicine="medicine" MedicineClicked="@OnMedicineClicked" />
+                }
+            </div>
+        }
+    </div>
+</Popup>
+
 
 @code {
     [Parameter] public Medicine Medicine { get; set; } = new();
     [Parameter] public EventCallback<Medicine> MedicineChanged { get; set; }
+    [Parameter] public bool ShowSelected { get; set; } = false;
     private List<Medicine> _suggestedMedicines = [];
     private List<Medicine> _allMedicines = [];
     private string _searchString = string.Empty;
+    private bool _popupVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
         _allMedicines = await _medDbService.GetAllAsync();
+        _suggestedMedicines = _allMedicines.Take(5).ToList();
         await base.OnInitializedAsync();
     }
 
@@ -44,13 +54,23 @@
     private async Task OnMedicineClicked(Medicine medicine)
     {
         await MedicineChanged.InvokeAsync(medicine);
-        _suggestedMedicines = [];
-        _searchString = medicine.Name;
+        _suggestedMedicines = _allMedicines.Take(5).ToList();
+        _popupVisible = false;
     }
 
-    private async Task OnClickClear()
+    private void OnVisibleChanged(bool visible)
     {
-        await MedicineChanged.InvokeAsync(new());
-        _searchString = string.Empty;
+        _popupVisible = visible;
+    }
+
+    private void OnClickSearch()
+    {
+        _popupVisible = true;
+    }
+
+    private async Task DeleteClicked(Medicine medicine)
+    {
+        Medicine = new();
+        await MedicineChanged.InvokeAsync(Medicine);
     }
 }

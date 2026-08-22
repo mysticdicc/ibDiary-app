@@ -17,13 +17,13 @@
     @if (CalendarFilter.MedicineFilterEnabled)
     {
         <div>
-            <MedicineSearcher Medicine="@CalendarFilter.Medicine" MedicineChanged="@UpdateMedicine" />
+            <MedicineSearcher Medicine="@CalendarFilter.Medicine" MedicineChanged="@UpdateMedicine" ShowSelected="true"/>
         </div>
     }
     @if (CalendarFilter.SymptomFilterEnabled)
     {
         <div>
-            <SymptomSearcher Symptom="@CalendarFilter.Symptom" SymptomChanged="@UpdateSymptom" />
+            <SymptomSearcher Symptom="@CalendarFilter.Symptom" SymptomChanged="@UpdateSymptom" ShowSelected="true"/>
         </div>
     }
     <div>

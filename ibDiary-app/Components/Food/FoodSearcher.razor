@@ -1,56 +1,75 @@
 ﻿@inject FoodItemClientService _foodService
 
-<div class="food-item-searcher">
-    <div>
-        <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Food"/>
-        <button @onclick="@OnClickClear">
-            <span class="material-symbols-outlined">cancel</span>
-        </button>
-    </div>
-    @if (_suggestedFoods.Count > 0)
+<div class="searcher-preview food-searcher-preview">
+    <button @onclick="@OnClickSearch">
+        <p>Search Food</p>
+        <span class="material-symbols-outlined">search</span>
+    </button>
+    @if (ShowSelected && !Food.IsNew)
     {
-        <div>
-            @foreach (var food in _suggestedFoods)
-            {
-                <FoodItemSmallCard Food="food" FoodClicked="@OnFoodClicked"/>
-            }
-        </div>
-    }
-    else
-    {
-        <p>No results.</p>
+        <FoodItemSmallCard Food="@Food" DeleteClicked="@DeleteClicked"/>
     }
 </div>
+
+<Popup Visible="@_popupVisible" VisibleChanged="@OnVisibleChanged" Title="Search Food">
+    <div class="food-item-searcher">
+        <div>
+            <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Food Items" />
+        </div>
+        @if (_suggestedFoods.Count > 0)
+        {
+            <div>
+                @foreach (var food in _suggestedFoods)
+                {
+                    <FoodItemSmallCard Food="food" FoodClicked="@OnFoodClicked" />
+                }
+            </div>
+        }
+    </div>
+</Popup>
 
 @code {
     [Parameter] public FoodItem Food { get; set; } = new();
     [Parameter] public EventCallback<FoodItem> FoodChanged { get; set; }
+    [Parameter] public bool ShowSelected { get; set; } = false;
     private List<FoodItem> _suggestedFoods = [];
     private List<FoodItem> _allFoods = [];
     private string _searchString = string.Empty;
+    private bool _popupVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
         _allFoods = await _foodService.GetAllAsync();
+        _suggestedFoods = _allFoods.Take(5).ToList();
         await base.OnInitializedAsync();
     }
 
     private void OnSearchInputChanged(string value)
     {
         _searchString = value;
-        _suggestedFoods = _allFoods.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        _suggestedFoods = _allFoods.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Take(5).ToList();
     }
 
     private async Task OnFoodClicked(FoodItem food)
     {
         await FoodChanged.InvokeAsync(food);
-        _suggestedFoods = [];
-        _searchString = food.Name;
+        _suggestedFoods = _allFoods.Take(5).ToList();
+        _popupVisible = false;
     }
 
-    private async Task OnClickClear()
+    private void OnVisibleChanged(bool visible)
     {
-        await FoodChanged.InvokeAsync(new());
-        _searchString = string.Empty;
+        _popupVisible = visible;
+    }
+
+    private void OnClickSearch()
+    {
+        _popupVisible = true;
+    }
+
+    private async Task DeleteClicked(FoodItem food)
+    {
+        Food = new();
+        await FoodChanged.InvokeAsync(Food);
     }
 }

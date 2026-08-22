@@ -18,7 +18,8 @@
         {
             @foreach (var food in _allFoods)
             {
-                <FoodItemSmallCard Food="food" FoodClicked="@OnFoodItemClicked" DeleteClicked="@OnClickDeleteFood"/>
+                <FoodItemSmallCard Food="food" FoodClicked="@OnFoodItemClicked" 
+                    DeleteClicked="@OnClickDeleteFood"/>
             }
         }
         else
@@ -30,7 +31,8 @@
         {
             @foreach (var meal in _allMeals)
             {
-                <MealSmallCard Meal="meal" MealClicked="@OnMealClicked" DeleteClicked="@OnClickDeleteMeal"/>
+                <MealSmallCard Meal="meal" MealClicked="@OnMealClicked" 
+                    DeleteClicked="@OnClickDeleteMeal"/>
             }
         }
         else

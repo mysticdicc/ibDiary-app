@@ -6,6 +6,7 @@
     --active: rgb(194, 0, 255);
     --text: rgb(204, 212, 227);
     font-family: "Roboto";
+    box-sizing: border-box;
 }
 
 button {
@@ -185,7 +186,6 @@ button:active {
         background: #7300DB;
         background: linear-gradient(3deg, rgba(115, 0, 219, 1) 0%, rgba(59, 3, 139, 1) 23%, rgba(0, 6, 54, 1) 100%);
         border-radius: 10px;
-        overflow: hidden;
 
         > header {
             display: flex;
@@ -193,6 +193,7 @@ button:active {
             justify-content: flex-end;
             width: 100%;
             align-items: center;
+            padding: 5px;
 
             h1 {
                 font-size: 1.2rem;
@@ -202,11 +203,14 @@ button:active {
                 background-color: rgba(0,0,0,0);
             }
         }
+    }
+}
 
-        > div {
-            width: 100%;
-            overflow: hidden;
-        }
+.popup-background-fade .popup-background-fade {
+    z-index: 2000;
+
+    > div {
+        z-index: 2001;
     }
 }
 
@@ -608,18 +612,8 @@ button:active {
         padding: 5px;
         text-align: center;
 
-        .symptom-state-change, .medicine-state-change {
-            padding: 0;
-
-            .left {
-                visibility: hidden;
-                width: 0;
-            }
-
-            .right {
-                width: 100%;
-                padding: 0;
-            }
+        p {
+            margin: 0;
         }
     }
 }
@@ -696,6 +690,7 @@ button:active {
     > div {
         display: flex;
         flex-direction: row;
+        margin-bottom: 5px;
 
         h3 {
             font-size: 1.2rem;
@@ -710,11 +705,61 @@ button:active {
                 width: 100%;
             }
         }
+
+        .searcher-preview {
+            margin-bottom: 5px;
+            width: 100%;
+        }
+    }
+
+    .popup-background-fade {
+        z-index: 1100;
+
+        > div {
+            z-index: 1101;
+        }
+    }
+}
+
+.searcher-preview {
+    display: flex;
+    flex-direction: column;
+
+    button {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-style: solid;
+        border-color: var(--text);
+        border-width: 1px;
+        border-radius: 5px;
+        background-color: rgba(0,0,0,0);
+        margin-bottom: 5px;
+
+        p {
+            margin: 0;
+            margin-left: 5px;
+        }
+
+        span {
+            font-size: 1.2rem;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    }
+
+    .small-card {
+        div {
+            button {
+                display: none;
+            }
+        }
     }
 }
 
 .medicine-searcher, .symptom-searcherm, .food-item-searcher, .meal-searcher {
-    width: 100%;
+    margin: 5px;
 
     > div {
         display: flex;
@@ -732,12 +777,15 @@ button:active {
         }
 
         .small-card {
-            width: 100%;
-
             button {
                 display: none;
             }
         }
+    }
+
+    > div:has(.small-card) {
+        display: flex;
+        flex-direction: column;
     }
 }
 
@@ -789,6 +837,21 @@ button:active {
         display: flex;
         flex-direction: column;
 
+        header {
+            display: flex;
+            flex-direction: row;
+            padding: 5px;
+            align-items: center;
+
+            h3 {
+                margin: 0;
+            }
+
+            .food-searcher-preview {
+                margin-left: auto;
+            }
+        }
+
         .food-item-card {
             > div {
                 button {
@@ -821,3 +884,18 @@ button:active {
 .food-list, .medicine-list {
     padding: 5px;
 }
+
+.meal-item-report-viewer, .food-item-report-viewer {
+    padding: 5px;
+
+    .small-card {
+        button {
+            display: none;
+        }
+    }
+
+    button {
+        background-color: rgba(0,0,0,0);
+    }
+}
+
