@@ -1,0 +1,127 @@
+﻿@if (HasOwnControl)
+{
+    <div class="new-item-container">
+        <button @onclick="@OnClickAdd">
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </div>
+}
+
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged">
+    <div class="new-item-popup">
+        <header>
+            <h2>Add New Item</h2>
+        </header>
+        <div>
+            <button @onclick="@MedicineClicked">Create Medicine</button>
+            <button @onclick="@MedicineReportClicked">Create Medicine Report</button>
+            <button @onclick="@SymptomClicked">Create Symptom</button>
+            <button @onclick="@SymptomReportClicked">Create Symptom Report</button>
+            <button @onclick="@FoodClicked">Create Food Item</button>
+            <button @onclick="@FoodReportClicked">Create Food Report</button>
+            <button @onclick="@MealClicked">Create Meal</button>
+            <button @onclick="@MealReportClicked">Create Meal Report</button>
+        </div>
+    </div>
+</Popup>
+
+<MedicineViewer Medicine="@_medicine" @bind-Visible="@_medicineVisible"/>
+<MedicineReportViewer MedicineReport="@_medReport" @bind-Visible="@_medicineReportVisible"/>
+
+<SymptomViewer Symptom="@_symptom" @bind-Visible="@_symptomVisible"/>
+<SymptomReportViewer SymptomReport="@_sympReport" @bind-Visible="@_sympReportVisible"/>
+
+<FoodItemViewer Food="@_food" @bind-Visible="@_foodVisible"/>
+<FoodItemReportViewer Report="@_foodReport" @bind-Visible="@_foodReportVisible"/>
+
+<MealViewer Meal="@_meal" @bind-Visible="@_mealVisible"/>
+<MealReportViewer Report="@_mealReport" @bind-Visible="@_mealReportVisible"/>
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    [Parameter] public bool HasOwnControl { get; set; } = true;
+
+    private Medicine _medicine = new();
+    private bool _medicineVisible = false;
+
+    private MedicineReport _medReport = new();
+    private bool _medicineReportVisible = false;
+
+    private Symptom _symptom = new();
+    private bool _symptomVisible = false;
+
+    private SymptomReport _sympReport = new();
+    private bool _sympReportVisible = false;
+
+    private FoodItem _food = new();
+    private bool _foodVisible = false;
+
+    private FoodItemReport _foodReport = new();
+    private bool _foodReportVisible = false;
+
+    private Meal _meal = new();
+    private bool _mealVisible = false;
+
+    private MealReport _mealReport = new();
+    private bool _mealReportVisible = false;
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
+    }
+
+    private void MedicineClicked()
+    {
+        _medicine = new();
+        _medicineVisible = true;
+    }
+
+    private void MedicineReportClicked()
+    {
+        _medReport = new();
+        _medicineReportVisible = true;
+    }
+
+    private void SymptomClicked()
+    {
+        _symptom = new();
+        _symptomVisible = true;
+    }
+
+    private void SymptomReportClicked()
+    {
+        _sympReport = new();
+        _sympReportVisible = true;
+    }
+
+    private void FoodClicked()
+    {
+        _food = new();
+        _foodVisible = true;
+    }
+
+    private void FoodReportClicked()
+    {
+        _foodReport = new();
+        _foodReportVisible = true;
+    }
+
+    private void MealClicked()
+    {
+        _meal = new();
+        _mealVisible = true;
+    }
+
+    private void MealReportClicked()
+    {
+        _mealReport = new();
+        _mealReportVisible = true;
+    }
+
+    private async Task OnClickAdd()
+    {
+        Visible = true;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+}

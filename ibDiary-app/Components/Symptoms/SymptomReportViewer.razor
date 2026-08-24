@@ -3,7 +3,7 @@
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Symptom Report">
     <div class="symptom-report-viewer">
         <div>
-            <SymptomSmallCard Symptom="@SymptomReport.Symptom" />
+            <SymptomSearcher Symptom="@SymptomReport.Symptom" SymptomChanged="@OnSymptomSelected" ShowSelected="true"/>
         </div>
         <div>
             @if (null != SymptomReport.Medication)
@@ -70,5 +70,10 @@
     private async Task OnVisibleChamged(bool visible)
     {
         await VisibleChanged.InvokeAsync(visible);
+    }
+
+    private void OnSymptomSelected(Symptom symptom)
+    {
+        if (!symptom.IsNew) SymptomReport.Symptom = symptom;
     }
 }

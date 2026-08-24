@@ -1,9 +1,9 @@
 ﻿@inject MedicineReportClientService _medDbService;
 
-<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title=@($"{MedicineReport.Medicine.Name} Report")>
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Medicine Report">
     <div class="medicine-report-viewer">
         <div>
-            <MedicineSmallCard Medicine="@MedicineReport.Medicine" />
+            <MedicineSearcher Medicine="@MedicineReport.Medicine" MedicineChanged="@OnMedicineSelected" ShowSelected="true"/>
         </div>
         <div>
             <IbdDateTimeInput Title="Taken At" @bind-Value="@MedicineReport.MedicineTakenAt" />
@@ -58,5 +58,10 @@
     private async Task OnVisibleChamged(bool visible)
     {
         await VisibleChanged.InvokeAsync(visible);
+    }
+
+    private void OnMedicineSelected(Medicine medicine)
+    {
+        if (!medicine.IsNew) MedicineReport.Medicine = medicine;
     }
 }

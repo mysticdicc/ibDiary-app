@@ -1,0 +1,6 @@
+@ibDiary_web.Server_HostAddress = http://localhost:5018
+
+GET {{ibDiary_web.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

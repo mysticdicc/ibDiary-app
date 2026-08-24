@@ -1,10 +1,13 @@
 :root {
     --primary: rgb(115, 0, 219);
-    --secondary: rgb(68, 1, 189);
-    --background: rgb(0, 6, 54);
-    --background-light: rgb(24, 30, 79);
+    --background: rgb(114, 2, 189);
+    --background-dark: rgb(49, 1, 82);
+    --background-light: rgb(142, 46, 207);
+    --secondary: rgb(211, 0, 133);
+    --secondary-dark: rgb(171, 0, 107);
     --active: rgb(194, 0, 255);
     --text: rgb(204, 212, 227);
+    --border: rgb(20, 1, 33);
     font-family: "Roboto";
     box-sizing: border-box;
 }
@@ -13,15 +16,20 @@ button {
     border-style: none;
     color: var(--text);
     padding: 5px;
+    transition: all 0.2s ease;
+    background-color: rgba(182, 145, 207);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-button:active {
-    background-color: var(--primary);
-}
+    button:active {
+        background-color: var(--primary);
+        box-shadow: inset 2px 2px 0 rgba(49, 1, 82, 1);
+    }
 
 #app {
-    background: #7300DB;
-    background: linear-gradient(3deg, rgba(115, 0, 219, 1) 0%, rgba(59, 3, 139, 1) 23%, rgba(0, 6, 54, 1) 100%);
+    background: rgb(86, 1, 145);
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -80,42 +88,71 @@ button:active {
     }
 }
 
-
 .main-layout-container {
     margin-top: 48px;
-    height: calc(100vh - 48px);
+    height: calc(100vh - 78px);
     width: 100vw;
+    margin-bottom: 30px;
+
+    .main-layout-footer {
+        width: 100vw;
+        height: 2rem;
+    }
 
     .main-layout-header {
         width: 100vw;
-        height: 4rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-content: center;
+        color: var(--text);
+        height: 3rem;
+
+        h1 {
+            background-color: var(--secondary);
+            padding-left: 5px;
+            padding-right: 5px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            border-style: solid;
+            border-width: 1px;
+            border-color: var(--border);
+            margin: 0;
+            border-radius: 10px;
+            font-size: 1.5rem;
+        }
     }
 
     .main {
         width: 100vw;
-        height: calc(100% - 4rem);
+        height: calc(100% - 5rem);
         overflow-y: auto;
         overflow-x: hidden;
-        padding: 5px;
+        padding: 10px;
         color: var(--text);
 
         > article {
             border-style: solid;
             border-width: 1px;
-            border-color: var(--text);
+            border-color: var(--border);
             border-radius: 10px;
             height: 100%;
             overflow-x: hidden;
             overflow-y: auto;
+            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            background-color: var(--background-light);
 
             > header {
                 display: flex;
                 flex-direction: row;
                 border-bottom: solid;
-                border-color: var(--text);
+                border-color: var(--border);
+                background-color: var(--background-dark);
                 border-width: 1px;
                 width: 100%;
                 justify-content: flex-end;
+                box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
 
                 button {
                     background-color: rgba(0,0,0,0);
@@ -128,6 +165,14 @@ button:active {
 .nav-menu-container {
     display: flex;
     flex-direction: column;
+    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--border);
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: var(--background);
 
     > header {
         display: flex;
@@ -183,9 +228,12 @@ button:active {
         z-index: 1000;
         width: 90%;
         height: fit-content;
-        background: #7300DB;
-        background: linear-gradient(3deg, rgba(115, 0, 219, 1) 0%, rgba(59, 3, 139, 1) 23%, rgba(0, 6, 54, 1) 100%);
+        background-color: var(--background);
+        border-style: solid;
+        border-color: var(--border);
+        border-width: 1px;
         border-radius: 10px;
+        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
 
         > header {
             display: flex;
@@ -294,34 +342,56 @@ button:active {
 }
 
 .home-page {
-    .scrolling-calendar {
-        max-height: 50%;
-    }
-
     > div {
         border-style: solid;
         border-width: 1px;
-        border-color: var(--text);
-        border-radius: 5px;
-        padding: 5px;
+        border-color: var(--border);
+        border-radius: 10px;
         margin-top: 10px;
-        margin-left: 5px;
-        margin-right: 5px;
+        margin-left: 10px;
+        margin-right: 10px;
         background-color: rgba(0,0,0,0.1);
+        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+        background-color: var(--background);
 
-        header {
+        > div {
+            padding: 5px;
+
+            .small-card {
+                margin-bottom: 10px;
+                margin-left: 5px;
+                margin-right: 5px;
+            }
+        }
+
+        > header {
             display: flex;
             flex-direction: row;
+            background-color: var(--secondary);
+            padding: 5px;
+            border-style: solid;
+            border-width: 1px;
+            border-color: var(--border);
+            border-radius: 10px 10px 0px 0px;
 
             button {
                 margin-left: auto;
                 background-color: rgba(0,0,0,0);
+            }
+
+            h2 {
+                margin: 0;
+                color: var(--text);
             }
         }
 
         p {
             margin: 0;
         }
+    }
+
+    > div:last-of-type {
+        margin-bottom: 10px;
     }
 }
 
@@ -336,10 +406,6 @@ button:active {
 
     > p {
         text-align: center;
-        padding: 5px;
-    }
-
-    .symptom-list {
         padding: 5px;
     }
 }
@@ -528,15 +594,17 @@ button:active {
         display: flex;
         flex-direction: row;
 
-        .small-card {
+        .searcher-preview {
             width: 100%;
 
-            button {
-                display: none;
+            .small-card {
+                button {
+                    display: none;
+                }
             }
         }
 
-        button {
+        > button {
             background-color: rgba(0,0,0,0);
             flex: 1;
         }
@@ -551,17 +619,13 @@ button:active {
     height: 100%;
 
     > header {
-        background-color: var(--text);
+        background-color: var(--background-dark);
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
 
         button {
-            background-color: var(--text);
-
-            span {
-                color: var(--background);
-            }
+            background-color: var(--background-dark);
         }
     }
 
@@ -594,18 +658,20 @@ button:active {
 .calendar-card {
     border-style: solid;
     border-width: 1px;
-    border-color: var(--text);
+    border-color: var(--border);
+    background-color: var(--background);
     border-radius: 5px;
     overflow: hidden;
     margin-left: 2rem;
     margin-right: 2rem;
     margin-top: 1rem;
     min-height: fit-content;
+    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
 
     header {
         padding: 5px;
-        background-color: var(--text);
-        color: var(--background);
+        background-color: var(--background-dark);
+        color: var(--text);
     }
 
     div {
@@ -622,16 +688,15 @@ button:active {
     border-radius: 5px;
     border-style: solid;
     border-width: 1px;
-    border-color: var(--text);
+    border-color: var(--background-dark);
+    background-color: var(--background);
     display: flex;
     flex-direction: column;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-bottom: 5px;
+    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
 
     > header {
-        background-color: var(--text);
-        color: var(--background-light);
+        background-color: var(--background-dark);
+        color: var(--text);
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -640,11 +705,7 @@ button:active {
 
         button {
             margin-left: auto;
-            background-color: var(--text);
-
-            span {
-                color: var(--background);
-            }
+            background-color: var(--background-dark);
         }
     }
 
@@ -667,6 +728,10 @@ button:active {
                 font-size: 1rem;
             }
         }
+    }
+
+    > div:last-of-type {
+        margin-bottom: 5px;
     }
 
     p {
@@ -881,8 +946,28 @@ button:active {
     }
 }
 
-.food-list, .medicine-list {
-    padding: 5px;
+.food-list, .medicine-list, .symptom-list {
+    padding: 10px;
+
+    h2 {
+        background-color: var(--secondary);
+        border-color: var(--border);
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .small-card {
+        margin-bottom: 10px;
+    }
 }
 
 .meal-item-report-viewer, .food-item-report-viewer {
@@ -899,3 +984,59 @@ button:active {
     }
 }
 
+.new-item-popup {
+    padding: 5px;
+
+    header {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 5px;
+
+        h2 {
+            color: var(--text);
+        }
+    }
+
+    div {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 10px;
+        padding: 10px;
+
+        button {
+            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            border-style: solid;
+            border-color: var(--border);
+            border-width: 1px;
+            border-radius: 5px;
+            background-color: var(--background);
+        }
+    }
+}
+
+.new-item-container {
+    position: absolute;
+    bottom: 10%;
+    right: 7.5%;
+
+    button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 25px;
+        overflow: hidden;
+        background-color: var(--secondary);
+        border-style: solid;
+        border-color: var(--border);
+        border-width: 1px;
+        padding: 10px;
+        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+        z-index: 100;
+
+        span {
+            font-size: 2rem;
+        }
+    }
+}

@@ -2,12 +2,24 @@
 
 <div class="main-layout-container">
     <header class="main-layout-header">
-        <NavMenu />
+        <h1>IbDiary</h1>
     </header>
     <main class="main">
         @Body
     </main>
-
+    <footer class="main-layout-footer">
+        <NavMenu />
+    </footer>
     <Notification />
     <ConfirmationPopup />
+    <NewItemPopup Visible="@_newItemVisible" VisibleChanged="@NewVisibleChanged"/>
 </div>
+
+@code {
+    private bool _newItemVisible = false;
+
+    private void NewVisibleChanged(bool visible)
+    {
+        _newItemVisible = visible;
+    }
+}

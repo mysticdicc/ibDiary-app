@@ -2,4 +2,9 @@
   <Project Path="ibDiary-app/ibDiary-app.csproj">
     <Deploy />
   </Project>
+  <Project Path="ibDiary-web/ibdiary-web.client/ibdiary-web.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ibDiary-web/ibDiary-web.Server/ibDiary-web.Server.csproj" Id="d18f7dda-4ce3-4779-924b-7bc2038ac5ca" />
 </Solution>

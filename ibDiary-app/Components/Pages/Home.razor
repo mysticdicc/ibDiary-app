@@ -5,17 +5,28 @@
 @page "/"
 
 <article class="home-page">
+    <header>
+        <button @onclick="@OnClickAdd">
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </header>
+
     @if (_pendingReports.Count > 0)
     {
         <div class="pending-reports">
-            <h2>Pending Reports</h2>
-            <p>The following medicines are due reports.</p>
+            <header>
+                <h2>Pending Reports</h2>
+            </header>
             <div>
-                @foreach (var report in _pendingReports)
-                {
-                    <MedicineReportRow MedicineReport="report"/>
-                }
+                <p>The following medicines are due reports.</p>
+                <div>
+                    @foreach (var report in _pendingReports)
+                    {
+                        <MedicineReportRow MedicineReport="report" />
+                    }
+                </div>
             </div>
+
         </div>
     }
     <div class="current-medicines" @onclick="@OnClickCurrentMedicines">
@@ -25,17 +36,19 @@
                 <span class="material-symbols-outlined">help</span>
             </button>
         </header>
-        @if (_currentMedicines.Count > 0)
-        {
-            @foreach (var active in _currentMedicines)
+        <div>
+            @if (_currentMedicines.Count > 0)
             {
-                <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked"/>
+                @foreach (var active in _currentMedicines)
+                {
+                    <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked" />
+                }
             }
-        }
-        else
-        {
-            <p>You have no active medicines.</p>
-        }
+            else
+            {
+                <p>You have no active medicines.</p>
+            }
+        </div>
     </div>
     <div class="current-symptoms" @onclick="@OnClickCurrentSymptoms">
         <header>
@@ -44,26 +57,28 @@
                 <span class="material-symbols-outlined">help</span>
             </button>
         </header>
-        
-        @if (_currentSymptoms.Count > 0)
-        {
-            @foreach (var active in _currentSymptoms)
+        <div>
+            @if (_currentSymptoms.Count > 0)
             {
-                <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked"/>
+                @foreach (var active in _currentSymptoms)
+                {
+                    <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" />
+                }
             }
-        }
-        else
-        {
-            <p>You have no active symptoms.</p>
-        }
+            else
+            {
+                <p>You have no active symptoms.</p>
+            }
+        </div>
+
     </div>
-    <ScrollingCalendar @ref="@_calendar"/>
 </article>
 
-<MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible" MedicineChanged="@OnCalendarUpdate" />
-<SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible" SymptomChanged="@OnCalendarUpdate" />
+<MedicineViewer Medicine="@_currentMedicine" @bind-Visible="@_medicineViewerVisible"/>
+<SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible" />
 <SymptomHelpPopup @bind-Visible="@_symptomHelpVisible"/>
 <MedicineHelpPopup @bind-Visible="@_medicineHelpVisible"/>
+<NewItemPopup @bind-Visible="@_newItemVisible" HasOwnControl="false"/>
 
 @code {
     private List<MedicineReport> _pendingReports = [];
@@ -79,7 +94,7 @@
     private bool _symptomHelpVisible = false;
     private bool _medicineHelpVisible = false;
 
-    private ScrollingCalendar? _calendar;
+    private bool _newItemVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,7 +114,6 @@
     private async Task OnMedicineReportChanged(MedicineReport report)
     {
         _pendingReports = await _pendingMedService.GetPendingReportsAsync();
-        if (null != _calendar) await _calendar.RefreshAsync();
     }
 
     private void OnMedicineRowClicked(Medicine medicine)
@@ -134,9 +148,9 @@
         _medicineHelpVisible = true;
     }
 
-    private async Task OnCalendarUpdate(ICalendarUpdate update)
+    private void OnClickAdd()
     {
-        if (null != _calendar) await _calendar.RefreshAsync();
+        _newItemVisible = true;
     }
 }
 
