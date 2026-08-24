@@ -152,6 +152,18 @@
             day.CreatedSymptoms = day.CreatedSymptoms.Where(x => x == _filter.Symptom).ToList();
         }
 
+        if (_filter.FoodFilterEnabled)
+        {
+            day.FoodReports = day.FoodReports.Where(x => x.FoodItem == _filter.Food).ToList();
+            day.CreatedFoods = day.CreatedFoods.Where(x => x == _filter.Food).ToList();
+        }
+
+        if (_filter.MealFilterEnabled)
+        {
+            day.MealReports = day.MealReports.Where(x => x.Meal == _filter.Meal).ToList();
+            day.CreatedMeals = day.CreatedMeals.Where(x => x == _filter.Meal).ToList();
+        }
+
         if (!_filter.ShowMedicineReports)
         {
             day.MedicineReports = [];
@@ -167,7 +179,7 @@
             day.CreatedSymptoms = [];
         }
 
-        if (!_filter.ShowCreatedMedicines)
+        if (!_filter.ShowAddedMedicines)
         {
             day.CreatedMedicines = [];
         }

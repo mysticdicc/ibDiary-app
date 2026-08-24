@@ -1,4 +1,5 @@
-﻿using ibDiary_app.Models.Medication;
+﻿using ibDiary_app.Models.Food;
+using ibDiary_app.Models.Medication;
 using ibDiary_app.Models.Symptoms;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,19 @@ namespace ibDiary_app.Models.Calendar
         public Medicine Medicine { get; set; }
         public bool SymptomFilterEnabled { get; set; }
         public Symptom Symptom { get; set; }
+        public bool FoodFilterEnabled { get; set; }
+        public FoodItem Food { get; set; }
+        public bool MealFilterEnabled { get; set; }
+        public Meal Meal { get; set; }
         public bool ShowInactive { get; set; }
         public bool ShowMedicineReports { get; set; }
         public bool ShowSymptomReports { get; set; }
-        public bool ShowCreatedMedicines { get; set; }
+        public bool ShowFoodReports { get; set; }
+        public bool ShowMealReports { get; set; }
+        public bool ShowAddedMedicines { get; set; }
         public bool ShowAddedSymptoms { get; set; }
+        public bool ShowAddedFoods { get; set; }
+        public bool ShowAddedMeals { get; set; }
 
         public CalendarFilter()
         {
@@ -30,41 +39,131 @@ namespace ibDiary_app.Models.Calendar
             Medicine = new();
             SymptomFilterEnabled = false;
             Symptom = new();
+            FoodFilterEnabled = false;
+            Food = new();
+            MealFilterEnabled = false;
+            Meal = new();
             ShowInactive = true;
             ShowMedicineReports = true;
             ShowSymptomReports = true;
-            ShowCreatedMedicines = true;
+            ShowFoodReports = true;
+            ShowMealReports = true;
+            ShowAddedMedicines = true;
             ShowAddedSymptoms = true;
+            ShowAddedFoods = true;
+            ShowAddedMeals = true;
         }
 
-        public void ChangeSymptomFilter(bool enabled, Symptom? symptom)
+        public void UpdateShowFilters()
+        {
+            if (!MedicineFilterEnabled && !SymptomFilterEnabled && !FoodFilterEnabled && !MealFilterEnabled)
+            {
+                ShowInactive = true;
+                ShowMedicineReports = true;
+                ShowSymptomReports = true;
+                ShowAddedMedicines = true;
+                ShowAddedSymptoms = true;
+                ShowAddedFoods = true;
+                ShowFoodReports = true;
+                ShowAddedMeals = true;
+                ShowMealReports = true;
+                return;
+            }
+
+            ShowInactive = false;
+            ShowMedicineReports = false;
+            ShowSymptomReports = false;
+            ShowAddedMedicines = false;
+            ShowAddedSymptoms = false;
+            ShowAddedFoods = false;
+            ShowFoodReports = false;
+            ShowAddedMeals = false;
+            ShowMealReports = false;
+
+            if (MedicineFilterEnabled)
+            {
+                ShowMedicineReports = true;
+                ShowAddedMedicines = true;
+            }
+            if (SymptomFilterEnabled)
+            {
+                ShowSymptomReports = true;
+                ShowAddedSymptoms = true;
+            }
+
+            if (FoodFilterEnabled)
+            {
+                ShowFoodReports = true;
+                ShowMealReports = true;
+                ShowAddedFoods = true;
+                ShowAddedMeals = true; //for meals containing food
+            }
+
+            if (MealFilterEnabled)
+            {
+                ShowMealReports = true;
+                ShowAddedMeals = true;
+            }
+        }
+
+        public void ChangeSymptomFilter(bool enabled)
         {
             if (enabled)
             {
-                if (null == symptom) return;
                 SymptomFilterEnabled = true;
-                Symptom = symptom;
             }
             else
             {
                 SymptomFilterEnabled = false;
                 Symptom = new();
             }
+
+            UpdateShowFilters();
         }
 
-        public void ChangeMedicineFilter(bool enabled, Medicine? medicine)
+        public void ChangeMedicineFilter(bool enabled)
         {
             if (enabled)
             {
-                if (null == medicine) return;
                 MedicineFilterEnabled = true;
-                Medicine = medicine;
             }
             else
             {
                 MedicineFilterEnabled = false;
                 Medicine = new();
             }
+
+            UpdateShowFilters();
+        }
+
+        public void ChangeFoodFilter(bool enabled)
+        {
+            if (enabled)
+            {
+                FoodFilterEnabled = true;
+            }
+            else
+            {
+                FoodFilterEnabled = false;
+                Food = new();
+            }
+
+            UpdateShowFilters();
+        }
+
+        public void ChangeMealFilter(bool enabled)
+        {
+            if (enabled)
+            {
+                MealFilterEnabled = true;
+            }
+            else
+            {
+                MealFilterEnabled = false;
+                Meal = new();
+            }
+
+            UpdateShowFilters();
         }
     }
 }

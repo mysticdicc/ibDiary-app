@@ -1,6 +1,7 @@
 ﻿using AndroidX.Work;
 using ibDiary_app.Data;
 using ibDiary_app.Models.Medication;
+using ibDiary_app.Models.Settings;
 using ibDiary_app.Models.Symptoms;
 using ibDiary_app.Services;
 using ibDiary_app.Services.Calendar;
@@ -55,6 +56,10 @@ namespace ibDiary_app
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite($"Filename={dbPath}")
             );
+
+            var settings = new AppSettings();
+            settings.Load();
+            builder.Services.AddSingleton(settings);
 
             builder.Services.AddSingleton<ClientNotificationService>();
             builder.Services.AddSingleton<ConfirmationService>();

@@ -53,6 +53,7 @@
     private async Task OnFoodClicked(FoodItem food)
     {
         await FoodChanged.InvokeAsync(food);
+        _searchString = string.Empty;
         _suggestedFoods = _allFoods.Take(5).ToList();
         _popupVisible = false;
     }

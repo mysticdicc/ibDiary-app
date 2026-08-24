@@ -1,44 +1,22 @@
-﻿@inject NavigationManager NavManager
-
-<div class="nav-menu-container">
+﻿<div class="nav-menu-container">
     <div>
-        <button @onclick="@OnClickHome"><span class="material-symbols-outlined">home</span></button>
-        <button @onclick="@OnClickOpenHistory">History</button>
-        <button @onclick="@OnClickOpenFoods">Foods</button>
-        <button @onclick="@OnClickOpenSymptoms">Symptoms</button>
-        <button @onclick="@OnClickOpenMedicine">Medicines</button>
-        <button @onclick="@OnClickOpenSettings"><span class="material-symbols-outlined">settings</span></button>
+        <NavLink href="" class="nav" Match="NavLinkMatch.All">
+            <span class="material-symbols-outlined">home</span>
+        </NavLink>
+        <NavLink href="history" class="nav">
+            <p>History</p>
+        </NavLink>
+        <NavLink href="foods" class="nav">
+            <p>Foods</p>
+        </NavLink>
+        <NavLink href="symptoms" class="nav">
+            <p>Symptoms</p>
+        </NavLink>
+        <NavLink href="medicines" class="nav">
+            <p>Medicines</p>
+        </NavLink>
+        <NavLink href="settings" class="nav">
+            <span class="material-symbols-outlined">settings</span>
+        </NavLink>
     </div>
 </div>
-
-@code {
-    private void OnClickHome()
-    {
-        NavManager.NavigateTo("/");
-    }
-
-    private void OnClickOpenSymptoms()
-    {
-        NavManager.NavigateTo("/symptoms");
-    }
-
-    private void OnClickOpenMedicine()
-    {
-        NavManager.NavigateTo("/medicines");
-    }
-
-    private void OnClickOpenHistory()
-    {
-        NavManager.NavigateTo("/history");
-    }
-
-    private void OnClickOpenSettings()
-    {
-        NavManager.NavigateTo("/settings");
-    }
-
-    private void OnClickOpenFoods()
-    {
-        NavManager.NavigateTo("/foods");
-    }
-}

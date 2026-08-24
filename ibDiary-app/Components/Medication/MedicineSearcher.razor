@@ -54,6 +54,7 @@
     private async Task OnMedicineClicked(Medicine medicine)
     {
         await MedicineChanged.InvokeAsync(medicine);
+        _searchString = string.Empty;
         _suggestedMedicines = _allMedicines.Take(5).ToList();
         _popupVisible = false;
     }

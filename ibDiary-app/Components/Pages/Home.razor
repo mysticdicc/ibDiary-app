@@ -4,6 +4,7 @@
 @inject SymptomClientService _symDbSevrice
 @inject NavigationManager _navManager
 @inject ComponentUpdateService _updateService
+@inject ConfirmationService _confirmService
 @page "/"
 
 <article class="home-page">
@@ -43,7 +44,7 @@
             {
                 @foreach (var active in _currentMedicines)
                 {
-                    <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked" />
+                    <MedicineSmallCard Medicine="active" MedicineClicked="@OnMedicineRowClicked" DeleteClicked="@OnMedicineDeleted"/>
                 }
             }
             else
@@ -64,7 +65,7 @@
             {
                 @foreach (var active in _currentSymptoms)
                 {
-                    <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" />
+                    <SymptomSmallCard Symptom="active" SymptomClicked="@OnSymptomRowClicked" DeleteClicked="@OnSymptomDeleted"/>
                 }
             }
             else
@@ -165,6 +166,36 @@
     private void OnClickAdd()
     {
         _newItemVisible = true;
+    }
+
+    private async Task OnMedicineDeleted(Medicine medicine)
+    {
+        var request = new ConfirmationRequest();
+        request.Message = $"Are you sure you want to delete {medicine.Name}?";
+        request.TrueOption = new(true, "Yes");
+        request.FalseOption = new(false, "No");
+        var result = await _confirmService.ShowAsync(request);
+
+        if (result.Result)
+        {
+            var success = await _medDbService.DeleteAsync(medicine);
+            if (success) await RefreshHomeAsync();
+        }
+    }
+
+    private async Task OnSymptomDeleted(Symptom symptom)
+    {
+        var request = new ConfirmationRequest();
+        request.Message = $"Are you sure you want to delete {symptom.Title}?";
+        request.TrueOption = new(true, "Yes");
+        request.FalseOption = new(false, "No");
+        var result = await _confirmService.ShowAsync(request);
+
+        if (result.Result)
+        {
+            var success = await _symDbSevrice.DeleteAsync(symptom);
+            if (success) await RefreshHomeAsync();
+        }
     }
 }
 

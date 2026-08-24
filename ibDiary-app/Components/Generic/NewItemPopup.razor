@@ -9,19 +9,24 @@
     </div>
 }
 
-<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged">
+<Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Add New">
     <div class="new-item-popup">
-        <header>
-            <h2>Add New Item</h2>
-        </header>
         <div>
+            <header>
+                <h2>Items</h2>
+            </header>
             <button @onclick="@MedicineClicked">Create Medicine</button>
-            <button @onclick="@MedicineReportClicked">Create Medicine Report</button>
             <button @onclick="@SymptomClicked">Create Symptom</button>
-            <button @onclick="@SymptomReportClicked">Create Symptom Report</button>
             <button @onclick="@FoodClicked">Create Food Item</button>
-            <button @onclick="@FoodReportClicked">Create Food Report</button>
             <button @onclick="@MealClicked">Create Meal</button>
+        </div>
+        <div>
+            <header>
+                <h2>Reports</h2>
+            </header>
+            <button @onclick="@MedicineReportClicked">Create Medicine Report</button>
+            <button @onclick="@SymptomReportClicked">Create Symptom Report</button>
+            <button @onclick="@FoodReportClicked">Create Food Report</button>
             <button @onclick="@MealReportClicked">Create Meal Report</button>
         </div>
     </div>

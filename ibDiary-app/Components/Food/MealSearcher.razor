@@ -53,6 +53,7 @@
     private async Task OnMealClicked(Meal meal)
     {
         await MealChanged.InvokeAsync(meal);
+        _searchString = string.Empty;
         _suggestedMeals = _allMeals.Take(5).ToList();
         _popupVisible = false;
     }

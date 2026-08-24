@@ -54,6 +54,7 @@
     private async Task OnSymptomClicked(Symptom symptom)
     {
         await SymptomChanged.InvokeAsync(symptom);
+        _searchString = string.Empty;
         _suggestedSymptoms = _allSymptoms.Take(5).ToList();
         _popupVisible = false;
     }

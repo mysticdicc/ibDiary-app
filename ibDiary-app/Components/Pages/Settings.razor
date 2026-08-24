@@ -7,6 +7,8 @@
 @inject SymptomReportClientService _sympReportService
 @inject CalendarClientService _calService
 @inject ClientNotificationService _notifier
+@inject ConfirmationService _confirmService
+@inject AppSettings _settings
 @using System.Text.Json
 
 <article class="settings-page">
@@ -23,6 +25,16 @@
             <h2>Database</h2>
         </header>
         <button @onclick="@OnClickDeleteDatabase">Delete Database</button>
+    </div>
+    <div>
+        <header>
+            <h2>Notifications</h2>
+        </header>
+        <IbdCheckbox Value="@_settings.NotificationsEnabled" ValueChanged="@NotificationsEnabledChanged" Title="Notifications Enabled"/>
+        @if (_settings.NotificationsEnabled)
+        {
+            <IbdCheckbox Value="@_settings.MedicineReportNotificationsEnabled" ValueChanged="@MedicineReportNotificationEnabledChanged" Title="Medicine Report Notifications Enabled"/>
+        }
     </div>
 </article>
 
@@ -51,8 +63,15 @@
         }
     }
 
-    private void OnClickDeleteDatabase()
+    private async Task OnClickDeleteDatabase()
     {
+        var request = new ConfirmationRequest();
+        request.Message = "Are you sure you want to delete the database file? This will delete all of the history in the application. There is no automatic backup.";
+        request.TrueOption = new(true, "Yes");
+        request.FalseOption = new(false, "No");
+        var result = await _confirmService.ShowAsync(request);
+        if (!result.Result) return;
+
         string dbPath = Path.Combine(FileSystem.AppDataDirectory, "ibdiary_db.db");
         if (File.Exists(dbPath))
         {
@@ -67,5 +86,17 @@
             }
         }
         else _notifier.ShowNotification("Error Deleting Database", "Could not find database file to delete.");
+    }
+
+    private void NotificationsEnabledChanged(bool value)
+    {
+        _settings.NotificationsEnabled = value;
+        _settings.Save();
+    }
+
+    private void MedicineReportNotificationEnabledChanged(bool value)
+    {
+        _settings.MedicineReportNotificationsEnabled = value;
+        _settings.Save();
     }
 }

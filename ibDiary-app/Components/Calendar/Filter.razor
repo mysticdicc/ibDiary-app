@@ -1,40 +1,75 @@
 ﻿<div class="calendar-filter">
     <div>
-        <h3>Filter By</h3>
+        <header>
+            <h3>Filter By</h3>
+            <button @onclick="@OnClickReset">
+                <span class="material-symbols-outlined">refresh</span>
+            </button>
+        </header>
+        <div>
+            <IbdCheckbox Value="@CalendarFilter.DateFilterEnabled" ValueChanged="@UpdateDateFilterEnabled" Title="Date" />
+            <IbdCheckbox Value="@CalendarFilter.MedicineFilterEnabled" ValueChanged="@UpdateMedicineFilterEnabled" Title="Medicine" />
+            <IbdCheckbox Value="@CalendarFilter.SymptomFilterEnabled" ValueChanged="@UpdateSymptomFilterEnabled" Title="Symptom" />
+        </div>
+        <div>
+            <IbdCheckbox Value="@CalendarFilter.FoodFilterEnabled" ValueChanged="@UpdateFoodFilterEnabled" Title="Food" />
+            <IbdCheckbox Value="@CalendarFilter.MealFilterEnabled" ValueChanged="@UpdateMealFilterEnabled" Title="Meal" />
+        </div>
+        @if (CalendarFilter.DateFilterEnabled)
+        {
+            <div>
+                <IbdDateOnlyInput Value="@CalendarFilter.DateFilterFrom" ValueChanged="@UpdateDateFilterFrom" Title="Date From" />
+                <IbdDateOnlyInput Value="@CalendarFilter.DateFilterTo" ValueChanged="@UpdateDateFilterTo" Title="Date To" />
+            </div>
+        }
+        @if (CalendarFilter.MedicineFilterEnabled)
+        {
+            <div>
+                <MedicineSearcher Medicine="@CalendarFilter.Medicine" MedicineChanged="@UpdateMedicine" ShowSelected="true" />
+            </div>
+        }
+        @if (CalendarFilter.SymptomFilterEnabled)
+        {
+            <div>
+                <SymptomSearcher Symptom="@CalendarFilter.Symptom" SymptomChanged="@UpdateSymptom" ShowSelected="true" />
+            </div>
+        }
+        @if (CalendarFilter.FoodFilterEnabled)
+        {
+            <div>
+                <FoodSearcher Food="@CalendarFilter.Food" FoodChanged="@UpdateFood" ShowSelected="true" />
+            </div>
+        }
+        @if (CalendarFilter.MealFilterEnabled)
+        {
+            <div>
+                <MealSearcher Meal="@CalendarFilter.Meal" MealChanged="@UpdateMeal" ShowSelected="true" />
+            </div>
+        }
     </div>
     <div>
-        <IbdCheckbox Value="@CalendarFilter.DateFilterEnabled" ValueChanged="@UpdateDateFilterEnabled" Title="Date" />
-        <IbdCheckbox Value="@CalendarFilter.MedicineFilterEnabled" ValueChanged="@UpdateMedicineFilterEnabled" Title="Medicine" />
-        <IbdCheckbox Value="@CalendarFilter.SymptomFilterEnabled" ValueChanged="@UpdateSymptomFilterEnabled" Title="Symptom" />
-    </div>
-    @if (CalendarFilter.DateFilterEnabled)
-    {
+        <header>
+            <h3>Show/Hide</h3>
+        </header>
         <div>
-            <IbdDateOnlyInput Value="@CalendarFilter.DateFilterFrom" ValueChanged="@UpdateDateFilterFrom" Title="Date From" />
-            <IbdDateOnlyInput Value="@CalendarFilter.DateFilterTo" ValueChanged="@UpdateDateFilterTo" Title="Date To" />
+            <IbdCheckbox Value="@CalendarFilter.ShowInactive" ValueChanged="@UpdateShowInactive" Title="Inactive" />
         </div>
-    }
-    @if (CalendarFilter.MedicineFilterEnabled)
-    {
         <div>
-            <MedicineSearcher Medicine="@CalendarFilter.Medicine" MedicineChanged="@UpdateMedicine" ShowSelected="true"/>
+            <IbdCheckbox Value="@CalendarFilter.ShowAddedMedicines" ValueChanged="@UpdateShowCreatedMedicines" Title="Medicines" />
+            <IbdCheckbox Value="@CalendarFilter.ShowMedicineReports" ValueChanged="@UpdateShowMedicineReports" Title="Medicine Reports" />
         </div>
-    }
-    @if (CalendarFilter.SymptomFilterEnabled)
-    {
         <div>
-            <SymptomSearcher Symptom="@CalendarFilter.Symptom" SymptomChanged="@UpdateSymptom" ShowSelected="true"/>
+            <IbdCheckbox Value="@CalendarFilter.ShowAddedSymptoms" ValueChanged="@UpdateShowAddedSymptoms" Title="Symptoms" />
+            <IbdCheckbox Value="@CalendarFilter.ShowSymptomReports" ValueChanged="@UpdateShowSymptomReports" Title="Symptom Reports" />
         </div>
-    }
-    <div>
-        <h3>Show/Hide</h3>
-    </div>
-    <div>
-        <IbdCheckbox Value="@CalendarFilter.ShowInactive" ValueChanged="@UpdateShowInactive" Title="Inactive" />
-        <IbdCheckbox Value="@CalendarFilter.ShowCreatedMedicines" ValueChanged="@UpdateShowCreatedMedicines" Title="Medicines" />
-        <IbdCheckbox Value="@CalendarFilter.ShowMedicineReports" ValueChanged="@UpdateShowMedicineReports" Title="Medicine Reports" />
-        <IbdCheckbox Value="@CalendarFilter.ShowAddedSymptoms" ValueChanged="@UpdateShowAddedSymptoms" Title="Symptoms" />
-        <IbdCheckbox Value="@CalendarFilter.ShowSymptomReports" ValueChanged="@UpdateShowSymptomReports" Title="Symptom Reports" />
+        <div>
+            <IbdCheckbox Value="@CalendarFilter.ShowAddedFoods" ValueChanged="@UpdateShowAddedFoods" Title="Foods" />
+            <IbdCheckbox Value="@CalendarFilter.ShowFoodReports" ValueChanged="@UpdateShowFoodReports" Title="Food Reports" />
+        </div>
+        <div>
+            <IbdCheckbox Value="@CalendarFilter.ShowAddedMeals" ValueChanged="@UpdateShowAddedMeals" Title="Meals"/>
+            <IbdCheckbox Value="@CalendarFilter.ShowMealReports" ValueChanged="@UpdateShowMealReports" Title="Meal Reports"/>
+        </div>
     </div>
 </div>
 
@@ -50,13 +85,25 @@
 
     private async Task UpdateMedicineFilterEnabled(bool value)
     {
-        CalendarFilter.MedicineFilterEnabled = value;
+        CalendarFilter.ChangeMedicineFilter(value);
         await OnFilterChanged.InvokeAsync();
     }
 
     private async Task UpdateSymptomFilterEnabled(bool value)
     {
-        CalendarFilter.SymptomFilterEnabled = value;
+        CalendarFilter.ChangeSymptomFilter(value);
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateFoodFilterEnabled(bool value)
+    {
+        CalendarFilter.ChangeFoodFilter(value);
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateMealFilterEnabled(bool value)
+    {
+        CalendarFilter.ChangeMealFilter(value);
         await OnFilterChanged.InvokeAsync();
     }
 
@@ -84,6 +131,18 @@
         await OnFilterChanged.InvokeAsync();
     }
 
+    private async Task UpdateMeal(Meal meal)
+    {
+        CalendarFilter.Meal = meal;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateFood(FoodItem food)
+    {
+        CalendarFilter.Food = food;
+        await OnFilterChanged.InvokeAsync();
+    }
+
     private async Task UpdateShowInactive(bool value)
     {
         CalendarFilter.ShowInactive = value;
@@ -92,7 +151,7 @@
 
     private async Task UpdateShowCreatedMedicines(bool value)
     {
-        CalendarFilter.ShowCreatedMedicines = value;
+        CalendarFilter.ShowAddedMedicines = value;
         await OnFilterChanged.InvokeAsync();
     }
 
@@ -111,6 +170,36 @@
     private async Task UpdateShowSymptomReports(bool value)
     {
         CalendarFilter.ShowSymptomReports = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowAddedFoods(bool value)
+    {
+        CalendarFilter.ShowAddedFoods = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowFoodReports(bool value)
+    {
+        CalendarFilter.ShowFoodReports = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowAddedMeals(bool value)
+    {
+        CalendarFilter.ShowAddedMeals = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateShowMealReports(bool value)
+    {
+        CalendarFilter.ShowMealReports = value;
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task OnClickReset()
+    {
+        CalendarFilter = new();
         await OnFilterChanged.InvokeAsync();
     }
 }

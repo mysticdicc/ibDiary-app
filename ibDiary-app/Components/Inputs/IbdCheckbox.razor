@@ -1,4 +1,4 @@
-﻿<div class="ibd-checkbox ibd-input">
+﻿<div class="ibd-checkbox" @onclick="@OnClickCheckbox" @onabort:stopPropagation="true">
     <p>@Title</p>
     @if (ReadOnly) 
     {
@@ -20,6 +20,12 @@
     {
         if (e.Value is not bool value) return;
         Value = value;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task OnClickCheckbox()
+    {
+        Value = !Value;
         await ValueChanged.InvokeAsync(Value);
     }
 }

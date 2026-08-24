@@ -24,7 +24,7 @@ button {
 }
 
     button:active {
-        background-color: var(--primary);
+        background-color: var(--secondary);
         box-shadow: inset 2px 2px 0 rgba(49, 1, 82, 1);
     }
 
@@ -173,6 +173,7 @@ button {
     margin-left: 10px;
     margin-right: 10px;
     background-color: var(--background);
+    overflow: hidden;
 
     > header {
         display: flex;
@@ -190,7 +191,7 @@ button {
         display: flex;
         flex-direction: row;
 
-        button:has(.material-symbols-outlined) {
+        .nav:has(.material-symbols-outlined) {
             flex: 0;
             align-items: center;
             justify-content: center;
@@ -201,13 +202,27 @@ button {
             }
         }
 
-        button:not(:has(.material-symbols-outlined)) {
+        .nav:not(:has(.material-symbols-outlined)) {
             flex: 1;
             font-size: 1.1rem;
         }
 
-        button {
+        .nav {
             background-color: rgba(0,0,0,0);
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            padding: 5px;
+
+            p {
+                margin: 0;
+            }
+        }
+
+        .nav.active {
+            background-color: var(--secondary);
         }
     }
 }
@@ -219,6 +234,7 @@ button {
     height: 100%;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.7);
+    z-index: 200;
 
     > div {
         position: fixed;
@@ -236,15 +252,19 @@ button {
         box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
 
         > header {
+            background-color: var(--background-dark);
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
             width: 100%;
             align-items: center;
+            align-content: center;
             padding: 5px;
 
             h1 {
                 font-size: 1.2rem;
+                color: var(--text);
+                margin: 0;
             }
 
             button {
@@ -284,32 +304,67 @@ button {
     > p {
         font-size: 0.8rem;
         margin: 0px;
+        color: var(--text);
+    }
+
+    > input:not(input[type="checkbox"]), textarea, select {
+        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
     }
 
     > input, textarea, select {
-        background-color: rgba(0,0,0,0);
+        background-color: var(--background-light);
         color: var(--text);
-        border-style: none;
-        border-bottom: solid;
+        border-style: solid;
         border-width: 1px;
-        border-color: var(--text);
+        border-color: var(--border);
         padding: 5px;
     }
 
     > input:focus, textarea:focus {
         outline: none;
-        background-color: var(--background);
+        background-color: var(--background-dark);
     }
 }
 
 .ibd-checkbox {
+    display: flex;
+    flex-direction: row;
+    padding: 2px;
+    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    height: fit-content;
+
     > input {
-        margin-top: 2px;
+        background-color: var(--background-light);
+        color: var(--text);
+        border-style: solid;
+        border-width: 1px;
+        border-color: var(--border);
+        padding: 5px;
+        margin-left: auto;
+        margin-right: 5px;
     }
 
+        > input:focus {
+            outline: none;
+            background-color: var(--background-dark);
+        }
+
     > p {
-        text-align: center;
+        font-size: 0.8rem;
+        margin: 0;
+        color: var(--text);
+        text-wrap: nowrap;
+        margin-right: 5px;
+        margin-left: 5px;
     }
+}
+
+.ibd-checkbox:active {
+    background-color: var(--secondary);
 }
 
 .ibd-datetime-input {
@@ -422,6 +477,11 @@ button {
         flex-direction: row;
         justify-content: center;
 
+        .ibd-checkbox {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
         button {
             flex: 1;
             background-color: rgba(0,0,0,0);
@@ -463,15 +523,26 @@ button {
 .medicine-viewer {
     display: flex;
     flex-direction: column;
+    padding: 10px;
 
     > div:not(.state-change-list) {
         display: flex;
         flex-direction: row;
 
+        .ibd-checkbox {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
         > button {
             flex: 1;
             background-color: rgba(0,0,0,0);
         }
+    }
+
+    .medicine-schedule-viewer {
+        margin-top: 5px;
+        margin-bottom: 5px;
     }
 }
 
@@ -480,12 +551,17 @@ button {
     flex-direction: column;
     width: 100%;
     padding: 5px;
-    border-color: var(--text);
+    border-color: var(--border);
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
     margin-left: 5px;
     margin-right: 5px;
+    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+
+    p {
+        color: var(--text);
+    }
 
     > header {
         display: flex;
@@ -495,7 +571,7 @@ button {
         .ibd-input {
             margin-left: auto;
         }
-        
+
         button {
             background-color: rgba(0,0,0,0);
             height: 1rem;
@@ -587,12 +663,17 @@ button {
 }
 
 
-.medicine-report-viewer, .symptom-report-viewer {
+.medicine-report-viewer, .symptom-report-viewer, .food-item-report-viewer, .meal-item-report-viewer {
     padding: 5px;
 
     > div {
         display: flex;
         flex-direction: row;
+
+        .ibd-checkbox {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
 
         .searcher-preview {
             width: 100%;
@@ -728,6 +809,10 @@ button {
                 font-size: 1rem;
             }
         }
+
+        p {
+            color: var(--text);
+        }
     }
 
     > div:last-of-type {
@@ -745,21 +830,60 @@ button {
 
 .calendar-filter {
     border-style: solid;
-    border-color: var(--text);
+    border-color: var(--border);
     border-width: 1px;
     border-radius: 5px;
+    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
     padding: 5px;
     margin: 5px;
     gap: 5px;
+    background-color: var(--background);
 
     > div {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         margin-bottom: 5px;
 
-        h3 {
-            font-size: 1.2rem;
-            margin: 0;
+        > header {
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+
+            h3 {
+                font-size: 1.2rem;
+                margin: 0;
+                margin-bottom: 10px;
+                background-color: var(--secondary);
+                border-color: var(--border);
+                border-style: solid;
+                border-width: 1px;
+                border-radius: 10px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 10px;
+                padding-right: 10px;
+                box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+                width: fit-content;
+            }
+
+            button {
+                margin-left: auto;
+                padding: 5px;
+                height: fit-content;
+                border-radius: 25px;
+                background-color: var(--secondary);
+                box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            }
+
+            button:active {
+                background-color: var(--background-dark);
+            }
+        }
+
+        > div {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 5px;
         }
 
         .ibd-datetime-input {
@@ -769,6 +893,10 @@ button {
             input {
                 width: 100%;
             }
+        }
+
+        .ibd-checkbox {
+            flex: 1;
         }
 
         .searcher-preview {
@@ -796,11 +924,12 @@ button {
         align-items: center;
         justify-content: center;
         border-style: solid;
-        border-color: var(--text);
+        border-color: var(--border);
         border-width: 1px;
         border-radius: 5px;
-        background-color: rgba(0,0,0,0);
+        background-color: var(--secondary);
         margin-bottom: 5px;
+        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
 
         p {
             margin: 0;
@@ -815,6 +944,8 @@ button {
     }
 
     .small-card {
+        margin-bottom: 5px;
+
         div {
             button {
                 display: none;
@@ -829,6 +960,7 @@ button {
     > div {
         display: flex;
         flex-direction: row;
+        padding: 5px;
 
         button {
             background-color: rgba(0,0,0,0);
@@ -842,6 +974,8 @@ button {
         }
 
         .small-card {
+            margin-bottom: 10px;
+
             button {
                 display: none;
             }
@@ -859,10 +993,12 @@ button {
         display: flex;
         flex-direction: column;
         border-style: solid;
-        border-color: var(--text);
+        border-color: var(--border);
+        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+        background-color: var(--background);
         border-width: 1px;
         border-radius: 5px;
-        margin: 5px;
+        margin: 10px;
         padding: 5px;
         gap: 5px;
 
@@ -872,13 +1008,33 @@ button {
             justify-content: center;
 
             h2 {
-                margin: 0;
+                background-color: var(--secondary);
+                border-color: var(--border);
+                border-style: solid;
+                border-width: 1px;
+                border-radius: 10px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 10px;
+                padding-right: 10px;
+                box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
             }
         }
 
         button {
             background-color: rgba(0,0,0,0.3);
+            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            border-color: var(--border);
+            border-style: solid;
+            border-width: 1px;
             border-radius: 5px;
+        }
+
+        button:last-of-type {
+            margin-bottom: 5px;
         }
     }
 }
@@ -894,7 +1050,16 @@ button {
             background-color: rgba(0,0,0,0);
             flex: 1;
         }
+
+        h3 {
+            color: var(--text);
+        }
+
+        .small-card {
+            margin-bottom: 10px;
+        }
     }
+
 }
 
 .meal-viewer {
@@ -978,32 +1143,42 @@ button {
             display: none;
         }
     }
-
-    button {
-        background-color: rgba(0,0,0,0);
-    }
 }
 
 .new-item-popup {
     padding: 5px;
 
-    header {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        margin-bottom: 5px;
-
-        h2 {
-            color: var(--text);
-        }
-    }
-
-    div {
+    > div {
+        border-style: solid;
+        border-color: var(--border);
+        border-width: 1px;
+        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+        padding: 5px;
+        margin-bottom: 10px;
         display: flex;
         flex-direction: column;
-        gap: 7px;
-        margin-bottom: 10px;
-        padding: 10px;
+        background-color: var(--background-light);
+        border-radius: 10px;
+
+        > header {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+            h2 {
+                background-color: var(--secondary);
+                border-radius: 10px;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-bottom: 5px;
+                padding-top: 5px;
+                box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+                border-color: var(--border);
+                border-width: 1px;
+                border-style: solid;
+                color: var(--text);
+            }
+        }
 
         button {
             box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
@@ -1012,6 +1187,7 @@ button {
             border-width: 1px;
             border-radius: 5px;
             background-color: var(--background);
+            margin-bottom: 1px;
         }
     }
 }
@@ -1038,5 +1214,9 @@ button {
         span {
             font-size: 2rem;
         }
+    }
+
+    button:active {
+        background-color: var(--background-dark);
     }
 }

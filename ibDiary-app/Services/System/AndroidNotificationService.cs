@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
 using AndroidX.Work;
+using ibDiary_app.Models.Settings;
 using ibDiary_app.Services.Medication;
 using System;
 using System.Collections.Generic;
@@ -16,46 +17,61 @@ namespace ibDiary_app.Services.System
             : base(context, parameters) 
         {
             _medReportService = null;
+            _settings = null;
         }
 
         private PendingMedicineReportService? _medReportService;
+        private AppSettings? _settings;
 
         public override Result DoWork()
         {
             return DoWorkAsync().GetAwaiter().GetResult()!;
         }
 
+        private bool ServicesNeedLoading()
+        {
+            if (_settings == null) return true;
+            if (_medReportService == null) return true;
+            return false;
+        }
+
+        private void LoadServices()
+        {
+            var services = IPlatformApplication.Current?.Services;
+            _medReportService = services?.GetService<PendingMedicineReportService>();
+            _settings = services?.GetService<AppSettings>();
+        }
+
         public async Task<Result?> DoWorkAsync()
         {
             try
             {
-                if (null == _medReportService)
-                {
-                    var services = IPlatformApplication.Current?.Services;
-                    _medReportService = services?.GetService<PendingMedicineReportService>();
-                }
-
-                if (_medReportService == null)
-                    return Result.InvokeRetry();
-
-                var reports = await _medReportService.GetPendingReportsAsync();
-                if (reports.Count > 0)
-                {
-                    if (reports.Count == 1)
-                    {
-                        SendNotification("IbDiary Medicine Reminder", $"You are due to take {reports.First().Medicine.Name}.");
-                    }
-                    else if (reports.Count > 1)
-                    {
-                        SendNotification("IbDiary Medicine Reminder", $"You have {reports.Count} medicines due.");
-                    }
-                }
+                if (ServicesNeedLoading()) LoadServices();
+                if (ServicesNeedLoading()) return Result.InvokeRetry();
+                if (!_settings!.NotificationsEnabled) return Result.InvokeSuccess();
+                if (_settings.MedicineReportNotificationsEnabled) await HandleMedicineReportNotificationsAsync();
 
                 return Result.InvokeSuccess();
             }
             catch
             {
                 return Result.InvokeRetry();
+            }
+        }
+
+        private async Task HandleMedicineReportNotificationsAsync()
+        {
+            var reports = await _medReportService!.GetPendingReportsAsync();
+            if (reports.Count > 0)
+            {
+                if (reports.Count == 1)
+                {
+                    SendNotification("IbDiary Medicine Reminder", $"You are due to take {reports.First().Medicine.Name}.");
+                }
+                else if (reports.Count > 1)
+                {
+                    SendNotification("IbDiary Medicine Reminder", $"You have {reports.Count} medicines due.");
+                }
             }
         }
 
