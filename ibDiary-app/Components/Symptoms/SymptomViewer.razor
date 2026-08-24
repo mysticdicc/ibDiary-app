@@ -1,4 +1,5 @@
-﻿@inject SymptomClientService _symDbService;
+﻿@inject SymptomClientService _symDbService
+@inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
     <div class="symptom-viewer">
@@ -89,6 +90,7 @@
 
         if (result)
         {
+            _updateService.NotifiyComponentUpdate(Symptom);
             await SymptomChanged.InvokeAsync(Symptom);
             await OnClickCancel();
         }

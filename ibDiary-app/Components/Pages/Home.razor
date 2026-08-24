@@ -1,7 +1,9 @@
-﻿@inject PendingMedicineReportService _pendingMedService
+﻿@implements IDisposable
+@inject PendingMedicineReportService _pendingMedService
 @inject MedicineClientService _medDbService
 @inject SymptomClientService _symDbSevrice
 @inject NavigationManager _navManager
+@inject ComponentUpdateService _updateService
 @page "/"
 
 <article class="home-page">
@@ -78,7 +80,7 @@
 <SymptomViewer Symptom="@_currentSymptom" @bind-Visible="@_symptomViewerVisible" />
 <SymptomHelpPopup @bind-Visible="@_symptomHelpVisible"/>
 <MedicineHelpPopup @bind-Visible="@_medicineHelpVisible"/>
-<NewItemPopup @bind-Visible="@_newItemVisible" HasOwnControl="false"/>
+<NewItemPopup @bind-Visible="@_newItemVisible" HasOwnControl="false" />
 
 @code {
     private List<MedicineReport> _pendingReports = [];
@@ -99,7 +101,19 @@
     protected override async Task OnInitializedAsync()
     {
         await RefreshHomeAsync();
+        _updateService.SubscribeToComponentUpdates(RefreshHomeCallbackAsync);
         await base.OnInitializedAsync();
+    }
+
+    private async void RefreshHomeCallbackAsync(object? sender, ICalendarUpdate update)
+    {
+        await RefreshHomeAsync();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _updateService.UnsubscribeFromComponentUpdates(RefreshHomeCallbackAsync);
     }
 
     private async Task RefreshHomeAsync()

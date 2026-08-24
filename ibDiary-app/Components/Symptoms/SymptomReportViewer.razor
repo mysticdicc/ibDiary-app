@@ -1,4 +1,5 @@
-﻿@inject SymptomReportClientService _symDbService;
+﻿@inject SymptomReportClientService _symDbService
+@inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Symptom Report">
     <div class="symptom-report-viewer">
@@ -62,6 +63,7 @@
 
         if (result)
         {
+            _updateService.NotifiyComponentUpdate(SymptomReport);
             await SymptomReportChanged.InvokeAsync(SymptomReport);
             await OnClickCancel();
         }

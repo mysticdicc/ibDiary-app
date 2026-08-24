@@ -1,4 +1,5 @@
-﻿@inject MedicineReportClientService _medDbService;
+﻿@inject MedicineReportClientService _medDbService
+@inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Medicine Report">
     <div class="medicine-report-viewer">
@@ -50,6 +51,7 @@
 
         if (result)
         {
+            _updateService.NotifiyComponentUpdate(MedicineReport);
             await MedicineReportChanged.InvokeAsync(MedicineReport);
             await OnClickCancel();
         }

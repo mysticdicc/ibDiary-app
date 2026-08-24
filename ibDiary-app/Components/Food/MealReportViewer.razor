@@ -1,4 +1,5 @@
 ﻿@inject MealReportClientService _mealReportService
+@inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@VisibleChanged" Title="Meal Report">
     <div class="meal-item-report-viewer">
@@ -55,6 +56,7 @@
 
         if (result)
         {
+            _updateService.NotifiyComponentUpdate(Report);
             await ReportChanged.InvokeAsync(Report);
             await OnClickCancel();
         }
