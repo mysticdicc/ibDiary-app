@@ -5,6 +5,7 @@ using AndroidX.Core.App;
 using AndroidX.Work;
 using ibDiary_app.Models.Settings;
 using ibDiary_app.Services.Medication;
+using ibDiary_app.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,10 +19,12 @@ namespace ibDiary_app.Services.System
         {
             _medReportService = null;
             _settings = null;
+            _notificationRepo = null;
         }
 
         private PendingMedicineReportService? _medReportService;
         private AppSettings? _settings;
+        private ScheduledNotificationRepository? _notificationRepo;
 
         public override Result DoWork()
         {
@@ -32,6 +35,7 @@ namespace ibDiary_app.Services.System
         {
             if (_settings == null) return true;
             if (_medReportService == null) return true;
+            if (_notificationRepo == null) return true;
             return false;
         }
 
@@ -40,6 +44,7 @@ namespace ibDiary_app.Services.System
             var services = IPlatformApplication.Current?.Services;
             _medReportService = services?.GetService<PendingMedicineReportService>();
             _settings = services?.GetService<AppSettings>();
+            _notificationRepo = services?.GetService<ScheduledNotificationRepository>();
         }
 
         public async Task<Result?> DoWorkAsync()
@@ -50,6 +55,7 @@ namespace ibDiary_app.Services.System
                 if (ServicesNeedLoading()) return Result.InvokeRetry();
                 if (!_settings!.NotificationsEnabled) return Result.InvokeSuccess();
                 if (_settings.MedicineReportNotificationsEnabled) await HandleMedicineReportNotificationsAsync();
+                if (_settings.ScheduledNotificationsEnabled) await HandleScheduledNotifications();
 
                 return Result.InvokeSuccess();
             }
@@ -70,9 +76,48 @@ namespace ibDiary_app.Services.System
                 }
                 else if (reports.Count > 1)
                 {
-                    SendNotification("IbDiary Medicine Reminder", $"You have {reports.Count} medicines due.");
+                    SendNotification("IbDiary Medicine Reminder", $"You have {reports.Count} medicines due reports.");
                 }
             }
+        }
+
+        private async Task HandleScheduledNotifications()
+        {
+            var notifications = await _notificationRepo!.GetAllAsync();
+            var active = notifications.Where(x => x.Active).ToList();
+            if (active.Count == 0) return;
+
+            foreach (var notification in active)
+            {
+                var dueAt = CalculateNextDueTime(notification);
+
+                if (dueAt <= DateTime.UtcNow)
+                {
+                    SendNotification(
+                        $"IbDiary - {notification.Type}",
+                        $"Time for your {notification.Type} reminder."
+                    );
+
+                    notification.LastSentAt = DateTime.UtcNow;
+                    await _notificationRepo.UpdateAsync(notification);
+                }
+            }
+        }
+
+        private DateTime CalculateNextDueTime(ScheduledNotification notification)
+        {
+            var startDate = notification.LastSentAt == DateTime.MinValue
+                ? notification.StartAt
+                : notification.LastSentAt;
+
+            return notification.IntervalType switch
+            {
+                ScheduleIntervalType.Minutes => startDate.AddMinutes(notification.IntervalValue),
+                ScheduleIntervalType.Hours => startDate.AddHours(notification.IntervalValue),
+                ScheduleIntervalType.Days => startDate.AddDays(notification.IntervalValue),
+                ScheduleIntervalType.Months => startDate.AddMonths(notification.IntervalValue),
+                _ => DateTime.MinValue
+            };
         }
 
         private static readonly string CHANNEL_ID = "ibdiary_notifications";

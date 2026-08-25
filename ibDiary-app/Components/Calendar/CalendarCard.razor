@@ -48,6 +48,7 @@
             _dayUpdates.AddRange(Day.FoodReports);
             _dayUpdates.AddRange(Day.CreatedMeals);
             _dayUpdates.AddRange(Day.MealReports);
+            _dayUpdates.AddRange(Day.CreatedNotifications);
 
             _dayUpdates = _dayUpdates.OrderByDescending(x => x.GetDate()).ToList();
         }

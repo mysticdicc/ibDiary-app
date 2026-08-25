@@ -65,10 +65,10 @@
 
     private IbdSelectOption? _selectedInterval;
     private List<IbdSelectOption> _scheduleOptions = [
-        new("Minutes", MedicineScheduleIntervalType.Minutes),
-        new("Hours", MedicineScheduleIntervalType.Hours),
-        new("Days", MedicineScheduleIntervalType.Days),
-        new("Months", MedicineScheduleIntervalType.Months)
+        new("Minutes", ScheduleIntervalType.Minutes),
+        new("Hours", ScheduleIntervalType.Hours),
+        new("Days", ScheduleIntervalType.Days),
+        new("Months", ScheduleIntervalType.Months)
     ];
 
     private bool _helpVisible = false;
@@ -85,14 +85,14 @@
     {
         if (e.Value is not MedicineScheduleType type || e.Value == null) return;
         MedicineSchedule.Type = type;
-        if (type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = MedicineScheduleIntervalType.Hours;
+        if (type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = ScheduleIntervalType.Hours;
         UpdateIntervalTitle();
         await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
     }
 
     private async Task OnIntervalTypeChanged(IbdSelectOption e)
     {
-        if (e.Value is not MedicineScheduleIntervalType type || e.Value == null) return;
+        if (e.Value is not ScheduleIntervalType type || e.Value == null) return;
         MedicineSchedule.IntervalType = type;
         UpdateIntervalTitle();
         await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
@@ -102,10 +102,10 @@
     {
         _intervalTitle = MedicineSchedule.IntervalType switch
         {
-            MedicineScheduleIntervalType.Minutes => "Minutes",
-            MedicineScheduleIntervalType.Hours => "Hours",
-            MedicineScheduleIntervalType.Days => "Days",
-            MedicineScheduleIntervalType.Months => "Months",
+            ScheduleIntervalType.Minutes => "Minutes",
+            ScheduleIntervalType.Hours => "Hours",
+            ScheduleIntervalType.Days => "Days",
+            ScheduleIntervalType.Months => "Months",
             _ => string.Empty
         };
     }

@@ -1,7 +1,7 @@
 :root {
     --primary: rgb(115, 0, 219);
     --background: rgb(114, 2, 189);
-    --background-dark: rgb(49, 1, 82);
+    --background-dark: rgb(68, 1, 113);
     --background-light: rgb(142, 46, 207);
     --secondary: rgb(211, 0, 133);
     --secondary-dark: rgb(171, 0, 107);
@@ -255,7 +255,6 @@ button {
             background-color: var(--background-dark);
             display: flex;
             flex-direction: row;
-            justify-content: flex-end;
             width: 100%;
             align-items: center;
             align-content: center;
@@ -265,10 +264,22 @@ button {
                 font-size: 1.2rem;
                 color: var(--text);
                 margin: 0;
+                background-color: var(--secondary);
+                border-color: var(--border);
+                border-style: solid;
+                border-width: 1px;
+                border-radius: 10px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 10px;
+                padding-right: 10px;
+                box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+                width: fit-content;
             }
 
             button {
                 background-color: rgba(0,0,0,0);
+                 margin-left: auto;
             }
         }
     }
@@ -336,6 +347,7 @@ button {
     border-width: 1px;
     border-radius: 5px;
     height: fit-content;
+    background-color: var(--background-light);
 
     > input {
         background-color: var(--background-light);
@@ -372,10 +384,42 @@ button {
 }
 
 .ibd-int-input {
-    > input {
-        height: 2rem;
-        flex: 1;
-        max-width: 4rem;
+    background-color: var(--background-light);
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+    height: fit-content;
+
+    p {
+        text-align: center;
+        color: var(--text);
+        margin: 0;
+    }
+
+    > div {
+        display: flex;
+        flex-direction: row;
+
+        button {
+            background-color: var(--background-light);
+        }
+
+        > input {
+            height: 2rem;
+            max-width: 4rem;
+            background-color: var(--background-light);
+            color: var(--text);
+            border-style: solid;
+            border-width: 1px;
+            border-color: var(--border);
+            padding: 5px;
+            text-align: center;
+        }
+
+            > input:focus {
+                background-color: var(--background-dark);
+            }
     }
 }
 
@@ -398,40 +442,58 @@ button {
 
 .home-page {
     > div {
-        border-style: solid;
-        border-width: 1px;
-        border-color: var(--border);
-        border-radius: 10px;
         margin-top: 10px;
         margin-left: 10px;
         margin-right: 10px;
-        background-color: rgba(0,0,0,0.1);
-        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
-        background-color: var(--background);
 
         > div {
             padding: 5px;
 
             .small-card {
                 margin-bottom: 10px;
-                margin-left: 5px;
-                margin-right: 5px;
+            }
+
+            > p {
+                background-color: var(--background-light);
+                border-color: var(--border);
+                border-width: 1px;
+                border-style: solid;
+                border-radius: 5px;
+                box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+                padding: 5px;
+                margin: 0;
+                text-align: center;
             }
         }
 
         > header {
             display: flex;
             flex-direction: row;
+            justify-content: center;
+            align-content: center;
             background-color: var(--secondary);
-            padding: 5px;
+            border-color: var(--border);
             border-style: solid;
             border-width: 1px;
-            border-color: var(--border);
-            border-radius: 10px 10px 0px 0px;
+            border-radius: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 5px;
 
             button {
-                margin-left: auto;
+                margin-left: 5px;
                 background-color: rgba(0,0,0,0);
+                padding: 0;
+
+                span {
+                    font-size: 1.2rem;
+                }
             }
 
             h2 {
@@ -445,9 +507,9 @@ button {
         }
     }
 
-    > div:last-of-type {
-        margin-bottom: 10px;
-    }
+        > div:last-of-type {
+            margin-bottom: 10px;
+        }
 }
 
 .symptom-page {
@@ -606,9 +668,15 @@ button {
     }
 }
 
-.medicine-row, .medicine-report-row, .symptom-row, .symptom-report-row {
+.medicine-row, .medicine-report-row, .symptom-row, .symptom-report-row, .scheduled-notification-row {
     width: 100%;
-    display: grid;
+    display: grid !important;
+    background-color: var(--background);
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 1px;
+    padding: 5px;
+    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
 
     p {
         text-align: center;
@@ -620,16 +688,20 @@ button {
         margin-right: 5px;
     }
 
-    p:not(:last-of-type) {
-        border-right: solid;
-        border-width: 1px;
-        border-color: var(--text);
-    }
+        p:not(:last-of-type) {
+            border-right: solid;
+            border-width: 1px;
+            border-color: var(--text);
+        }
 
     button {
         background-color: rgba(0,0,0,0);
         margin-left: auto;
     }
+}
+
+.scheduled-notification-row {
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 .medicine-row {
@@ -918,7 +990,7 @@ button {
     display: flex;
     flex-direction: column;
 
-    button {
+    > button {
         margin-left: auto;
         display: flex;
         align-items: center;
@@ -954,7 +1026,7 @@ button {
     }
 }
 
-.medicine-searcher, .symptom-searcherm, .food-item-searcher, .meal-searcher {
+.medicine-searcher, .symptom-searcher, .food-item-searcher, .meal-searcher {
     margin: 5px;
 
     > div {
@@ -1024,8 +1096,44 @@ button {
             }
         }
 
+        > p {
+            background-color: var(--background-light);
+            border-color: var(--border);
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 5px;
+            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            padding: 5px;
+            margin: 0;
+            text-align: center;
+        }
+
+        h3 {
+            background-color: var(--secondary);
+            border-color: var(--border);
+            border-style: solid;
+            border-width: 1px;
+            border-radius: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            width: fit-content;
+            font-size: 1.2rem;
+        }
+
+        > div {
+            display: flex;
+            flex-direction: row;
+
+            button {
+                margin-left: auto;
+            }
+        }
+
         button {
-            background-color: rgba(0,0,0,0.3);
+            background-color: var(--background-dark);
             box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
             border-color: var(--border);
             border-style: solid;
@@ -1033,9 +1141,9 @@ button {
             border-radius: 5px;
         }
 
-        button:last-of-type {
-            margin-bottom: 5px;
-        }
+            button:last-of-type {
+                margin-bottom: 5px;
+            }
     }
 }
 
@@ -1218,5 +1326,33 @@ button {
 
     button:active {
         background-color: var(--background-dark);
+    }
+}
+
+.scheduled-notification-viewer {
+    padding: 5px;
+    
+    > div:has(header) {
+        display: flex;
+        flex-direction: column;
+
+        > div {
+            display: flex;
+            flex-direction: row;
+        }
+    }
+
+    > div:not(:has(header)) {
+        display: flex;
+        flex-direction: row;
+
+        > button {
+            flex: 1;
+            background-color: var(--background);
+        }
+    }
+
+    > div {
+        margin-top: 5px;
     }
 }

@@ -56,7 +56,7 @@ namespace ibDiary_app.Models.Food
         {
             var list = new List<string>();
             var minute = AteMealAt.Minute.ToString("D2");
-            list.Add($"You ate food item {Meal.Name} at {AteMealAt.Hour}:{minute}.");
+            list.Add($"You ate meal {Meal.Name} at {AteMealAt.Hour}:{minute}.");
             return list;
         }
     }

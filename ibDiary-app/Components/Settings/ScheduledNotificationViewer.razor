@@ -1,0 +1,123 @@
+﻿@inject ScheduledNotificationClientService _notificationService
+@inject ComponentUpdateService _updateService
+
+<Popup Visible="@Visible" VisibleChanged="@VisibleChanged" Title="Notification">
+    <div class="scheduled-notification-viewer">
+        <div>
+            <IbdSelect Options="@_typeOptions" Title="Notification Type" Value="@_selectedType" ValueChanged="@OnTypeChanged"/>
+        </div>
+        <div>
+            <IbdDateTimeInput @bind-Value="@Notification.StartAt" Title="Start At"/>
+        </div>
+        <div>
+            <header>
+                <h2>
+                    Schedule
+                </h2>
+            </header>
+            <div>
+                <IbdSelect Options="@_intervalTypes" Title="Interval Type" Value="@_selectedInterval" ValueChanged="@OnIntervalTypeChanged"/>
+                <IbdIntInput Title="@_intervalTitle" @bind-Value="@Notification.IntervalValue"/>
+            </div>
+        </div>
+        <div>
+            <button @onclick="@OnClickCancel">
+                Cancel
+            </button>
+            <button @onclick="@OnClickSave">
+                Save
+            </button>
+        </div>
+    </div>
+</Popup>
+
+@code {
+    [Parameter] required public ScheduledNotification Notification { get; set; }
+    [Parameter] public EventCallback<ScheduledNotification> NotificationChanged { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private string _intervalTitle = string.Empty;
+
+    private IbdSelectOption? _selectedType;
+    private List<IbdSelectOption> _typeOptions = [
+        new("Food Report Reminder", ScheduledNotificationType.Food),
+        new("Symptom Report Reminder", ScheduledNotificationType.Symptom)
+    ];
+
+    private IbdSelectOption? _selectedInterval;
+    private List<IbdSelectOption> _intervalTypes = [
+        new("Minutes", ScheduleIntervalType.Minutes),
+        new("Hours", ScheduleIntervalType.Hours),
+        new("Days", ScheduleIntervalType.Days),
+        new("Months", ScheduleIntervalType.Months)
+    ];
+
+    protected override void OnParametersSet()
+    {
+        _selectedType = _typeOptions.FirstOrDefault(x => x.Value?.Equals(Notification.Type) ?? false);
+        _selectedInterval = _intervalTypes.FirstOrDefault(x => x.Value?.Equals(Notification.IntervalType) ?? false);
+        UpdateIntervalTitle();
+        base.OnParametersSet();
+    }
+
+    private async Task OnVisibleChamged(bool visible)
+    {
+        await VisibleChanged.InvokeAsync(visible);
+    }
+
+    private async Task OnClickSave()
+    {
+        bool success = false;
+
+        if (Notification.IsNew)
+        {
+            success = await _notificationService.AddAsync(Notification) > 0;
+        }
+        else
+        {
+            success = await _notificationService.UpdateAsync(Notification);
+        }
+
+        if (success)
+        {
+            _updateService.NotifiyComponentUpdate(Notification);
+            await NotificationChanged.InvokeAsync(Notification);
+            await OnClickCancel();
+        }
+    }
+
+    private async Task OnClickCancel()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+
+    private void UpdateIntervalTitle()
+    {
+        _intervalTitle = Notification.IntervalType switch
+        {
+            ScheduleIntervalType.Minutes => "Minutes",
+            ScheduleIntervalType.Hours => "Hours",
+            ScheduleIntervalType.Days => "Days",
+            ScheduleIntervalType.Months => "Months",
+            _ => string.Empty
+        };
+    }
+
+    private async Task OnTypeChanged(IbdSelectOption option)
+    {
+        if (option.Value is not ScheduledNotificationType type || option.Value == null) return;
+        _selectedType = option;
+        Notification.Type = type;
+        await NotificationChanged.InvokeAsync(Notification);
+    }
+
+    private async Task OnIntervalTypeChanged(IbdSelectOption option)
+    {
+        if (option.Value is not ScheduleIntervalType type || option.Value == null) return;
+        _selectedInterval = option;
+        Notification.IntervalType = type;
+        UpdateIntervalTitle();
+        await NotificationChanged.InvokeAsync(Notification);
+    }
+}

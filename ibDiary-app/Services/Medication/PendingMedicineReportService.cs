@@ -1,4 +1,5 @@
 ﻿using ibDiary_app.Models.Medication;
+using ibDiary_app.Models.Settings;
 using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
@@ -66,19 +67,19 @@ namespace ibDiary_app.Services.Medication
                 if (lastReport == null) return DateTime.UtcNow;
                 DateTime? nextDue = null;
 
-                if (schedule.IntervalType == MedicineScheduleIntervalType.Minutes)
+                if (schedule.IntervalType == ScheduleIntervalType.Minutes)
                 {
                     nextDue = lastReport.MedicineTakenAt.AddMinutes(schedule.IntervalValue);
                 }
-                else if (schedule.IntervalType == MedicineScheduleIntervalType.Hours)
+                else if (schedule.IntervalType == ScheduleIntervalType.Hours)
                 {
                     nextDue = lastReport.MedicineTakenAt.AddHours(schedule.IntervalValue);
                 }
-                else if (schedule.IntervalType == MedicineScheduleIntervalType.Days)
+                else if (schedule.IntervalType == ScheduleIntervalType.Days)
                 {
                     nextDue = lastReport.MedicineTakenAt.AddDays(schedule.IntervalValue);
                 }
-                else if (schedule.IntervalType == MedicineScheduleIntervalType.Months)
+                else if (schedule.IntervalType == ScheduleIntervalType.Months)
                 {
                     nextDue = lastReport.MedicineTakenAt.AddMonths(schedule.IntervalValue);
                 }

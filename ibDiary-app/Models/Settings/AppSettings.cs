@@ -11,6 +11,8 @@ namespace ibDiary_app.Models.Settings
         public bool NotificationsEnabled { get; set; } = true;
         [Setting(true)]
         public bool MedicineReportNotificationsEnabled { get; set; } = true;
+        [Setting(true)]
+        public bool ScheduledNotificationsEnabled { get; set; } = true;
 
         public void Load()
         {

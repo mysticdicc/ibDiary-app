@@ -1,4 +1,6 @@
 ﻿@page "/settings"
+@implements IDisposable
+@inject ComponentUpdateService _updateService
 @inject MedicineClientService _medService
 @inject MedicineStateChangeClientService _medStateChangeService
 @inject MedicineReportClientService _medReportService
@@ -8,6 +10,7 @@
 @inject CalendarClientService _calService
 @inject ClientNotificationService _notifier
 @inject ConfirmationService _confirmService
+@inject ScheduledNotificationClientService _notificationService
 @inject AppSettings _settings
 @using System.Text.Json
 
@@ -34,11 +37,57 @@
         @if (_settings.NotificationsEnabled)
         {
             <IbdCheckbox Value="@_settings.MedicineReportNotificationsEnabled" ValueChanged="@MedicineReportNotificationEnabledChanged" Title="Medicine Report Notifications Enabled"/>
+            <IbdCheckbox Value="@_settings.ScheduledNotificationsEnabled" ValueChanged="@ScheduledNotificationsChanged" Title="Scheduled Notifications"/>
+        }
+        @if (_settings.ScheduledNotificationsEnabled)
+        {
+            <div>
+                <h3>
+                    Scheduled Notifications
+                </h3>
+                <button @onclick="@OnClickNewNotification">
+                    <span class="material-symbols-outlined">add</span>
+                </button>
+            </div>
+            @if (_notifications.Count == 0)
+            {
+                <p>You have no scheduled notifications, press the add button to create one.</p>
+            }
+            else
+            {
+                @foreach (var notification in _notifications)
+                {
+                    <ScheduledNotificationRow Notification="@notification" NotificationClicked="@OnNotificationClicked" />
+                }
+            }
         }
     </div>
 </article>
 
+<ScheduledNotificationViewer @bind-Notification="@_currentNotification" @bind-Visible="@_notificationViewerVisible"/>
+
 @code {
+    private List<ScheduledNotification> _notifications = [];
+    private ScheduledNotification _currentNotification = new(ScheduledNotificationType.Food);
+    private bool _notificationViewerVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _notifications = await _notificationService.GetAllAsync();
+        _updateService.SubscribeToComponentUpdates(RefreshCallbackAsync);
+        await base.OnInitializedAsync();
+    }
+
+    private async void RefreshCallbackAsync(object? sender, ICalendarUpdate update)
+    {
+        _notifications = await _notificationService.GetAllAsync();
+    }
+
+    public void Dispose()
+    {
+        _updateService.UnsubscribeFromComponentUpdates(RefreshCallbackAsync);
+    }
+
     private async Task OnClickDownloadBackup()
     {
         var backup = new BackupDto();
@@ -98,5 +147,23 @@
     {
         _settings.MedicineReportNotificationsEnabled = value;
         _settings.Save();
+    }
+
+    private void ScheduledNotificationsChanged(bool value)
+    {
+        _settings.ScheduledNotificationsEnabled = value;
+        _settings.Save();
+    }
+
+    private void OnNotificationClicked(ScheduledNotification notification)
+    {
+        _currentNotification = notification;
+        _notificationViewerVisible = true;
+    }
+
+    private void OnClickNewNotification()
+    {
+        _currentNotification = new(ScheduledNotificationType.Food);
+        _notificationViewerVisible = true;
     }
 }

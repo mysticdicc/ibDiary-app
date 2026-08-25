@@ -1,13 +1,21 @@
-﻿<div class="ibd-int-input ibd-input">
+﻿<div class="ibd-int-input">
     <p>@Title</p>
-    @if (ReadOnly)
-    {
-        <input type="number" value="@Value" readonly />
-    }
-    else
-    {
-        <input type="number" value="@Value" @onchange="OnValueChanged" />
-    }
+    <div>
+        <button @onclick="@OnClickDecrease">
+            <span class="material-symbols-outlined">arrow_circle_down</span>
+        </button>
+        @if (ReadOnly)
+        {
+            <input type="number" value="@Value" readonly />
+        }
+        else
+        {
+            <input type="number" value="@Value" @onchange="OnValueChanged" />
+        }
+        <button @onclick="@OnClickIncrease">
+            <span class="material-symbols-outlined">arrow_circle_up</span>
+        </button>
+    </div>
 </div>
 
 @code {
@@ -21,5 +29,18 @@
         int newValue = int.Parse(e.Value?.ToString() ?? "0");
         Value = newValue;
         await ValueChanged.InvokeAsync(newValue);
+    }
+
+    private async Task OnClickIncrease()
+    {
+        Value++;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task OnClickDecrease()
+    {
+        if (Value == 0) return;
+        Value--;
+        await ValueChanged.InvokeAsync(Value);
     }
 }

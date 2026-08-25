@@ -1,5 +1,6 @@
 ﻿using ibDiary_app.Models.Food;
 using ibDiary_app.Models.Medication;
+using ibDiary_app.Models.Settings;
 using ibDiary_app.Models.Symptoms;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace ibDiary_app.Models.Calendar
         public List<FoodItemReport> FoodReports { get; set; }
         public List<Meal> CreatedMeals { get; set; }
         public List<MealReport> MealReports { get; set; }
+        public List<ScheduledNotification> CreatedNotifications { get; set; }
         public bool IsNew { get; set; }
 
         public CalendarDay()
@@ -40,6 +42,7 @@ namespace ibDiary_app.Models.Calendar
             FoodReports = [];
             CreatedMeals = [];
             MealReports = [];
+            CreatedNotifications = [];
             IsNew = true;
         }
 
@@ -56,6 +59,7 @@ namespace ibDiary_app.Models.Calendar
             FoodReports = [];
             CreatedMeals = [];
             MealReports = [];
+            CreatedNotifications = [];
             IsNew = true;
         }
 
@@ -72,6 +76,7 @@ namespace ibDiary_app.Models.Calendar
             FoodReports = day.FoodReports;
             CreatedMeals = day.CreatedMeals;
             MealReports = day.MealReports;
+            CreatedNotifications = day.CreatedNotifications;
         }
 
         public bool HasChangedState(CalendarDay old)
@@ -86,7 +91,8 @@ namespace ibDiary_app.Models.Calendar
                 CreatedFoods != old.CreatedFoods ||
                 FoodReports != old.FoodReports ||
                 CreatedMeals != old.CreatedMeals ||
-                MealReports != old.MealReports;
+                MealReports != old.MealReports ||
+                CreatedNotifications != old.CreatedNotifications;
         }
 
         public CalendarDay Clone()

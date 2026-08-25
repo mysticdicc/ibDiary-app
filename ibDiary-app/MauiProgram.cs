@@ -7,6 +7,7 @@ using ibDiary_app.Services;
 using ibDiary_app.Services.Calendar;
 using ibDiary_app.Services.Food;
 using ibDiary_app.Services.Medication;
+using ibDiary_app.Services.Settings;
 using ibDiary_app.Services.Symptoms;
 using ibDiary_app.Services.System;
 using Microsoft.EntityFrameworkCore;
@@ -100,6 +101,9 @@ namespace ibDiary_app
 
             builder.Services.AddSingleton<MealReportRepository>();
             builder.Services.AddSingleton<MealReportClientService>();
+
+            builder.Services.AddSingleton<ScheduledNotificationRepository>();
+            builder.Services.AddSingleton<ScheduledNotificationClientService>();
 
             builder
                 .UseMauiApp<App>()

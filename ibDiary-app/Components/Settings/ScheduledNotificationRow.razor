@@ -1,0 +1,21 @@
+﻿<div class="scheduled-notification-row" @onclick="@OnRowClicked">
+    <p>
+        @Notification.Type
+    </p>
+    <p>
+        @Notification.IntervalValue @Notification.IntervalType
+    </p>
+    <p>
+        @Notification.StartAt.ToString("HH:mm")
+    </p>
+</div>
+
+@code {
+    [Parameter] required public ScheduledNotification Notification { get; set; }
+    [Parameter] public EventCallback<ScheduledNotification> NotificationClicked { get; set; }
+
+    private async Task OnRowClicked()
+    {
+        await NotificationClicked.InvokeAsync(Notification);
+    }
+}
