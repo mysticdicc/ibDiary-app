@@ -1,11 +1,412 @@
-﻿#root {
-    max-width: 1280px;
+﻿:root {
+    --primary: rgb(115, 0, 219);
+    --background: rgb(114, 2, 189);
+    --background-dark: rgb(68, 1, 113);
+    --background-light: rgb(142, 46, 207);
+    --secondary: rgb(211, 0, 133);
+    --text: rgb(204, 212, 227);
+    --muted: rgb(186, 174, 236);
+    --panel: rgba(82, 9, 143, 0.85);
+    --shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+    --radius: 18px;
+    --border: rgb(20, 1, 33);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    margin: 0;
+    min-height: 100%;
+    font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background-color: var(--background);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.page {
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    section {
+        background-color: var(--background-light);
+        padding: 10px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        margin-top: 1rem;
+    }
+
+    section:last-of-type {
+        border-radius: 0 0 10px 10px;
+    }
+}
+
+.container {
+    width: min(1100px, 92%);
     margin: 0 auto;
+}
+
+.hero {
     padding: 2rem;
+    position: relative;
+    z-index: 0;
+    overflow: clip;
+    background-color: var(--background-dark);
+    border-radius: 10px 10px 0 0;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    margin-top: 1rem;
+
+    img {
+        position: absolute;
+        top: 20%;
+        right: 5%;
+        width: auto;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        box-shadow: 0px 0px 10px 10px rgba(255,255,255,0.3);
+    }
+
+    .badge {
+        margin-bottom: 1rem;
+    }
+
+    h1, p, a {
+        position: relative;
+        z-index: 2;
+    }
+
+    h1 {
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        line-height: 1.1;
+        margin: 0;
+        max-width: 70%;
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+
+    p {
+        color: var(--muted);
+        font-size: 1.05rem;
+        margin: 0;
+        max-width: 70%;
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+}
+
+.badge {
+    width: fit-content;
+    background-color: var(--secondary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 800;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: var(--shadow);
+
+    h1 {
+        margin: 0;
+    }
+}
+
+.cta {
+    display: inline-block;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    background-color: var(--secondary);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    font-weight: 700;
+}
+
+.section {
+    padding: 2.4rem 0;
+}
+
+    .section h2 {
+        margin: 0 0 0.8rem;
+        font-size: clamp(1.4rem, 3vw, 2rem);
+    }
+
+.section-intro {
+    color: var(--muted);
+    margin-top: 0;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.custom-section {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+
+    .card {
+        flex: 1;
+    }
+}
+
+.card {
+    background: var(--background);
+    border-width: 1px;
+    border-color: var(--border);
+    border-radius: var(--radius);
+    border-style: solid;
+    padding: 1rem;
+    box-shadow: var(--shadow);
+
+    h3 {
+        margin-top: 0.2rem;
+        margin-bottom: 0.5rem;
+        background-color: var(--secondary);
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: var(--shadow);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        padding: 10px;
+    }
+
+    p {
+        margin: 0;
+        color: var(--muted);
+    }
+}
+
+.carousel {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.carousel-btn {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+    .carousel-btn:hover {
+        background-color: var(--primary);
+    }
+
+.carousel-content {
+    flex: 1;
+    max-width: 450px;
     text-align: center;
 }
 
-th, td {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    .carousel-content .shot-card {
+        margin: 0;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+
+        .carousel-content .shot-card img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 9 / 19;
+            object-fit: cover;
+        }
+
+.shot-info {
+    margin-top: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+    background-color: var(--background);
+    padding: 10px;
+}
+
+    .shot-info h3 {
+        margin: 0 0 0.5rem;
+        color: var(--text);
+        font-size: 1.25rem;
+    }
+
+    .shot-info p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+    }
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(115, 0, 219, 0.3);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .dot.active {
+        background: var(--primary);
+    }
+
+    .dot:hover {
+        background: var(--primary);
+    }
+
+@media (max-width: 900px) {
+    .carousel {
+        gap: 1rem;
+    }
+
+    .carousel-btn {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.5rem;
+    }
+
+    .carousel-content {
+        max-width: 300px;
+    }
+}
+
+.signup-form {
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 10px;
+    padding: 1rem;
+    display: grid;
+    gap: 0.9rem;
+    max-width: 680px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+    .signup-form label {
+        display: grid;
+        gap: 0.45rem;
+        font-weight: 600;
+    }
+
+    .signup-form input,
+    .signup-form textarea,
+    .signup-form select {
+        border: 1px solid var(--border);
+        background-color: var(--background-light);
+        color: #efe8ff;
+        border-radius: 12px;
+        padding: 0.72rem 0.75rem;
+        font: inherit;
+        box-shadow: var(--shadow);
+    }
+
+        .signup-form input::placeholder,
+        .signup-form textarea::placeholder {
+            color: rgba(239, 232, 255, 0.72);
+        }
+
+    .signup-form button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.8rem 1rem;
+        font: inherit;
+        font-weight: 700;
+        color: var(--text);
+        cursor: pointer;
+        background-color: var(--secondary);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+    }
+
+        .signup-form button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+.form-msg {
+    margin: 0.2rem 0 0;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+    .form-msg.success {
+        background: rgba(37, 201, 122, 0.2);
+        border: 1px solid rgba(37, 201, 122, 0.5);
+        color: #c8ffe4;
+    }
+
+    .form-msg.error {
+        background: rgba(255, 74, 123, 0.2);
+        border: 1px solid rgba(255, 74, 123, 0.5);
+        color: #ffd4e1;
+    }
+
+.footer {
+    margin-top: 3rem;
+    border-top: 1px solid var(--border);
+    background: rgba(27, 1, 50, 0.4);
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    color: var(--muted);
+}
+
+.footer a {
+    color: #ffd4f0;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .shots {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding-top: 3.5rem;
+    }
 }
