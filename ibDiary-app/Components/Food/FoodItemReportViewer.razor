@@ -2,25 +2,29 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@VisibleChanged" Title="Food Report">
-    <div class="food-item-report-viewer">
-        <div>
-            <FoodSearcher Food="@Report.FoodItem" FoodChanged="@OnFoodItemSelected" ShowSelected="true"/>
+    <EditForm Model="@Report" OnValidSubmit="@OnClickSave">
+        <DataAnnotationsValidator />
+
+        <div class="food-item-report-viewer">
+            <div>
+                <FoodSearcher @bind-Value="@Report.FoodItem" ShowSelected="true" />
+            </div>
+            <div>
+                <IbdDateTimeInput @bind-Value="@Report.AteFoodAt" Title="Ate At" />
+            </div>
+            <div>
+                <IbdTextArea @bind-Value="@Report.Notes" Title="Notes" />
+            </div>
+            <div>
+                <button @onclick="@OnClickCancel">
+                    Cancel
+                </button>
+                <button type="submit">
+                    Save
+                </button>
+            </div>
         </div>
-        <div>
-            <IbdDateTimeInput @bind-Value="@Report.AteFoodAt" Title="Ate At"/>
-        </div>
-        <div>
-            <IbdTextArea @bind-Value="@Report.Notes" Title="Notes"/>
-        </div>
-        <div>
-            <button @onclick="@OnClickCancel">
-                Cancel
-            </button>
-            <button @onclick="@OnClickSave">
-                Save
-            </button>
-        </div>
-    </div>
+    </EditForm>
 </Popup>
 
 
@@ -60,11 +64,5 @@
             await ReportChanged.InvokeAsync(Report);
             await OnClickCancel();
         }
-    }
-
-    private async Task OnFoodItemSelected(FoodItem foodItem)
-    {
-        Report.FoodItem = foodItem;
-        await ReportChanged.InvokeAsync(Report);
     }
 }

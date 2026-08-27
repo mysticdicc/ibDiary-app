@@ -1,20 +1,37 @@
-﻿@inject FoodItemClientService _foodService
+﻿@inherits InputBase<FoodItem?>
+@inject FoodItemClientService _foodService
 
 <div class="searcher-preview food-searcher-preview">
     <button @onclick="@OnClickSearch">
         <p>Search Food</p>
         <span class="material-symbols-outlined">search</span>
     </button>
-    @if (ShowSelected && !Food.IsNew)
+    @if (EditContext != null && ValueExpression != null)
     {
-        <FoodItemSmallCard Food="@Food" DeleteClicked="@DeleteClicked"/>
+        var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+        if (messages.Count > 0)
+        {
+            <div class="validation-error">
+                @foreach (var error in messages)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
+    }
+    @if (null != CurrentValue)
+    {
+        @if (ShowSelected && !CurrentValue.IsNew)
+        {
+            <FoodItemSmallCard Food="@CurrentValue" DeleteClicked="@DeleteClicked" />
+        }
     }
 </div>
 
 <Popup Visible="@_popupVisible" VisibleChanged="@OnVisibleChanged" Title="Search Food">
     <div class="food-item-searcher">
         <div>
-            <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Food Items" />
+            <IbdTextInput @bind-Value="@_searchString" @bind-Value:after="@OnSearchInputChanged" Title="Search Food Items" />
         </div>
         @if (_suggestedFoods.Count > 0)
         {
@@ -29,13 +46,32 @@
 </Popup>
 
 @code {
-    [Parameter] public FoodItem Food { get; set; } = new();
-    [Parameter] public EventCallback<FoodItem> FoodChanged { get; set; }
     [Parameter] public bool ShowSelected { get; set; } = false;
     private List<FoodItem> _suggestedFoods = [];
     private List<FoodItem> _allFoods = [];
     private string _searchString = string.Empty;
     private bool _popupVisible = false;
+
+    protected override bool TryParseValueFromString(string? value, out FoodItem? result, out string validationErrorMessage)
+    {
+        result = null;
+        validationErrorMessage = string.Empty;
+        return false;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (EditContext != null)
+        {
+            EditContext.OnValidationStateChanged += HandleValidationStateChanged;
+        }
+        base.OnParametersSet();
+    }
+
+    private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,15 +80,15 @@
         await base.OnInitializedAsync();
     }
 
-    private void OnSearchInputChanged(string value)
+    private void OnSearchInputChanged()
     {
-        _searchString = value;
-        _suggestedFoods = _allFoods.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Take(5).ToList();
+        _suggestedFoods = _allFoods.Where(x => x.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)).Take(5).ToList();
     }
 
     private async Task OnFoodClicked(FoodItem food)
     {
-        await FoodChanged.InvokeAsync(food);
+        CurrentValue = food;
+        await ValueChanged.InvokeAsync(food);
         _searchString = string.Empty;
         _suggestedFoods = _allFoods.Take(5).ToList();
         _popupVisible = false;
@@ -70,7 +106,7 @@
 
     private async Task DeleteClicked(FoodItem food)
     {
-        Food = new();
-        await FoodChanged.InvokeAsync(Food);
+        CurrentValue = null;
+        await ValueChanged.InvokeAsync(CurrentValue);
     }
 }

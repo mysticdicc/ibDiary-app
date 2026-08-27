@@ -1,6 +1,7 @@
 ﻿using ibDiary_data.Models.Calendar;
 using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Medication;
+using ibDiary_data.Models.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,7 @@ namespace ibDiary_data.Models.Symptoms
     public class SymptomReport : ICalendarUpdate
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
+        [NotNewCalendarObject(ErrorMessage = "Symptom is required.")]
         public Symptom Symptom { get; set; }
         public Medicine? Medication { get; set; }
         public DateTime SubmittedAt { get; set; }

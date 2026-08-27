@@ -1,20 +1,37 @@
-﻿@inject MedicineClientService _medDbService
+﻿@inherits InputBase<Medicine?>
+@inject MedicineClientService _medDbService
 
 <div class="searcher-preview medicine-searcher-preview">
     <button @onclick="@OnClickSearch">
         <p>Search Medicine</p>
         <span class="material-symbols-outlined">search</span>
     </button>
-    @if (ShowSelected && !Medicine.IsNew) 
+    @if (EditContext != null && ValueExpression != null)
     {
-        <MedicineSmallCard Medicine="@Medicine" DeleteClicked="@DeleteClicked"/>
+        var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+        if (messages.Count > 0)
+        {
+            <div class="validation-error">
+                @foreach (var error in messages)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
+    }
+    @if (null != CurrentValue)
+    {
+        @if (ShowSelected && !CurrentValue.IsNew)
+        {
+            <MedicineSmallCard Medicine="@CurrentValue" DeleteClicked="@DeleteClicked" />
+        }
     }
 </div>
 
 <Popup Visible="@_popupVisible" VisibleChanged="@OnVisibleChanged" Title="Search Medicine">
     <div class="medicine-searcher">
         <div>
-            <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Medicine" />
+            <IbdTextInput @bind-Value="@_searchString" @bind-Value:after="@OnSearchInputChanged" Title="Search Medicine" />
         </div>
         @if (_suggestedMedicines.Count > 0)
         {
@@ -30,13 +47,18 @@
 
 
 @code {
-    [Parameter] public Medicine Medicine { get; set; } = new();
-    [Parameter] public EventCallback<Medicine> MedicineChanged { get; set; }
     [Parameter] public bool ShowSelected { get; set; } = false;
     private List<Medicine> _suggestedMedicines = [];
     private List<Medicine> _allMedicines = [];
     private string _searchString = string.Empty;
     private bool _popupVisible = false;
+
+    protected override bool TryParseValueFromString(string? value, out Medicine? result, out string validationErrorMessage)
+    {
+        result = null;
+        validationErrorMessage = string.Empty;
+        return false;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,15 +67,15 @@
         await base.OnInitializedAsync();
     }
 
-    private void OnSearchInputChanged(string value)
+    private void OnSearchInputChanged()
     {
-        _searchString = value;
-        _suggestedMedicines = _allMedicines.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        _suggestedMedicines = _allMedicines.Where(x => x.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)).ToList();
     }
 
     private async Task OnMedicineClicked(Medicine medicine)
     {
-        await MedicineChanged.InvokeAsync(medicine);
+        CurrentValue = medicine;
+        await ValueChanged.InvokeAsync(medicine);
         _searchString = string.Empty;
         _suggestedMedicines = _allMedicines.Take(5).ToList();
         _popupVisible = false;
@@ -71,7 +93,7 @@
 
     private async Task DeleteClicked(Medicine medicine)
     {
-        Medicine = new();
-        await MedicineChanged.InvokeAsync(Medicine);
+        CurrentValue = null;
+        await ValueChanged.InvokeAsync(null);
     }
 }

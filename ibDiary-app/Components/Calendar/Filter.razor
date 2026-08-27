@@ -25,25 +25,25 @@
         @if (CalendarFilter.MedicineFilterEnabled)
         {
             <div>
-                <MedicineSearcher Medicine="@CalendarFilter.Medicine" MedicineChanged="@UpdateMedicine" ShowSelected="true" />
+                <MedicineSearcher @bind-Value="@CalendarFilter.Medicine" @bind-Value:after="@UpdateGeneral" ShowSelected="true" />
             </div>
         }
         @if (CalendarFilter.SymptomFilterEnabled)
         {
             <div>
-                <SymptomSearcher Symptom="@CalendarFilter.Symptom" SymptomChanged="@UpdateSymptom" ShowSelected="true" />
+                <SymptomSearcher @bind-Value="@CalendarFilter.Symptom" @bind-Value:after="@UpdateGeneral" ShowSelected="true" />
             </div>
         }
         @if (CalendarFilter.FoodFilterEnabled)
         {
             <div>
-                <FoodSearcher Food="@CalendarFilter.Food" FoodChanged="@UpdateFood" ShowSelected="true" />
+                <FoodSearcher @bind-Value="@CalendarFilter.Food" @bind-Value:after="@UpdateGeneral" ShowSelected="true" />
             </div>
         }
         @if (CalendarFilter.MealFilterEnabled)
         {
             <div>
-                <MealSearcher Meal="@CalendarFilter.Meal" MealChanged="@UpdateMeal" ShowSelected="true" />
+                <MealSearcher @bind-Value="@CalendarFilter.Meal" @bind-Value:after="@UpdateGeneral" ShowSelected="true" />
             </div>
         }
     </div>
@@ -119,30 +119,6 @@
         await OnFilterChanged.InvokeAsync();
     }
 
-    private async Task UpdateMedicine(Medicine value)
-    {
-        CalendarFilter.Medicine = value;
-        await OnFilterChanged.InvokeAsync();
-    }
-
-    private async Task UpdateSymptom(Symptom value)
-    {
-        CalendarFilter.Symptom = value;
-        await OnFilterChanged.InvokeAsync();
-    }
-
-    private async Task UpdateMeal(Meal meal)
-    {
-        CalendarFilter.Meal = meal;
-        await OnFilterChanged.InvokeAsync();
-    }
-
-    private async Task UpdateFood(FoodItem food)
-    {
-        CalendarFilter.Food = food;
-        await OnFilterChanged.InvokeAsync();
-    }
-
     private async Task UpdateShowInactive(bool value)
     {
         CalendarFilter.ShowInactive = value;
@@ -200,6 +176,11 @@
     private async Task OnClickReset()
     {
         CalendarFilter = new();
+        await OnFilterChanged.InvokeAsync();
+    }
+
+    private async Task UpdateGeneral()
+    {
         await OnFilterChanged.InvokeAsync();
     }
 }

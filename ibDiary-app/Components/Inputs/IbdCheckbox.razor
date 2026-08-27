@@ -1,31 +1,56 @@
-﻿<div class="ibd-checkbox" @onclick="@OnClickCheckbox" @onabort:stopPropagation="true">
+﻿@inherits InputBase<bool>
+
+<div class="ibd-checkbox" @onclick="@OnClickCheckbox" @onclick:stopPropagation="true">
     <p>@Title</p>
     @if (ReadOnly) 
     {
-        <input type="checkbox" checked="@Value" readonly />
+        <input type="checkbox" checked="@CurrentValue" readonly />
     }
     else
     {
-        <input type="checkbox" checked="@Value" @onchange="@OnInputChanged"/>
+        <input type="checkbox" checked="@CurrentValue" @onchange="@OnInputChanged" />
+    }
+    @if (EditContext != null && ValueExpression != null)
+    {
+        var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+        if (messages.Count > 0)
+        {
+            <div class="validation-error">
+                @foreach (var error in messages)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
     }
 </div>
 
 @code {
-    [Parameter] public bool Value { get; set; }
-    [Parameter] public EventCallback<bool> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
+
+    protected override bool TryParseValueFromString(string? value, out bool result, out string validationErrorMessage)
+    {
+        if (bool.TryParse(value, out var parsedValue))
+        {
+            result = parsedValue;
+            validationErrorMessage = string.Empty;
+            return true;
+        }
+
+        result = false;
+        validationErrorMessage = "The value must be a valid boolean.";
+        return false;
+    }
 
     private async Task OnInputChanged(ChangeEventArgs e)
     {
         if (e.Value is not bool value) return;
-        Value = value;
-        await ValueChanged.InvokeAsync(Value);
+        CurrentValue = value;
     }
 
     private async Task OnClickCheckbox()
     {
-        Value = !Value;
-        await ValueChanged.InvokeAsync(Value);
+        CurrentValue = !CurrentValue;
     }
 }

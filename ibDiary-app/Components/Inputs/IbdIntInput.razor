@@ -1,4 +1,6 @@
-﻿<div class="ibd-int-input">
+﻿@inherits InputBase<int>
+
+<div class="ibd-int-input">
     <p>@Title</p>
     <div>
         <button @onclick="@OnClickDecrease">
@@ -6,11 +8,24 @@
         </button>
         @if (ReadOnly)
         {
-            <input type="number" value="@Value" readonly />
+            <input type="number" value="@CurrentValue" readonly />
         }
         else
         {
-            <input type="number" value="@Value" @onchange="OnValueChanged" />
+            <input type="number" value="@CurrentValue" @onchange="OnValueChanged" />
+        }
+        @if (EditContext != null && ValueExpression != null)
+        {
+            var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+            if (messages.Count > 0)
+            {
+                <div class="validation-error">
+                    @foreach (var error in messages)
+                    {
+                        <p>@error</p>
+                    }
+                </div>
+            }
         }
         <button @onclick="@OnClickIncrease">
             <span class="material-symbols-outlined">arrow_circle_up</span>
@@ -19,28 +34,40 @@
 </div>
 
 @code {
-    [Parameter] public int Value { get; set; }
-    [Parameter] public EventCallback<int> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
+
+    protected override bool TryParseValueFromString(string? value, out int result, out string validationErrorMessage)
+    {
+        if (int.TryParse(value, out var parsedValue))
+        {
+            result = parsedValue;
+            validationErrorMessage = string.Empty;
+            return true;
+        }
+
+        result = 0;
+        validationErrorMessage = "The value must be a valid integer.";
+        return false;
+    }
 
     private async Task OnValueChanged(ChangeEventArgs e)
     {
         int newValue = int.Parse(e.Value?.ToString() ?? "0");
-        Value = newValue;
-        await ValueChanged.InvokeAsync(newValue);
+        CurrentValue = newValue;
+        await ValueChanged.InvokeAsync(CurrentValue);
     }
 
     private async Task OnClickIncrease()
     {
-        Value++;
-        await ValueChanged.InvokeAsync(Value);
+        CurrentValue++;
+        await ValueChanged.InvokeAsync(CurrentValue);
     }
 
     private async Task OnClickDecrease()
     {
-        if (Value == 0) return;
-        Value--;
-        await ValueChanged.InvokeAsync(Value);
+        if (CurrentValue == 0) return;
+        CurrentValue--;
+        await ValueChanged.InvokeAsync(CurrentValue);
     }
 }

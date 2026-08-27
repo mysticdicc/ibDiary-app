@@ -37,6 +37,8 @@ namespace ibDiary_app.Services.Symptoms
 
         public async Task<int> AddAsync(SymptomStateChange symptom)
         {
+            symptom.IsNew = false;
+
             await _dbService.SymptomStateChanges.AddAsync(symptom);
             await _calendarService.NotifyUpdateCalendarDayAsync(symptom);
 

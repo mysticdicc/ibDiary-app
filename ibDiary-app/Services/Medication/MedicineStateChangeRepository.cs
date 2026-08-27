@@ -38,6 +38,7 @@ namespace ibDiary_app.Services.Medication
 
         public async Task<int> AddAsync(MedicineStateChange medicine)
         {
+            medicine.IsNew = false;
             await _dbService.MedicineStateChanges.AddAsync(medicine);
             await _calendarService.NotifyUpdateCalendarDayAsync(medicine);
 

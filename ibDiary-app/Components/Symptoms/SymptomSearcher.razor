@@ -1,20 +1,37 @@
-﻿@inject SymptomClientService _sympDbService
+﻿@inherits InputBase<Symptom?>
+@inject SymptomClientService _sympDbService
 
 <div class="searcher-preview symptom-searcher-preview">
     <button @onclick="@OnClickSearch">
         <p>Search Symptoms</p>
         <span class="material-symbols-outlined">search</span>
     </button>
-    @if (ShowSelected && !Symptom.IsNew)
+    @if (EditContext != null && ValueExpression != null)
     {
-        <SymptomSmallCard Symptom="@Symptom" DeleteClicked="@SymptomDeleteClicked"/>
+        var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+        if (messages.Count > 0)
+        {
+            <div class="validation-error">
+                @foreach (var error in messages)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
+    }
+    @if (null != CurrentValue)
+    {
+        @if (ShowSelected && !CurrentValue.IsNew)
+        {
+            <SymptomSmallCard Symptom="@CurrentValue" DeleteClicked="@SymptomDeleteClicked" />
+        }
     }
 </div>
 
 <Popup Visible="@_popupVisible" VisibleChanged="@OnVisibleChanged" Title="Search Symptoms">
     <div class="symptom-searcher">
         <div>
-            <IbdTextInput Value="@_searchString" ValueChanged="@OnSearchInputChanged" Title="Search Symptoms" />
+            <IbdTextInput @bind-Value="@_searchString" @bind-Value:after="@OnSearchInputChanged" Title="Search Symptoms" />
         </div>
         @if (_suggestedSymptoms.Count > 0)
         {
@@ -30,13 +47,18 @@
 
 
 @code {
-    [Parameter] public Symptom Symptom { get; set; } = new();
-    [Parameter] public EventCallback<Symptom> SymptomChanged { get; set; }
     [Parameter] public bool ShowSelected { get; set; } = false;
     private List<Symptom> _allSymptoms = [];
     private List<Symptom> _suggestedSymptoms = [];
     private string _searchString = string.Empty;
     private bool _popupVisible = false;
+
+    protected override bool TryParseValueFromString(string? value, out Symptom? result, out string validationErrorMessage)
+    {
+        result = null;
+        validationErrorMessage = string.Empty;
+        return false;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,15 +67,15 @@
         await base.OnInitializedAsync();
     }
 
-    private void OnSearchInputChanged(string value)
+    private void OnSearchInputChanged()
     {
-        _searchString = value;
-        _suggestedSymptoms = _allSymptoms.Where(x => x.Title.Contains(value, StringComparison.CurrentCultureIgnoreCase)).Take(5).ToList();
+        _suggestedSymptoms = _allSymptoms.Where(x => x.Title.Contains(_searchString, StringComparison.CurrentCultureIgnoreCase)).Take(5).ToList();
     }
 
     private async Task OnSymptomClicked(Symptom symptom)
     {
-        await SymptomChanged.InvokeAsync(symptom);
+        CurrentValue = symptom;
+        await ValueChanged.InvokeAsync(CurrentValue);
         _searchString = string.Empty;
         _suggestedSymptoms = _allSymptoms.Take(5).ToList();
         _popupVisible = false;
@@ -71,7 +93,7 @@
 
     private async Task SymptomDeleteClicked()
     {
-        Symptom = new();
-        await SymptomChanged.InvokeAsync(Symptom);
+        CurrentValue = null;
+        await ValueChanged.InvokeAsync(null);
     }
 }

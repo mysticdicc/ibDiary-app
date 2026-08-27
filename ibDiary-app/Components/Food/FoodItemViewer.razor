@@ -2,22 +2,26 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
-    <div class="food-item-viewer">
-        <div>
-            <IbdTextInput @bind-Value="@Food.Name" Title="Name"/>
+    <EditForm Model="@Food" OnValidSubmit="@OnClickSave">
+        <DataAnnotationsValidator />
+
+        <div class="food-item-viewer">
+            <div>
+                <IbdTextInput @bind-Value="@Food.Name" Title="Name" />
+            </div>
+            <div>
+                <IbdTextArea @bind-Value="@Food.Description" Title="Description" />
+            </div>
+            <div>
+                <button @onclick="@OnClickCancel">
+                    Cancel
+                </button>
+                <button type="submit">
+                    Save
+                </button>
+            </div>
         </div>
-        <div>
-            <IbdTextArea @bind-Value="@Food.Description" Title="Description"/>
-        </div>
-        <div>
-            <button @onclick="@OnClickCancel">
-                Cancel
-            </button>
-            <button @onclick="@OnClickSave">
-                Save
-            </button>
-        </div>
-    </div>
+    </EditForm>
 </Popup>
 
 @code {

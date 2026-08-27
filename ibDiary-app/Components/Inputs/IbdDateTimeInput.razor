@@ -1,27 +1,54 @@
-﻿<div class="ibd-datetime-input ibd-input">
+﻿@inherits InputBase<DateTime>
+
+<div class="ibd-datetime-input ibd-input">
     <p>@Title</p>
     @if (ReadOnly)
     {
-        <input type="text" value="@Value.ToString("yyyy-MM-ddTHH:mm")" readonly />
+        <input type="text" value="@CurrentValue.ToString("yyyy-MM-ddTHH:mm")" readonly />
     }
     else
     {
-        <input type="datetime-local" value="@Value.ToString("yyyy-MM-ddTHH:mm")" @onchange="@OnValueChanged" />
+        <input type="datetime-local" value="@CurrentValue.ToString("yyyy-MM-ddTHH:mm")" @onchange="@OnValueChanged" />
+    }
+    @if (EditContext != null && ValueExpression != null)
+    {
+        var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+        if (messages.Count > 0)
+        {
+            <div class="validation-error">
+                @foreach (var error in messages)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
     }
 </div>
 
 @code {
-    [Parameter] public DateTime Value { get; set; }
-    [Parameter] public EventCallback<DateTime> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
+
+    protected override bool TryParseValueFromString(string? value, out DateTime result, out string validationErrorMessage)
+    {
+        if (DateTime.TryParse(value, out var parsedValue))
+        {
+            result = parsedValue;
+            validationErrorMessage = string.Empty;
+            return true;
+        }
+
+        result = default;
+        validationErrorMessage = "The date/time is invalid.";
+        return false;
+    }
 
     private async Task OnValueChanged(ChangeEventArgs e)
     {
         if (e.Value is string value && DateTime.TryParse(value, out var dateTime))
         {
-            Value = dateTime;
-            await ValueChanged.InvokeAsync(Value);
+            CurrentValue = dateTime;
+            await ValueChanged.InvokeAsync(CurrentValue);
         }
     }
 }

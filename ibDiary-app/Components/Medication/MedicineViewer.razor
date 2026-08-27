@@ -2,60 +2,64 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
-    <div class="medicine-viewer">
-        @if (!Medicine.IsNew && Medicine.StateChanges.Count > 0)
-        {
-            <div>
-                <button @onclick="@(() => ChangeTab("med"))">
-                    Medicine
-                </button>
-                <button @onclick="@(() => ChangeTab("his"))">
-                    History
-                </button>
-            </div>
-        }
-        @if (_medicineVisible)
-        {
-            <div>
-                <IbdTextInput @bind-Value="@Medicine.Name" Title="Name" />
-                <IbdCheckbox @bind-Value="@Medicine.Active" Title="Active" />
-            </div>
-            <div>
-                <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
-            </div>
-            <div>
-                <IbdTextInput @bind-Value="@Medicine.PrescribedBy" Title="Prescribed By" />
-            </div>
-            <div>
-                <IbdDateTimeInput @bind-Value="@Medicine.PrescribedAt" Title="Prescribed At" />
-            </div>
-            <div>
-                <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
-            </div>
-            <div>
-                <MedicineScheduleViewer @bind-MedicineSchedule="@Medicine.MedicineSchedule" />
-            </div>
-        }
-        @if (_historyVisible)
-        {
-            <div class="state-change-list">
+    <EditForm Model="@Medicine" OnValidSubmit="@OnClickSave">
+        <DataAnnotationsValidator />
+
+        <div class="medicine-viewer">
+            @if (!Medicine.IsNew && Medicine.StateChanges.Count > 0)
+            {
                 <div>
-                    @foreach (var change in Medicine.StateChanges)
-                    {
-                        <MedicineStateChangeRow StateChange="change" />
-                    }
+                    <button @onclick="@(() => ChangeTab("med"))">
+                        Medicine
+                    </button>
+                    <button @onclick="@(() => ChangeTab("his"))">
+                        History
+                    </button>
                 </div>
+            }
+            @if (_medicineVisible)
+            {
+                <div>
+                    <IbdTextInput @bind-Value="@Medicine.Name" Title="Name" />
+                    <IbdCheckbox @bind-Value="@Medicine.Active" Title="Active" />
+                </div>
+                <div>
+                    <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
+                </div>
+                <div>
+                    <IbdTextInput @bind-Value="@Medicine.PrescribedBy" Title="Prescribed By" />
+                </div>
+                <div>
+                    <IbdDateTimeInput @bind-Value="@Medicine.PrescribedAt" Title="Prescribed At" />
+                </div>
+                <div>
+                    <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
+                </div>
+                <div>
+                    <MedicineScheduleViewer @bind-MedicineSchedule="@Medicine.MedicineSchedule" />
+                </div>
+            }
+            @if (_historyVisible)
+            {
+                <div class="state-change-list">
+                    <div>
+                        @foreach (var change in Medicine.StateChanges)
+                        {
+                            <MedicineStateChangeRow StateChange="change" />
+                        }
+                    </div>
+                </div>
+            }
+            <div>
+                <button @onclick="@OnClickCancel">
+                    Cancel
+                </button>
+                <button type="submit">
+                    Save
+                </button>
             </div>
-        }
-        <div>
-            <button @onclick="@OnClickCancel">
-                Cancel
-            </button>
-            <button @onclick="@OnClickSave">
-                Save
-            </button>
         </div>
-    </div>
+    </EditForm>
 </Popup>
 
 

@@ -18,6 +18,7 @@ namespace ibDiary_data.Models.Symptoms
         [NotMapped] public DateOnly ChangedAtDate { get => DateOnly.FromDateTime(ChangedAt); }
         [Column(TypeName = "jsonb")] public Symptom SymptomBefore { get; set; }
         [Column(TypeName = "jsonb")] public Symptom SymptomAfter { get; set; }
+        public bool IsNew { get; set; }
 
         public SymptomStateChange()
         {
@@ -26,6 +27,7 @@ namespace ibDiary_data.Models.Symptoms
             ChangedAt = DateTime.UtcNow;
             SymptomBefore = new();
             SymptomAfter = new();
+            IsNew = true;
         }
 
         public SymptomStateChange(Symptom symptom, Symptom oldSymptom)
@@ -35,6 +37,7 @@ namespace ibDiary_data.Models.Symptoms
             ChangedAt = DateTime.UtcNow;
             SymptomBefore = oldSymptom;
             SymptomAfter = symptom;
+            IsNew = true;
         }
 
         public DateOnly GetDate() => ChangedAtDate;

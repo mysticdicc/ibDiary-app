@@ -4,7 +4,7 @@
         <button @onclick="@OnClickHelp">
             <span class="material-symbols-outlined">help</span>
         </button>
-        <IbdSelect Options="@_typeOptions" Title="Schedule Type" Value="@_selectedType" ValueChanged="@OnTypeChanged" />
+        <IbdSelect Options="@_typeOptions" Title="Schedule Type" @bind-Value="@_selectedType" @bind-Value:after="@OnTypeChanged" />
     </header>
     <div>
         @if (_helpVisible)
@@ -45,7 +45,7 @@
     else if (MedicineSchedule.Type == MedicineScheduleType.Interval)
     {
         <div>
-            <IbdSelect Options="@_scheduleOptions" Title="Interval Length" Value="@_selectedInterval" ValueChanged="@OnIntervalTypeChanged" />
+            <IbdSelect Options="@_scheduleOptions" Title="Interval Length" @bind-Value="@_selectedInterval" @bind-Value:after="@OnIntervalTypeChanged" />
             <IbdIntInput @bind-Value="@MedicineSchedule.IntervalValue" Title="@_intervalTitle" />
         </div>
     }
@@ -81,19 +81,15 @@
         return base.OnParametersSetAsync();
     }
 
-    private async Task OnTypeChanged(IbdSelectOption e)
+    private async Task OnTypeChanged()
     {
-        if (e.Value is not MedicineScheduleType type || e.Value == null) return;
-        MedicineSchedule.Type = type;
-        if (type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = ScheduleIntervalType.Hours;
+        if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = ScheduleIntervalType.Hours;
         UpdateIntervalTitle();
         await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
     }
 
-    private async Task OnIntervalTypeChanged(IbdSelectOption e)
+    private async Task OnIntervalTypeChanged()
     {
-        if (e.Value is not ScheduleIntervalType type || e.Value == null) return;
-        MedicineSchedule.IntervalType = type;
         UpdateIntervalTitle();
         await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
     }

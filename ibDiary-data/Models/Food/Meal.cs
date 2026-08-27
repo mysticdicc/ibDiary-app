@@ -11,6 +11,7 @@ namespace ibDiary_data.Models.Food
     public class Meal : ICalendarUpdate
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
+        [Required(ErrorMessage = "Name cannot be empty.")]
         [MaxLength(128, ErrorMessage = "Name must not exceed 128 characters.")]
         public string Name { get; set; }
         public List<FoodItem> FoodItems { get; set; }

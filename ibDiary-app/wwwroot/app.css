@@ -13,6 +13,7 @@
     --safe-right: env(safe-area-inset-right);
     --border: rgb(20, 1, 33);
     --shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+    --error: rgb(255, 0, 54);
     font-family: "Roboto";
     box-sizing: border-box;
 }
@@ -362,6 +363,19 @@ button {
     > input:focus, textarea:focus {
         outline: none;
         background-color: var(--background-dark);
+    }
+}
+
+.validation-error {
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: var(--error);
+    border: 1px solid vaR(--border);
+    box-shadow: var(--shadow);
+    width: fit-content;
+
+    p {
+        margin: 0;
     }
 }
 
@@ -1045,6 +1059,10 @@ button {
             margin-left: 5px;
             margin-right: 5px;
         }
+    }
+
+    > .validation-error {
+        margin-left: auto;
     }
 
     .small-card {

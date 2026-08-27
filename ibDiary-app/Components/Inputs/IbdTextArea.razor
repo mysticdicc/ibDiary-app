@@ -1,25 +1,45 @@
-﻿<div class="ibd-text-area ibd-input">
+﻿@inherits InputBase<string>
+
+<div class="ibd-text-area ibd-input">
     <p>@Title</p>
     @if (ReadOnly)
     {
-        <textarea value="@Value" readonly />
+        <textarea value="@CurrentValue" readonly />
     }
     else
     {
-        <textarea value="@Value" @onchange="@OnInputChanged"/>
+        <textarea value="@CurrentValue" @onchange="@OnInputChanged" />
+    }
+    @if (EditContext != null && ValueExpression != null)
+    {
+        var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+        if (messages.Count > 0)
+        {
+            <div class="validation-error">
+                @foreach (var error in messages)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
     }
 </div>
 
 @code {
-    [Parameter] public string Value { get; set; } = string.Empty;
-    [Parameter] public EventCallback<string> ValueChanged { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
+
+    protected override bool TryParseValueFromString(string? value, out string result, out string validationErrorMessage)
+    {
+        result = value ?? string.Empty;
+        validationErrorMessage = string.Empty;
+        return true;
+    }
 
     private async Task OnInputChanged(ChangeEventArgs e)
     {
         if (e.Value is not string value) return;
-        Value = value;
-        await ValueChanged.InvokeAsync(Value);
+        CurrentValue = value;
+        await ValueChanged.InvokeAsync(CurrentValue);
     }
 }

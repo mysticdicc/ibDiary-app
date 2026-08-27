@@ -1,5 +1,6 @@
 ﻿using ibDiary_data.Models.Calendar;
 using ibDiary_data.Models.Interfaces;
+using ibDiary_data.Models.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,7 @@ namespace ibDiary_data.Models.Medication
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
         public int MedicineId { get; set; }
+        [NotNewCalendarObject(ErrorMessage = "Medicine is required.")]
         public Medicine Medicine { get; set; }
         public DateTime SubmittedAt { get; set; }
         public DateTime MedicineTakenAt { get; set; }

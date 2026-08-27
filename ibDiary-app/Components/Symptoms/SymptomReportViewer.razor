@@ -2,38 +2,42 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Symptom Report">
-    <div class="symptom-report-viewer">
-        <div>
-            <SymptomSearcher Symptom="@SymptomReport.Symptom" SymptomChanged="@OnSymptomSelected" ShowSelected="true"/>
-        </div>
-        <div>
-            @if (null != SymptomReport.Medication)
-            {
-                <MedicineSmallCard Medicine="@SymptomReport.Medication" />
-            }
-            else
-            {
+    <EditForm Model="@SymptomReport" OnValidSubmit="@OnClickSave">
+        <DataAnnotationsValidator />
 
-            }
+        <div class="symptom-report-viewer">
+            <div>
+                <SymptomSearcher @bind-Value="@SymptomReport.Symptom" ShowSelected="true" />
+            </div>
+            <div>
+                @if (null != SymptomReport.Medication)
+                {
+                    <MedicineSmallCard Medicine="@SymptomReport.Medication" />
+                }
+                else
+                {
+
+                }
+            </div>
+            <div>
+                <IbdIntInput @bind-Value="@SymptomReport.Severity" Title="Severity" />
+            </div>
+            <div>
+                <IbdTextArea @bind-Value="@SymptomReport.Notes" Title="Notes" />
+            </div>
+            <div>
+                <IbdDateTimeInput @bind-Value="@SymptomReport.SubmittedFor" Title="Submitted For" />
+            </div>
+            <div>
+                <button @onclick="@OnClickCancel">
+                    Cancel
+                </button>
+                <button type="submit">
+                    Save
+                </button>
+            </div>
         </div>
-        <div>
-            <IbdIntInput @bind-Value="@SymptomReport.Severity" Title="Severity" />
-        </div>
-        <div>
-            <IbdTextArea @bind-Value="@SymptomReport.Notes" Title="Notes"/>
-        </div>
-        <div>
-            <IbdDateTimeInput @bind-Value="@SymptomReport.SubmittedFor" Title="Submitted For" />
-        </div>
-        <div>
-            <button @onclick="@OnClickCancel">
-                Cancel
-            </button>
-            <button @onclick="@OnClickSave">
-                Save
-            </button>
-        </div>
-    </div>
+    </EditForm>
 </Popup>
 
 @code {
@@ -72,10 +76,5 @@
     private async Task OnVisibleChamged(bool visible)
     {
         await VisibleChanged.InvokeAsync(visible);
-    }
-
-    private void OnSymptomSelected(Symptom symptom)
-    {
-        if (!symptom.IsNew) SymptomReport.Symptom = symptom;
     }
 }

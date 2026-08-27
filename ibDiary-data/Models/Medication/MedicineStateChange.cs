@@ -18,6 +18,7 @@ namespace ibDiary_data.Models.Medication
         [NotMapped] public DateOnly ChangedAtDate { get => DateOnly.FromDateTime(ChangedAt); }
         [Column(TypeName = "jsonb")] public Medicine MedicineBefore { get; set; }
         [Column(TypeName = "jsonb")] public Medicine MedicineAfter { get; set; }
+        public bool IsNew { get; set; }
 
         public MedicineStateChange()
         {
@@ -26,6 +27,7 @@ namespace ibDiary_data.Models.Medication
             ChangedAt = DateTime.UtcNow;
             MedicineBefore = new();
             MedicineAfter = new();
+            IsNew = true;
         }
 
         public MedicineStateChange(Medicine medicine, Medicine oldMedicine)
@@ -35,6 +37,7 @@ namespace ibDiary_data.Models.Medication
             ChangedAt = DateTime.UtcNow;
             MedicineBefore = oldMedicine;
             MedicineAfter = medicine;
+            IsNew = true;
         }
 
         public DateOnly GetDate() => ChangedAtDate;

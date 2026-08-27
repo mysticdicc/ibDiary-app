@@ -2,26 +2,30 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Medicine Report">
-    <div class="medicine-report-viewer">
-        <div>
-            <MedicineSearcher Medicine="@MedicineReport.Medicine" MedicineChanged="@OnMedicineSelected" ShowSelected="true"/>
+    <EditForm Model="@MedicineReport" OnValidSubmit="@OnClickSave">
+        <DataAnnotationsValidator />
+
+        <div class="medicine-report-viewer">
+            <div>
+                <MedicineSearcher @bind-Value="@MedicineReport.Medicine" ShowSelected="true" />
+            </div>
+            <div>
+                <IbdDateTimeInput Title="Taken At" @bind-Value="@MedicineReport.MedicineTakenAt" />
+                <IbdCheckbox @bind-Value="@MedicineReport.MedicineTaken" Title="Taken" />
+            </div>
+            <div>
+                <IbdTextArea Title="Notes" @bind-Value="@MedicineReport.Notes" />
+            </div>
+            <div>
+                <button @onclick="@OnClickCancel">
+                    Cancel
+                </button>
+                <button type="submit">
+                    Save
+                </button>
+            </div>
         </div>
-        <div>
-            <IbdDateTimeInput Title="Taken At" @bind-Value="@MedicineReport.MedicineTakenAt" />
-            <IbdCheckbox @bind-Value="@MedicineReport.MedicineTaken" Title="Taken"/>
-        </div>
-        <div>
-            <IbdTextArea Title="Notes" @bind-Value="@MedicineReport.Notes" />
-        </div>
-        <div>
-            <button @onclick="@OnClickCancel">
-                Cancel
-            </button>
-            <button @onclick="@OnClickSave">
-                Save
-            </button>
-        </div>
-    </div>
+    </EditForm>
 </Popup>
 
 @code {
@@ -60,10 +64,5 @@
     private async Task OnVisibleChamged(bool visible)
     {
         await VisibleChanged.InvokeAsync(visible);
-    }
-
-    private void OnMedicineSelected(Medicine medicine)
-    {
-        if (!medicine.IsNew) MedicineReport.Medicine = medicine;
     }
 }

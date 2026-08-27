@@ -15,8 +15,10 @@ namespace ibDiary_data.Models.Medication
     public class Medicine : ICalendarUpdate
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
+        [Required(ErrorMessage = "Name cannot be empty.")]
         [MaxLength(128, ErrorMessage = "Name must not exceed 128 characters.")]
         public string Name { get; set; }
+        [Required(ErrorMessage = "Dose cannot be empty.")]
         [MaxLength(128, ErrorMessage = "Dose must not exceed 128 characters.")]
         public string Dose { get; set; }
         [MaxLength(128, ErrorMessage = "Prescribed by must not exceed 128 characters.")]

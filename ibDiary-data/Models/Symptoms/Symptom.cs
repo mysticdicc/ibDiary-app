@@ -13,6 +13,7 @@ namespace ibDiary_data.Models.Symptoms
     public class Symptom : ICalendarUpdate
     {
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
+        [Required(ErrorMessage = "Name cannot be empty.")]
         [MaxLength(128, ErrorMessage = "Name must not be longer than 128 characters.")]
         public string Title { get; set; }
         [MaxLength(1024, ErrorMessage = "Description must not be longer than 1024 characters.")]

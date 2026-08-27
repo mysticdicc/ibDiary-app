@@ -2,32 +2,36 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
-    <div class="meal-viewer">
-        <div>
-            <IbdTextInput @bind-Value="@Meal.Name" Title="Name"/>
+    <EditForm Model="@Meal" OnValidSubmit="@OnClickSave">
+        <DataAnnotationsValidator />
+
+        <div class="meal-viewer">
+            <div>
+                <IbdTextInput @bind-Value="@Meal.Name" Title="Name" />
+            </div>
+            <div>
+                <IbdTextArea @bind-Value="@Meal.Notes" Title="Notes" />
+            </div>
+            <div>
+                <header>
+                    <h3>Food Items</h3>
+                    <FoodSearcher @bind-Value="@_selectedFood" @bind-Value:after="@OnFoodItemChanged"/>
+                </header>
+                @foreach (var food in Meal.FoodItems)
+                {
+                    <FoodItemSmallCard Food="food" DeleteClicked="@OnFoodItemDeleted" />
+                }
+            </div>
+            <div>
+                <button @onclick="@OnClickCancel">
+                    Cancel
+                </button>
+                <button type="submit">
+                    Save
+                </button>
+            </div>
         </div>
-        <div>
-            <IbdTextArea @bind-Value="@Meal.Notes" Title="Notes"/>
-        </div>
-        <div>
-            <header>
-                <h3>Food Items</h3>
-                <FoodSearcher Food="@_selectedFood" FoodChanged="@OnFoodItemChanged"/>
-            </header>
-            @foreach (var food in Meal.FoodItems)
-            {
-                <FoodItemSmallCard Food="food" DeleteClicked="@OnFoodItemDeleted"/>
-            }
-        </div>
-        <div>
-            <button @onclick="@OnClickCancel">
-                Cancel
-            </button>
-            <button @onclick="@OnClickSave">
-                Save
-            </button>
-        </div>
-    </div>
+    </EditForm>
 </Popup>
 
 @code {
@@ -77,9 +81,9 @@
         }
     }
 
-    private void OnFoodItemChanged(FoodItem foodItem)
+    private void OnFoodItemChanged()
     {
-        if (!Meal.FoodItems.Contains(foodItem)) Meal.FoodItems.Add(foodItem);
+        if (!Meal.FoodItems.Contains(_selectedFood)) Meal.FoodItems.Add(_selectedFood);
     }
 
     private void OnFoodItemDeleted(FoodItem foodItem)

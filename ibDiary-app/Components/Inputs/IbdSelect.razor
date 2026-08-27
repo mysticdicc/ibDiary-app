@@ -1,4 +1,6 @@
-﻿<div class="ibd-select ibd-input">
+﻿@inherits InputBase<IbdSelectOption?>
+
+<div class="ibd-select ibd-input">
     <p>@Title</p>
     @if (ReadOnly)
     {
@@ -6,26 +8,45 @@
     }
     else
     {
-        <select value="@Value?.DisplayName" @onchange="@OnSelectChanged">
+        <select value="@CurrentValue?.DisplayName" @onchange="@OnSelectChanged">
             @foreach (var option in Options)
             {
                 <option value="@option.DisplayName">@option.DisplayName</option>
             }
         </select>
     }
+    @if (EditContext != null && ValueExpression != null)
+    {
+        var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+        if (messages.Count > 0)
+        {
+            <div class="validation-error">
+                @foreach (var error in messages)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
+    }
 </div>
 
 @code {
-    [Parameter] public IbdSelectOption? Value { get; set; }
-    [Parameter] public EventCallback<IbdSelectOption?> ValueChanged { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
     [Parameter] public List<IbdSelectOption> Options { get; set; } = [];
     [Parameter] public bool ReadOnly { get; set; } = false;
+
+    protected override bool TryParseValueFromString(string? value, out IbdSelectOption? result, out string validationErrorMessage)
+    {
+        result = Options.FirstOrDefault(x => x.DisplayName == value);
+        validationErrorMessage = string.Empty;
+        return true;
+    }
 
     private async Task OnSelectChanged(ChangeEventArgs e)
     {
         if (e.Value is not string option) return;
         var value = Options.Where(x => x.DisplayName == option).FirstOrDefault();
-        if (null != value) await ValueChanged.InvokeAsync(value);
+        CurrentValue = value;
+        if (null != value) await ValueChanged.InvokeAsync(CurrentValue);
     }
 }
