@@ -21,6 +21,7 @@ namespace ibDiary_data.Models.Medication
         [Required(ErrorMessage = "Dose cannot be empty.")]
         [MaxLength(128, ErrorMessage = "Dose must not exceed 128 characters.")]
         public string Dose { get; set; }
+        [Required(ErrorMessage = "Prescribed by cannot be empty.")]
         [MaxLength(128, ErrorMessage = "Prescribed by must not exceed 128 characters.")]
         public string PrescribedBy { get; set; }
         [MaxLength(1024, ErrorMessage = "Notes must not exceed 1024 characters.")]

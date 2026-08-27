@@ -1,7 +1,7 @@
 ﻿<div class="medicine-schedule-viewer" @key="@MedicineSchedule.Id">
     <header>
         <p>Schedule</p>
-        <button @onclick="@OnClickHelp">
+        <button type="button" @onclick="@OnClickHelp" @onclick:stopPropagation="true">
             <span class="material-symbols-outlined">help</span>
         </button>
         <IbdSelect Options="@_typeOptions" Title="Schedule Type" @bind-Value="@_selectedType" @bind-Value:after="@OnTypeChanged" />
@@ -39,7 +39,7 @@
         </div>
         <div>
             <IbdIntInput @bind-Value="@MedicineSchedule.IntervalValue" Title="@_intervalTitle" />
-            <IbdIntInput @bind-Value="@MedicineSchedule.AmountPerDay" Title="Total" />
+            <IbdIntInput @bind-Value="@MedicineSchedule.AmountPerDay" Title="Total Per Day" />
         </div>
     }
     else if (MedicineSchedule.Type == MedicineScheduleType.Interval)
@@ -83,6 +83,8 @@
 
     private async Task OnTypeChanged()
     {
+        if (_selectedType?.Value is not MedicineScheduleType type) return;
+        MedicineSchedule.Type = type;
         if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = ScheduleIntervalType.Hours;
         UpdateIntervalTitle();
         await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
@@ -90,6 +92,8 @@
 
     private async Task OnIntervalTypeChanged()
     {
+        if (_selectedInterval?.Value is not ScheduleIntervalType type) return;
+        MedicineSchedule.IntervalType = type;
         UpdateIntervalTitle();
         await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
     }

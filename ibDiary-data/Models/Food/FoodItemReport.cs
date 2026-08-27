@@ -62,5 +62,20 @@ namespace ibDiary_data.Models.Food
             list.Add($"You ate food item {FoodItem.Name} at {AteFoodAt.Hour}:{minute}.");
             return list;
         }
+
+        public FoodItemReport Clone()
+        {
+            var clone = new FoodItemReport();
+
+            foreach (var property in typeof(FoodItemReport).GetProperties())
+            {
+                if (property.CanWrite)
+                {
+                    property.SetValue(clone, property.GetValue(this));
+                }
+            }
+
+            return clone;
+        }
     }
 }

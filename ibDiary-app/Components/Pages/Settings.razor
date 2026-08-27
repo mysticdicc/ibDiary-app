@@ -33,11 +33,11 @@
         <header>
             <h2>Notifications</h2>
         </header>
-        <IbdCheckbox Value="@_settings.NotificationsEnabled" ValueChanged="@NotificationsEnabledChanged" Title="Notifications Enabled"/>
+        <IbdCheckbox @bind-Value="@_settings.NotificationsEnabled" @bind-Value:after="@OnSettingsChanged" Title="Notifications Enabled" />
         @if (_settings.NotificationsEnabled)
         {
-            <IbdCheckbox Value="@_settings.MedicineReportNotificationsEnabled" ValueChanged="@MedicineReportNotificationEnabledChanged" Title="Medicine Report Notifications Enabled"/>
-            <IbdCheckbox Value="@_settings.ScheduledNotificationsEnabled" ValueChanged="@ScheduledNotificationsChanged" Title="Scheduled Notifications"/>
+            <IbdCheckbox @bind-Value="@_settings.MedicineReportNotificationsEnabled" @bind-Value:after="@OnSettingsChanged" Title="Medicine Report Notifications Enabled"/>
+            <IbdCheckbox @bind-Value="@_settings.ScheduledNotificationsEnabled" @bind-Value:after="@OnSettingsChanged" Title="Scheduled Notifications" />
         }
         @if (_settings.ScheduledNotificationsEnabled)
         {
@@ -137,21 +137,8 @@
         else _notifier.ShowNotification("Error Deleting Database", "Could not find database file to delete.");
     }
 
-    private void NotificationsEnabledChanged(bool value)
+    private void OnSettingsChanged()
     {
-        _settings.NotificationsEnabled = value;
-        _settings.Save();
-    }
-
-    private void MedicineReportNotificationEnabledChanged(bool value)
-    {
-        _settings.MedicineReportNotificationsEnabled = value;
-        _settings.Save();
-    }
-
-    private void ScheduledNotificationsChanged(bool value)
-    {
-        _settings.ScheduledNotificationsEnabled = value;
         _settings.Save();
     }
 

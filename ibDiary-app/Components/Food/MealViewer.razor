@@ -2,28 +2,28 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
-    <EditForm Model="@Meal" OnValidSubmit="@OnClickSave">
+    <EditForm Model="@_meal" OnValidSubmit="@OnClickSave">
         <DataAnnotationsValidator />
 
         <div class="meal-viewer">
             <div>
-                <IbdTextInput @bind-Value="@Meal.Name" Title="Name" />
+                <IbdTextInput @bind-Value="@_meal.Name" Title="Name" />
             </div>
             <div>
-                <IbdTextArea @bind-Value="@Meal.Notes" Title="Notes" />
+                <IbdTextArea @bind-Value="@_meal.Notes" Title="Notes" />
             </div>
             <div>
                 <header>
                     <h3>Food Items</h3>
                     <FoodSearcher @bind-Value="@_selectedFood" @bind-Value:after="@OnFoodItemChanged"/>
                 </header>
-                @foreach (var food in Meal.FoodItems)
+                @foreach (var food in _meal.FoodItems)
                 {
                     <FoodItemSmallCard Food="food" DeleteClicked="@OnFoodItemDeleted" />
                 }
             </div>
             <div>
-                <button @onclick="@OnClickCancel">
+                <button type="button" @onclick="@OnClickCancel">
                     Cancel
                 </button>
                 <button type="submit">
@@ -39,13 +39,14 @@
     [Parameter] public EventCallback<Meal> MealChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private Meal _meal = new();
     private FoodItem _selectedFood = new();
-    string _title = string.Empty;
+    private string _title = string.Empty;
 
     protected override Task OnParametersSetAsync()
     {
-        if (Meal.IsNew) _title = "Add Meal";
-        else _title = Meal.Name;
+        if (Meal != _meal) _meal = Meal.Clone();
+        _title = _meal.IsNew ? "Add Meal" : _meal.Name;
         return base.OnParametersSetAsync();
     }
 
@@ -64,30 +65,30 @@
     {
         bool result = false;
 
-        if (Meal.IsNew)
+        if (_meal.IsNew)
         {
-            result = await _mealService.AddAsync(Meal) > 0;
+            result = await _mealService.AddAsync(_meal) > 0;
         }
         else
         {
-            result = await _mealService.UpdateAsync(Meal);
+            result = await _mealService.UpdateAsync(_meal);
         }
 
         if (result)
         {
-            _updateService.NotifiyComponentUpdate(Meal);
-            await MealChanged.InvokeAsync(Meal);
+            _updateService.NotifiyComponentUpdate(_meal);
+            await MealChanged.InvokeAsync(_meal);
             await OnClickCancel();
         }
     }
 
     private void OnFoodItemChanged()
     {
-        if (!Meal.FoodItems.Contains(_selectedFood)) Meal.FoodItems.Add(_selectedFood);
+        if (!_meal.FoodItems.Contains(_selectedFood)) _meal.FoodItems.Add(_selectedFood);
     }
 
     private void OnFoodItemDeleted(FoodItem foodItem)
     {
-        if (Meal.FoodItems.Contains(foodItem)) Meal.FoodItems.Remove(foodItem);
+        if (_meal.FoodItems.Contains(foodItem)) _meal.FoodItems.Remove(foodItem);
     }
 }

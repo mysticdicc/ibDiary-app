@@ -1,4 +1,5 @@
 ﻿using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Food;
 using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Validation;
 using System;
@@ -76,6 +77,21 @@ namespace ibDiary_data.Models.Medication
             var minute = MedicineTakenAt.Minute.ToString("D2");
             list.Add($"You took {Dose} of {Medicine.Name} at {MedicineTakenAt.Hour}:{minute}.");
             return list;
+        }
+
+        public MedicineReport Clone()
+        {
+            var clone = new MedicineReport();
+
+            foreach (var property in typeof(MedicineReport).GetProperties())
+            {
+                if (property.CanWrite)
+                {
+                    property.SetValue(clone, property.GetValue(this));
+                }
+            }
+
+            return clone;
         }
     }
 }

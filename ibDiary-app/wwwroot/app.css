@@ -465,6 +465,16 @@ button {
     }
 }
 
+.ibd-int-input:has(.validation-error) {
+    button:first-child {
+        margin-left: auto;
+    }
+
+    button:last-child {
+        margin-right: auto;
+    }
+}
+
 .ibd-text-area {
     height: fit-content;
 
@@ -1062,7 +1072,7 @@ button {
     > button {
         margin-left: auto;
         display: flex;
-        align-items: alenter;
+        align-items: center;
         justify-content: center;
         border-style: solid;
         border-color: var(--border);

@@ -2,22 +2,22 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Medicine Report">
-    <EditForm Model="@MedicineReport" OnValidSubmit="@OnClickSave">
+    <EditForm Model="@_report" OnValidSubmit="@OnClickSave">
         <DataAnnotationsValidator />
 
         <div class="medicine-report-viewer">
             <div>
-                <MedicineSearcher @bind-Value="@MedicineReport.Medicine" ShowSelected="true" />
+                <MedicineSearcher @bind-Value="@_report.Medicine" ShowSelected="true" />
             </div>
             <div>
-                <IbdDateTimeInput Title="Taken At" @bind-Value="@MedicineReport.MedicineTakenAt" />
-                <IbdCheckbox @bind-Value="@MedicineReport.MedicineTaken" Title="Taken" />
+                <IbdDateTimeInput Title="Taken At" @bind-Value="@_report.MedicineTakenAt" />
+                <IbdCheckbox @bind-Value="@_report.MedicineTaken" Title="Taken" />
             </div>
             <div>
-                <IbdTextArea Title="Notes" @bind-Value="@MedicineReport.Notes" />
+                <IbdTextArea Title="Notes" @bind-Value="@_report.Notes" />
             </div>
             <div>
-                <button @onclick="@OnClickCancel">
+                <button type="button" @onclick="@OnClickCancel">
                     Cancel
                 </button>
                 <button type="submit">
@@ -33,6 +33,13 @@
     [Parameter] required public EventCallback<MedicineReport> MedicineReportChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private MedicineReport _report = new();
+
+    protected override void OnParametersSet()
+    {
+        if (MedicineReport != _report) _report = MedicineReport.Clone();
+        base.OnParametersSet();
+    }
 
     private async Task OnClickCancel()
     {
@@ -44,19 +51,19 @@
     {
         bool result = false;
 
-        if (MedicineReport.IsNew)
+        if (_report.IsNew)
         {
-            result = await _medDbService.AddAsync(MedicineReport) > 0;
+            result = await _medDbService.AddAsync(_report) > 0;
         }
         else
         {
-            result = await _medDbService.UpdateAsync(MedicineReport);
+            result = await _medDbService.UpdateAsync(_report);
         }
 
         if (result)
         {
-            _updateService.NotifiyComponentUpdate(MedicineReport);
-            await MedicineReportChanged.InvokeAsync(MedicineReport);
+            _updateService.NotifiyComponentUpdate(_report);
+            await MedicineReportChanged.InvokeAsync(_report);
             await OnClickCancel();
         }
     }

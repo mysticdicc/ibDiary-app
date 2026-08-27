@@ -2,17 +2,17 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="Symptom Report">
-    <EditForm Model="@SymptomReport" OnValidSubmit="@OnClickSave">
+    <EditForm Model="@_report" OnValidSubmit="@OnClickSave">
         <DataAnnotationsValidator />
 
         <div class="symptom-report-viewer">
             <div>
-                <SymptomSearcher @bind-Value="@SymptomReport.Symptom" ShowSelected="true" />
+                <SymptomSearcher @bind-Value="@_report.Symptom" ShowSelected="true" />
             </div>
             <div>
-                @if (null != SymptomReport.Medication)
+                @if (null != _report.Medication)
                 {
-                    <MedicineSmallCard Medicine="@SymptomReport.Medication" />
+                    <MedicineSmallCard Medicine="@_report.Medication" />
                 }
                 else
                 {
@@ -20,16 +20,16 @@
                 }
             </div>
             <div>
-                <IbdIntInput @bind-Value="@SymptomReport.Severity" Title="Severity" />
+                <IbdIntInput @bind-Value="@_report.Severity" Title="Severity" />
             </div>
             <div>
-                <IbdTextArea @bind-Value="@SymptomReport.Notes" Title="Notes" />
+                <IbdTextArea @bind-Value="@_report.Notes" Title="Notes" />
             </div>
             <div>
-                <IbdDateTimeInput @bind-Value="@SymptomReport.SubmittedFor" Title="Submitted For" />
+                <IbdDateTimeInput @bind-Value="@_report.SubmittedFor" Title="Submitted For" />
             </div>
             <div>
-                <button @onclick="@OnClickCancel">
+                <button type="button" @onclick="@OnClickCancel">
                     Cancel
                 </button>
                 <button type="submit">
@@ -45,6 +45,13 @@
     [Parameter] public EventCallback<SymptomReport> SymptomReportChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private SymptomReport _report = new();
+
+    protected override void OnParametersSet()
+    {
+        if (SymptomReport != _report) _report = SymptomReport.Clone();
+        base.OnParametersSet();
+    }
 
     private async Task OnClickCancel()
     {
@@ -56,19 +63,19 @@
     {
         bool result = false;
 
-        if (SymptomReport.Id == 0)
+        if (_report.Id == 0)
         {
-            result = await _symDbService.AddAsync(SymptomReport) > 0;
+            result = await _symDbService.AddAsync(_report) > 0;
         }
         else
         {
-            result = await _symDbService.UpdateAsync(SymptomReport);
+            result = await _symDbService.UpdateAsync(_report);
         }
 
         if (result)
         {
-            _updateService.NotifiyComponentUpdate(SymptomReport);
-            await SymptomReportChanged.InvokeAsync(SymptomReport);
+            _updateService.NotifiyComponentUpdate(_report);
+            await SymptomReportChanged.InvokeAsync(_report);
             await OnClickCancel();
         }
     }

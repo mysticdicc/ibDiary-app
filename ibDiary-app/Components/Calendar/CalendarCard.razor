@@ -48,7 +48,7 @@
                 @if (Day.SymptomReports.Count > 0)
                 {
                     <div>
-                        <p @onclick="@(() => OpenTab("sr"))">Day.SymptomReports.Count symptom reports were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        <p @onclick="@(() => OpenTab("sr"))">@Day.SymptomReports.Count symptom reports were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
                         @if (_symptomReportVisible)
                         {
                             @foreach (var item in Day.SymptomReports)

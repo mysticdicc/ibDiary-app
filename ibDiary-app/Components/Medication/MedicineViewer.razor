@@ -2,11 +2,11 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
-    <EditForm Model="@Medicine" OnValidSubmit="@OnClickSave">
+    <EditForm Model="@_medicine" OnValidSubmit="@OnClickSave">
         <DataAnnotationsValidator />
 
         <div class="medicine-viewer">
-            @if (!Medicine.IsNew && Medicine.StateChanges.Count > 0)
+            @if (!_medicine.IsNew && _medicine.StateChanges.Count > 0)
             {
                 <div>
                     <button @onclick="@(() => ChangeTab("med"))">
@@ -20,30 +20,30 @@
             @if (_medicineVisible)
             {
                 <div>
-                    <IbdTextInput @bind-Value="@Medicine.Name" Title="Name" />
-                    <IbdCheckbox @bind-Value="@Medicine.Active" Title="Active" />
+                    <IbdTextInput @bind-Value="@_medicine.Name" Title="Name" />
+                    <IbdCheckbox @bind-Value="@_medicine.Active" Title="Active" />
                 </div>
                 <div>
-                    <IbdTextInput @bind-Value="@Medicine.Dose" Title="Dose" />
+                    <IbdTextInput @bind-Value="@_medicine.Dose" Title="Dose" />
                 </div>
                 <div>
-                    <IbdTextInput @bind-Value="@Medicine.PrescribedBy" Title="Prescribed By" />
+                    <IbdTextInput @bind-Value="@_medicine.PrescribedBy" Title="Prescribed By" />
                 </div>
                 <div>
-                    <IbdDateTimeInput @bind-Value="@Medicine.PrescribedAt" Title="Prescribed At" />
+                    <IbdDateTimeInput @bind-Value="@_medicine.PrescribedAt" Title="Prescribed At" />
                 </div>
                 <div>
-                    <IbdTextArea @bind-Value="@Medicine.Notes" Title="Notes" />
+                    <IbdTextArea @bind-Value="@_medicine.Notes" Title="Notes" />
                 </div>
                 <div>
-                    <MedicineScheduleViewer @bind-MedicineSchedule="@Medicine.MedicineSchedule" />
+                    <MedicineScheduleViewer @bind-MedicineSchedule="@_medicine.MedicineSchedule" />
                 </div>
             }
             @if (_historyVisible)
             {
                 <div class="state-change-list">
                     <div>
-                        @foreach (var change in Medicine.StateChanges)
+                        @foreach (var change in _medicine.StateChanges)
                         {
                             <MedicineStateChangeRow StateChange="change" />
                         }
@@ -51,7 +51,7 @@
                 </div>
             }
             <div>
-                <button @onclick="@OnClickCancel">
+                <button type="button" @onclick="@OnClickCancel">
                     Cancel
                 </button>
                 <button type="submit">
@@ -68,14 +68,18 @@
     [Parameter] public EventCallback<Medicine> MedicineChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private Medicine _medicine = new();
     private string _title = string.Empty;
     private bool _medicineVisible = true;
     private bool _historyVisible = false;
 
     protected override void OnParametersSet()
     {
-        if (Medicine.IsNew) _title = "Add Medicine";
-        else _title = $"{Medicine.Name}";
+        if (_medicine != Medicine)
+        {
+            _medicine = Medicine.Clone();
+            _title = _medicine.IsNew ? "Add Medicine" : _medicine.Name;
+        }
         base.OnParametersSet();
     }
 
@@ -89,19 +93,19 @@
     {
         bool result = false;
 
-        if (Medicine.Id == 0) 
+        if (_medicine.Id == 0)
         {
-            result = await _medDbService.AddAsync(Medicine) > 0;
+            result = await _medDbService.AddAsync(_medicine) > 0;
         }
         else
         {
-            result = await _medDbService.UpdateAsync(Medicine);
+            result = await _medDbService.UpdateAsync(_medicine);
         }
 
         if (result)
         {
-            _updateService.NotifiyComponentUpdate(Medicine);
-            await MedicineChanged.InvokeAsync(Medicine);
+            _updateService.NotifiyComponentUpdate(_medicine);
+            await MedicineChanged.InvokeAsync(_medicine);
             await OnClickCancel();
         }
     }

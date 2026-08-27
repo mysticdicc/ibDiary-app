@@ -68,5 +68,20 @@ namespace ibDiary_data.Models.Symptoms
             list.Add($"You reported that your {Symptom.Title} symptom was severity {Severity} at {SubmittedFor.Hour}:{minute}.");
             return list;
         }
+
+        public SymptomReport Clone()
+        {
+            var clone = new SymptomReport();
+
+            foreach (var property in typeof(SymptomReport).GetProperties())
+            {
+                if (property.CanWrite)
+                {
+                    property.SetValue(clone, property.GetValue(this));
+                }
+            }
+
+            return clone;
+        }
     }
 }

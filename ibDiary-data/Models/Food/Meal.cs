@@ -51,5 +51,20 @@ namespace ibDiary_data.Models.Food
             list.Add($"Meal {Name} was added.");
             return list;
         }
+
+        public Meal Clone()
+        {
+            var clone = new Meal();
+
+            foreach (var property in typeof(Meal).GetProperties())
+            {
+                if (property.CanWrite)
+                {
+                    property.SetValue(clone, property.GetValue(this));
+                }
+            }
+
+            return clone;
+        }
     }
 }

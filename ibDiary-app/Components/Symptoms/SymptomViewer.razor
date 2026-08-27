@@ -45,7 +45,7 @@
                 </div>
             }
             <div>
-                <button @onclick="@OnClickCancel">
+                <button type="button" @onclick="@OnClickCancel">
                     Cancel
                 </button>
                 <button type="submit">
@@ -64,11 +64,15 @@
     private string _title = string.Empty;
     private bool _symptomVisible = true;
     private bool _historyVisible = false;
+    private Symptom _symptom = new();
 
     protected override void OnParametersSet()
     {
-        if (Symptom.IsNew) _title = "Add Symptom";
-        else _title = $"{Symptom.Title}";
+        if (_symptom != Symptom)
+        {
+            _symptom = Symptom.Clone();
+            _title = _symptom.IsNew ? "Add Symptom" : _symptom.Title;
+        }
         base.OnParametersSet();
     }
 

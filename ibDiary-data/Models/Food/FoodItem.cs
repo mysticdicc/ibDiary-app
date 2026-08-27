@@ -1,5 +1,6 @@
 ﻿using ibDiary_data.Models.Calendar;
 using ibDiary_data.Models.Interfaces;
+using ibDiary_data.Models.Medication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -47,6 +48,21 @@ namespace ibDiary_data.Models.Food
             var list = new List<string>();
             list.Add($"Food item {Name} was added.");
             return list;
+        }
+
+        public Meal Clone()
+        {
+            var clone = new Meal();
+
+            foreach (var property in typeof(Meal).GetProperties())
+            {
+                if (property.CanWrite)
+                {
+                    property.SetValue(clone, property.GetValue(this));
+                }
+            }
+
+            return clone;
         }
     }
 }

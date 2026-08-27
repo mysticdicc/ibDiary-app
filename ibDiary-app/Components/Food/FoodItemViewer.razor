@@ -13,7 +13,7 @@
                 <IbdTextArea @bind-Value="@Food.Description" Title="Description" />
             </div>
             <div>
-                <button @onclick="@OnClickCancel">
+                <button type="button" @onclick="@OnClickCancel">
                     Cancel
                 </button>
                 <button type="submit">
@@ -29,6 +29,7 @@
     [Parameter] public EventCallback<FoodItem> FoodChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
     private string _title = string.Empty;
 
     protected override Task OnParametersSetAsync()

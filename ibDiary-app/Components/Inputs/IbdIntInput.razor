@@ -3,7 +3,7 @@
 <div class="ibd-int-input">
     <p>@Title</p>
     <div>
-        <button @onclick="@OnClickDecrease">
+        <button type="button" @onclick="@OnClickDecrease" @onclick:stopPropagation="true">
             <span class="material-symbols-outlined">arrow_circle_down</span>
         </button>
         @if (ReadOnly)
@@ -14,26 +14,26 @@
         {
             <input type="number" value="@CurrentValue" @onchange="OnValueChanged" />
         }
-        @if (EditContext != null && ValueExpression != null)
-        {
-            var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
-            if (messages.Count > 0)
-            {
-                <div class="validation-error">
-                    @foreach (var error in messages)
-                    {
-                        <p>@error</p>
-                    }
-                </div>
-            }
-        }
-        <button @onclick="@OnClickIncrease">
+        <button type="button" @onclick="@OnClickIncrease" @onclick:stopPropagation="true">
             <span class="material-symbols-outlined">arrow_circle_up</span>
         </button>
     </div>
+    @if (EditContext != null && ValueExpression != null)
+    {
+        var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
+        if (messages.Count > 0)
+        {
+            <div class="validation-error">
+                @foreach (var error in messages)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
+    }
 </div>
 
-@code {
+@code { 
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
 
@@ -55,19 +55,16 @@
     {
         int newValue = int.Parse(e.Value?.ToString() ?? "0");
         CurrentValue = newValue;
-        await ValueChanged.InvokeAsync(CurrentValue);
     }
 
     private async Task OnClickIncrease()
     {
         CurrentValue++;
-        await ValueChanged.InvokeAsync(CurrentValue);
     }
 
     private async Task OnClickDecrease()
     {
         if (CurrentValue == 0) return;
         CurrentValue--;
-        await ValueChanged.InvokeAsync(CurrentValue);
     }
 }

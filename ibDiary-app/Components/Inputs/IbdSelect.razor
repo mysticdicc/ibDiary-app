@@ -47,6 +47,5 @@
         if (e.Value is not string option) return;
         var value = Options.Where(x => x.DisplayName == option).FirstOrDefault();
         CurrentValue = value;
-        if (null != value) await ValueChanged.InvokeAsync(CurrentValue);
     }
 }

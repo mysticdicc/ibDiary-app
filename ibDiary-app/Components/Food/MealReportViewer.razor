@@ -2,21 +2,21 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@VisibleChanged" Title="Meal Report">
-    <EditForm Model="@Report" OnValidSubmit="@OnClickSave">
+    <EditForm Model="@_report" OnValidSubmit="@OnClickSave">
         <DataAnnotationsValidator />
 
         <div class="meal-item-report-viewer">
             <div>
-                <MealSearcher @bind-Value="@Report.Meal" ShowSelected="true" />
+                <MealSearcher @bind-Value="@_report.Meal" ShowSelected="true" />
             </div>
             <div>
-                <IbdDateTimeInput @bind-Value="@Report.AteMealAt" Title="Ate At" />
+                <IbdDateTimeInput @bind-Value="@_report.AteMealAt" Title="Ate At" />
             </div>
             <div>
-                <IbdTextArea @bind-Value="@Report.Notes" Title="Notes" />
+                <IbdTextArea @bind-Value="@_report.Notes" Title="Notes" />
             </div>
             <div>
-                <button @onclick="@OnClickCancel">
+                <button type="button" @onclick="@OnClickCancel">
                     Cancel
                 </button>
                 <button type="submit">
@@ -33,6 +33,13 @@
     [Parameter] public EventCallback<MealReport> ReportChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private MealReport _report = new();
+
+    protected override void OnParametersSet()
+    {
+        if (Report != _report) _report = Report.Clone();
+        base.OnParametersSet();
+    }
 
     private async Task OnVisibleChamged(bool visible)
     {
@@ -49,19 +56,19 @@
     {
         bool result = false;
 
-        if (Report.IsNew)
+        if (_report.IsNew)
         {
-            result = await _mealReportService.AddAsync(Report) > 0;
+            result = await _mealReportService.AddAsync(_report) > 0;
         }
         else
         {
-            result = await _mealReportService.UpdateAsync(Report);
+            result = await _mealReportService.UpdateAsync(_report);
         }
 
         if (result)
         {
-            _updateService.NotifiyComponentUpdate(Report);
-            await ReportChanged.InvokeAsync(Report);
+            _updateService.NotifiyComponentUpdate(_report);
+            await ReportChanged.InvokeAsync(_report);
             await OnClickCancel();
         }
     }
