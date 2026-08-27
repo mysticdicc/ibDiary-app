@@ -12,13 +12,53 @@ namespace ibDiary_data.Models.Calendar
         public bool DateFilterEnabled { get; set; }
         public DateOnly DateFilterFrom { get; set; }
         public DateOnly DateFilterTo { get; set; }
-        public bool MedicineFilterEnabled { get; set; }
+        private bool _medicineFilterEnabled;
+        public bool MedicineFilterEnabled
+        {
+            get => _medicineFilterEnabled;
+            set
+            {
+                _medicineFilterEnabled = value;
+                if (!value) Medicine = new();
+                UpdateShowFilters();
+            }
+        }
         public Medicine Medicine { get; set; }
-        public bool SymptomFilterEnabled { get; set; }
+        private bool _symptomFilterEnabled;
+        public bool SymptomFilterEnabled
+        {
+            get => _symptomFilterEnabled;
+            set
+            {
+                _symptomFilterEnabled = value;
+                if (!value) Symptom = new();
+                UpdateShowFilters();
+            }
+        }
         public Symptom Symptom { get; set; }
-        public bool FoodFilterEnabled { get; set; }
+        private bool _foodFilterEnabled;
+        public bool FoodFilterEnabled
+        {
+            get => _foodFilterEnabled;
+            set
+            {
+                _foodFilterEnabled = value;
+                if (!value) Food = new();
+                UpdateShowFilters();
+            }
+        }
         public FoodItem Food { get; set; }
-        public bool MealFilterEnabled { get; set; }
+        private bool _mealFilterEnabled;
+        public bool MealFilterEnabled
+        {
+            get => _mealFilterEnabled;
+            set
+            {
+                _mealFilterEnabled = value;
+                if (!value) Meal = new();
+                UpdateShowFilters();
+            }
+        }
         public Meal Meal { get; set; }
         public bool ShowInactive { get; set; }
         public bool ShowMedicineReports { get; set; }
@@ -104,66 +144,6 @@ namespace ibDiary_data.Models.Calendar
                 ShowMealReports = true;
                 ShowAddedMeals = true;
             }
-        }
-
-        public void ChangeSymptomFilter(bool enabled)
-        {
-            if (enabled)
-            {
-                SymptomFilterEnabled = true;
-            }
-            else
-            {
-                SymptomFilterEnabled = false;
-                Symptom = new();
-            }
-
-            UpdateShowFilters();
-        }
-
-        public void ChangeMedicineFilter(bool enabled)
-        {
-            if (enabled)
-            {
-                MedicineFilterEnabled = true;
-            }
-            else
-            {
-                MedicineFilterEnabled = false;
-                Medicine = new();
-            }
-
-            UpdateShowFilters();
-        }
-
-        public void ChangeFoodFilter(bool enabled)
-        {
-            if (enabled)
-            {
-                FoodFilterEnabled = true;
-            }
-            else
-            {
-                FoodFilterEnabled = false;
-                Food = new();
-            }
-
-            UpdateShowFilters();
-        }
-
-        public void ChangeMealFilter(bool enabled)
-        {
-            if (enabled)
-            {
-                MealFilterEnabled = true;
-            }
-            else
-            {
-                MealFilterEnabled = false;
-                Meal = new();
-            }
-
-            UpdateShowFilters();
         }
     }
 }

@@ -11,12 +11,184 @@
             }
             else
             {
-                foreach (var dayUpdate in _dayUpdates)
+                @if (Day.SymptomStateChanges.Count > 0)
                 {
-                    foreach (var update in dayUpdate.GetCalendarUpdate())
-                    {
-                        <p>@update</p>
-                    }
+                    <div>
+                        <p @onclick="@(() => OpenTab("ssc"))">@Day.SymptomStateChanges.Count symptom edits were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_symptomStateChangesVisible)
+                        {
+                            @foreach (var item in Day.SymptomStateChanges)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+
+                }
+                @if (Day.CreatedSymptoms.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("cs"))">@Day.CreatedSymptoms.Count symptoms were created. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_createdSymptomsVisible)
+                        {
+                            @foreach (var item in Day.CreatedSymptoms)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+
+                }
+                @if (Day.SymptomReports.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("sr"))">Day.SymptomReports.Count symptom reports were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_symptomReportVisible)
+                        {
+                            @foreach (var item in Day.SymptomReports)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                @if (Day.CreatedMedicines.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("cm"))">@Day.CreatedMedicines.Count medicines were created. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_createdMedicinesVisible)
+                        {
+                            @foreach (var item in Day.CreatedMedicines)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                @if (Day.MedicineStateChanges.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("msc"))">Day.MedicineStateChanges.Count medicine edits were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_medicineStateChangesVisible)
+                        {
+                            @foreach (var item in Day.MedicineStateChanges)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                @if (Day.MedicineReports.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("mr"))">@Day.MedicineReports.Count medicine reports were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_medicineReportsVisible)
+                        {
+                            @foreach (var item in Day.MedicineReports)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                @if (Day.CreatedFoods.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("cf"))">@Day.CreatedFoods.Count food items were created. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_createdFoodsVisible)
+                        {
+                            @foreach (var item in Day.CreatedFoods)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                @if (Day.FoodReports.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("fr"))">@Day.FoodReports.Count food reports were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_foodReportsVisible)
+                        {
+                            @foreach (var item in Day.FoodReports)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                @if (Day.CreatedMeals.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("cme"))">@Day.CreatedMeals.Count meals were created. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_createdMealsVisible)
+                        {
+                            @foreach (var item in Day.CreatedMeals)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                @if (Day.MealReports.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("mer"))">@Day.MealReports.Count meal reports were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_mealReportsVisible)
+                        {
+                            @foreach (var item in Day.MealReports)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                @if (Day.CreatedNotifications.Count > 0)
+                {
+                    <div>
+                        <p @onclick="@(() => OpenTab("cn"))">@Day.CreatedNotifications.Count custom notifications were created. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        @if (_createdNotificationsVisible)
+                        {
+                            @foreach (var item in Day.CreatedNotifications)
+                            {
+                                @foreach (var update in item.GetCalendarUpdate())
+                                {
+                                    <p>@update</p>
+                                }
+                            }
+
+                        }
+                    </div>
                 }
             }
         }
@@ -31,6 +203,18 @@
     [Parameter] required public DateOnly Date { get; set; }
     [Parameter] public CalendarDay? Day { get; set; }
     private List<ICalendarUpdate> _dayUpdates = [];
+
+    private bool _symptomStateChangesVisible = false;
+    private bool _createdSymptomsVisible = false;
+    private bool _symptomReportVisible = false;
+    private bool _createdMedicinesVisible = false;
+    private bool _medicineStateChangesVisible = false;
+    private bool _medicineReportsVisible = false;
+    private bool _createdFoodsVisible = false;
+    private bool _foodReportsVisible = false;
+    private bool _createdMealsVisible = false;
+    private bool _mealReportsVisible = false;
+    private bool _createdNotificationsVisible = false;
 
     protected override Task OnParametersSetAsync()
     {
@@ -55,5 +239,45 @@
         else _dayUpdates = [];
 
         return base.OnParametersSetAsync();
+    }
+
+    private void OpenTab(string tab)
+    {
+        switch (tab)
+        {
+            case "ssc":
+                _symptomStateChangesVisible = !_symptomStateChangesVisible;
+                break;
+            case "cs":
+                _createdSymptomsVisible = !_createdSymptomsVisible;
+                break;
+            case "sr":
+                _symptomReportVisible = !_symptomReportVisible;
+                break;
+            case "cm":
+                _createdMedicinesVisible = !_createdMedicinesVisible;
+                break;
+            case "msc":
+                _medicineStateChangesVisible = !_medicineStateChangesVisible;
+                break;
+            case "mr":
+                _medicineReportsVisible = !_medicineReportsVisible;
+                break;
+            case "cf":
+                _createdFoodsVisible = !_createdFoodsVisible;
+                break;
+            case "fr":
+                _foodReportsVisible = !_foodReportsVisible;
+                break;
+            case "cme":
+                _createdMealsVisible = !_createdMealsVisible;
+                break;
+            case "mer":
+                _mealReportsVisible = !_mealReportsVisible;
+                break;
+            case "cn":
+                _createdNotificationsVisible = !_createdNotificationsVisible;
+                break;
+        }
     }
 }

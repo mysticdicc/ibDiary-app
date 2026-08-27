@@ -1,4 +1,6 @@
 ﻿@inject CalendarClientService _calDbService
+@inject ComponentUpdateService _updateService
+@implements IDisposable
 @inject IJSRuntime _jsRuntime
 
 <div class="scrolling-calendar top" @ref="@_scrollContainer">
@@ -9,7 +11,7 @@
         @if (_filterVisible)
         {
             <div>
-                <Filter CalendarFilter="@_filter" OnFilterChanged="@FilterChanged" />
+                <Filter @bind-CalendarFilter="@_filter" @bind-CalendarFilter:after="@FilterChanged" />
             </div>
         }
     </header>
@@ -34,6 +36,18 @@
     private bool _filterVisible = false;
     private CalendarFilter _filter = new();
 
+    private async void RefreshHomeCallbackAsync(object? sender, ICalendarUpdate update)
+    {
+        await LoadCalendarDataAsync();
+        _filter = new();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _updateService.UnsubscribeFromComponentUpdates(RefreshHomeCallbackAsync);
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -45,6 +59,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _updateService.SubscribeToComponentUpdates(RefreshHomeCallbackAsync);
         await LoadCalendarDataAsync();
         _filter = new();
         await base.OnInitializedAsync();
@@ -152,6 +167,8 @@
         {
             day.FoodReports = day.FoodReports.Where(x => x.FoodItem == _filter.Food).ToList();
             day.CreatedFoods = day.CreatedFoods.Where(x => x == _filter.Food).ToList();
+            day.MealReports = day.MealReports.Where(x => x.Meal.FoodItems.Contains(_filter.Food)).ToList();
+            day.CreatedMeals = day.CreatedMeals.Where(x => x.FoodItems.Contains(_filter.Food)).ToList();
         }
 
         if (_filter.MealFilterEnabled)
@@ -178,6 +195,26 @@
         if (!_filter.ShowAddedMedicines)
         {
             day.CreatedMedicines = [];
+        }
+
+        if (!_filter.ShowAddedFoods)
+        {
+            day.CreatedFoods = [];
+        }
+
+        if (!_filter.ShowFoodReports)
+        {
+            day.FoodReports = [];
+        }
+
+        if (!_filter.ShowAddedMeals)
+        {
+            day.CreatedMeals = [];
+        }
+
+        if (!_filter.ShowMealReports)
+        {
+            day.MealReports = [];
         }
 
         return true;
