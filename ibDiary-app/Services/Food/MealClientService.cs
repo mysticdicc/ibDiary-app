@@ -1,5 +1,5 @@
-﻿using ibDiary_app.Models.Food;
-using ibDiary_app.Models.Interfaces;
+﻿using ibDiary_data.Models.Food;
+using ibDiary_data.Models.Interfaces;
 using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;

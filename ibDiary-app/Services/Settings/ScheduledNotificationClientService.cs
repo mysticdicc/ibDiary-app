@@ -1,5 +1,5 @@
-﻿using ibDiary_app.Models.Interfaces;
-using ibDiary_app.Models.Settings;
+﻿using ibDiary_data.Models.Interfaces;
+using ibDiary_data.Models.Settings;
 using ibDiary_app.Services.System;
 
 namespace ibDiary_app.Services.Settings

@@ -1,4 +1,4 @@
-﻿using ibDiary_app.Models.Interfaces;
+﻿using ibDiary_data.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;

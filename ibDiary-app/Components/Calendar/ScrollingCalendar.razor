@@ -1,18 +1,18 @@
-﻿@inject CalendarClientService _calDbService;
-@inject IJSRuntime _jsRuntime;
+﻿@inject CalendarClientService _calDbService
+@inject IJSRuntime _jsRuntime
 
 <div class="scrolling-calendar top" @ref="@_scrollContainer">
     <header>
         <button @onclick="@OnClickShowFilter">
             <span class="material-symbols-outlined">filter_alt</span>
         </button>
+        @if (_filterVisible)
+        {
+            <div>
+                <Filter CalendarFilter="@_filter" OnFilterChanged="@FilterChanged" />
+            </div>
+        }
     </header>
-    @if (_filterVisible)
-    {
-        <div>
-            <Filter CalendarFilter="@_filter" OnFilterChanged="@FilterChanged"/>
-        </div>
-    }
     <button @onclick="@ScrollToTopAsync">
         Back To Top
     </button>

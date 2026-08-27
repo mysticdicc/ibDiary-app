@@ -1,6 +1,6 @@
-﻿using ibDiary_app.Data;
-using ibDiary_app.Models.Calendar;
-using ibDiary_app.Models.Interfaces;
+﻿using ibDiary_data.Data;
+using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

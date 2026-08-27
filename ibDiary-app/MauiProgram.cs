@@ -1,8 +1,8 @@
 ﻿using AndroidX.Work;
-using ibDiary_app.Data;
-using ibDiary_app.Models.Medication;
-using ibDiary_app.Models.Settings;
-using ibDiary_app.Models.Symptoms;
+using ibDiary_data.Data;
+using ibDiary_data.Models.Medication;
+using ibDiary_data.Models.Settings;
+using ibDiary_data.Models.Symptoms;
 using ibDiary_app.Services;
 using ibDiary_app.Services.Calendar;
 using ibDiary_app.Services.Food;

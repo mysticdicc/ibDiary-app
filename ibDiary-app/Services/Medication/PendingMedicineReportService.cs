@@ -1,5 +1,5 @@
-﻿using ibDiary_app.Models.Medication;
-using ibDiary_app.Models.Settings;
+﻿using ibDiary_data.Models.Medication;
+using ibDiary_data.Models.Settings;
 using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;

@@ -3,7 +3,7 @@ using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
 using AndroidX.Work;
-using ibDiary_app.Models.Settings;
+using ibDiary_data.Models.Settings;
 using ibDiary_app.Services.Medication;
 using ibDiary_app.Services.Settings;
 using System;

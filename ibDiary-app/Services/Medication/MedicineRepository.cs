@@ -1,8 +1,8 @@
-﻿using ibDiary_app.Data;
-using ibDiary_app.Models.Calendar;
-using ibDiary_app.Models.Interfaces;
-using ibDiary_app.Models.Medication;
-using ibDiary_app.Models.Symptoms;
+﻿using ibDiary_data.Data;
+using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Interfaces;
+using ibDiary_data.Models.Medication;
+using ibDiary_data.Models.Symptoms;
 using ibDiary_app.Services.Calendar;
 using ibDiary_app.Services.Medication;
 using Microsoft.EntityFrameworkCore;
