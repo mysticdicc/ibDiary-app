@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text;
 
@@ -13,6 +14,11 @@ namespace ibDiary_app.Services.System
         public bool MedicineReportNotificationsEnabled { get; set; } = true;
         [Setting(true)]
         public bool ScheduledNotificationsEnabled { get; set; } = true;
+        [Setting(15)]
+        [Range(0, 600, ErrorMessage = "Value must be between 0 and 600 minutes.")]
+        public int MinutesBetweenNotifications { get; set; } = 15;
+        [Setting(null)]
+        public DateTime? NotificationsLastSent { get; set; } = DateTime.MinValue;
 
         public void Load()
         {
@@ -21,8 +27,7 @@ namespace ibDiary_app.Services.System
             foreach (var prop in properties)
             {
                 var attribute = prop.GetCustomAttribute<SettingAttribute>();
-                if (attribute == null || !prop.CanWrite)
-                    continue;
+                if (attribute == null || !prop.CanWrite) continue;
 
                 if (!Preferences.Default.ContainsKey(prop.Name))
                 {
@@ -32,8 +37,15 @@ namespace ibDiary_app.Services.System
                 else
                 {
                     string stored = Preferences.Default.Get(prop.Name, string.Empty);
-                    var value = Convert.ChangeType(stored, prop.PropertyType);
-                    prop.SetValue(this, value);
+                    var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+
+                    if (string.IsNullOrEmpty(stored))
+                        prop.SetValue(this, null);
+                    else
+                    {
+                        var value = Convert.ChangeType(stored, targetType);
+                        prop.SetValue(this, value);
+                    }
                 }
             }
         }
@@ -63,6 +75,13 @@ namespace ibDiary_app.Services.System
             }
 
             Load();
+        }
+
+        public bool IsTimeToSendNotification()
+        {
+            if (NotificationsLastSent == null) return true;
+            if (DateTime.UtcNow > NotificationsLastSent.Value.AddMinutes(MinutesBetweenNotifications)) return true;
+            return false;
         }
     }
 }

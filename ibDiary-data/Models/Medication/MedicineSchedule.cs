@@ -15,9 +15,9 @@ namespace ibDiary_data.Models.Medication
         [JsonIgnore] public Medicine? Medicine { get; set; }
         public MedicineScheduleType Type { get; set; }
         public ScheduleIntervalType IntervalType { get; set; }
-        [Range(0, 512, ErrorMessage = "Value must be between 0 and 512.")]
+        [Range(1, 512, ErrorMessage = "Value must be between 1 and 512.")]
         public int IntervalValue { get; set; }
-        [Range(0, 512, ErrorMessage = "Amount must be between 0 and 512.")]
+        [Range(1, 512, ErrorMessage = "Amount must be between 1 and 512.")]
         public int AmountPerDay { get; set; }
         public DateTime StartedAt { get; set; }
         public bool IsNew { get; set; }
@@ -29,6 +29,8 @@ namespace ibDiary_data.Models.Medication
             StartedAt = DateTime.UtcNow;
             Type = MedicineScheduleType.DailyLimit;
             IntervalType = ScheduleIntervalType.Hours;
+            IntervalValue = 1;
+            AmountPerDay = 1;
         }
 
         public void UpdateProperties(MedicineSchedule schedule)

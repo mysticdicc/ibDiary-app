@@ -707,6 +707,15 @@ button {
         .ibd-input {
             flex: none;
         }
+
+        .ibd-int-input:first-of-type {
+            margin-left: 5px;
+        }
+
+        .ibd-int-input:last-of-type {
+            margin-left: auto;
+            margin-right: 5px;
+        }
     }
 }
 

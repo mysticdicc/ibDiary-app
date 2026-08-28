@@ -36,6 +36,7 @@
         <IbdCheckbox @bind-Value="@_settings.NotificationsEnabled" @bind-Value:after="@OnSettingsChanged" Title="Notifications Enabled" />
         @if (_settings.NotificationsEnabled)
         {
+            <IbdIntInput @bind-Value="@_settings.MinutesBetweenNotifications" @bind-Value:after="@OnSettingsChanged" Title="Minutes Between Notifications" IncreaseCount="15"/>
             <IbdCheckbox @bind-Value="@_settings.MedicineReportNotificationsEnabled" @bind-Value:after="@OnSettingsChanged" Title="Medicine Report Notifications Enabled"/>
             <IbdCheckbox @bind-Value="@_settings.ScheduledNotificationsEnabled" @bind-Value:after="@OnSettingsChanged" Title="Scheduled Notifications" />
         }

@@ -25,6 +25,7 @@ namespace ibDiary_app.Services.System
         private PendingMedicineReportService? _medReportService;
         private AppSettings? _settings;
         private ScheduledNotificationRepository? _notificationRepo;
+        private int _notificationsSent = 0;
 
         public override Result DoWork()
         {
@@ -51,11 +52,24 @@ namespace ibDiary_app.Services.System
         {
             try
             {
-                if (ServicesNeedLoading()) LoadServices();
-                if (ServicesNeedLoading()) return Result.InvokeRetry();
+                if (ServicesNeedLoading())
+                {
+                    LoadServices();
+                    if (ServicesNeedLoading()) return Result.InvokeRetry();
+                }
+
                 if (!_settings!.NotificationsEnabled) return Result.InvokeSuccess();
+                if (!_settings!.IsTimeToSendNotification()) return Result.InvokeSuccess();
+
                 if (_settings.MedicineReportNotificationsEnabled) await HandleMedicineReportNotificationsAsync();
                 if (_settings.ScheduledNotificationsEnabled) await HandleScheduledNotifications();
+
+                if (_notificationsSent > 0)
+                {
+                    _notificationsSent = 0;
+                    _settings.NotificationsLastSent = DateTime.UtcNow;
+                    _settings.Save();
+                }
 
                 return Result.InvokeSuccess();
             }
@@ -70,13 +84,15 @@ namespace ibDiary_app.Services.System
             var reports = await _medReportService!.GetPendingReportsAsync();
             if (reports.Count > 0)
             {
+                _notificationsSent++;
+
                 if (reports.Count == 1)
                 {
-                    SendNotification("IbDiary Medicine Reminder", $"You are due to take {reports.First().Medicine.Name}.");
+                    SendNotification("IbDiary Medicine Reminder", $"You are due to take {reports.First().Medicine.Name}.", 3);
                 }
                 else if (reports.Count > 1)
                 {
-                    SendNotification("IbDiary Medicine Reminder", $"You have {reports.Count} medicines due reports.");
+                    SendNotification("IbDiary Medicine Reminder", $"You have {reports.Count} medicines due reports.", 3);
                 }
             }
         }
@@ -93,9 +109,23 @@ namespace ibDiary_app.Services.System
 
                 if (dueAt <= DateTime.UtcNow)
                 {
+                    _notificationsSent++;
+
+                    int id = 0;
+                    switch (notification.Type)
+                    {
+                        case ScheduledNotificationType.Food:
+                            id = 1;
+                            break;
+                        case ScheduledNotificationType.Symptom:
+                            id = 2;
+                            break;
+                    }
+
                     SendNotification(
                         $"IbDiary - {notification.Type}",
-                        $"Time for your {notification.Type} reminder."
+                        $"Time for your {notification.Type} reminder.",
+                        id
                     );
 
                     notification.LastSentAt = DateTime.UtcNow;
@@ -122,7 +152,7 @@ namespace ibDiary_app.Services.System
 
         private static readonly string CHANNEL_ID = "ibdiary_notifications";
 
-        public static void SendNotification(string title, string message)
+        public static void SendNotification(string title, string message, int id)
         {
             var context = Android.App.Application.Context;
             if (context == null) return;
@@ -147,7 +177,7 @@ namespace ibDiary_app.Services.System
             if (notification == null) return;
 
             var notificationManager = NotificationManagerCompat.From(context);
-            notificationManager?.Notify(1, notification);
+            notificationManager?.Notify(id, notification);
         }
 
         private static void CreateNotificationChannel(Context context)

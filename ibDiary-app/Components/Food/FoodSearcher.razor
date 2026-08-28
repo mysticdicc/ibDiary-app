@@ -32,6 +32,9 @@
     <div class="food-item-searcher">
         <div>
             <IbdTextInput @bind-Value="@_searchString" @bind-Value:after="@OnSearchInputChanged" Title="Search Food Items" />
+            <button @onclick="@OnClickAdd">
+                <span class="material-symbols-outlined">add</span>
+            </button>
         </div>
         @if (_suggestedFoods.Count > 0)
         {
@@ -40,9 +43,14 @@
                 {
                     <FoodItemSmallCard Food="food" FoodClicked="@OnFoodClicked" />
                 }
+                <button @onclick="@OnShowMoreClicked">
+                    Show More
+                </button>
             </div>
         }
     </div>
+
+    <FoodItemViewer Food="@_newFood" FoodChanged="@OnNewFoodChanged" @bind-Visible="@_newFoodVisible" />
 </Popup>
 
 @code {
@@ -51,6 +59,9 @@
     private List<FoodItem> _allFoods = [];
     private string _searchString = string.Empty;
     private bool _popupVisible = false;
+    private int _showCount = 5;
+    private FoodItem _newFood = new();
+    private bool _newFoodVisible = false;
 
     protected override bool TryParseValueFromString(string? value, out FoodItem? result, out string validationErrorMessage)
     {
@@ -76,13 +87,13 @@
     protected override async Task OnInitializedAsync()
     {
         _allFoods = await _foodService.GetAllAsync();
-        _suggestedFoods = _allFoods.Take(5).ToList();
+        _suggestedFoods = _allFoods.Take(_showCount).ToList();
         await base.OnInitializedAsync();
     }
 
     private void OnSearchInputChanged()
     {
-        _suggestedFoods = _allFoods.Where(x => x.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)).Take(5).ToList();
+        _suggestedFoods = _allFoods.Where(x => x.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)).Take(_showCount).ToList();
     }
 
     private async Task OnFoodClicked(FoodItem food)
@@ -90,7 +101,7 @@
         CurrentValue = food;
         await ValueChanged.InvokeAsync(food);
         _searchString = string.Empty;
-        _suggestedFoods = _allFoods.Take(5).ToList();
+        _suggestedFoods = _allFoods.Take(_showCount).ToList();
         _popupVisible = false;
     }
 
@@ -108,5 +119,24 @@
     {
         CurrentValue = null;
         await ValueChanged.InvokeAsync(CurrentValue);
+    }
+
+    private void OnShowMoreClicked()
+    {
+        _showCount = _showCount + 5;
+        OnSearchInputChanged();
+    }
+
+    private async Task OnNewFoodChanged(FoodItem food)
+    {
+        _allFoods = await _foodService.GetAllAsync();
+        _newFood = new();
+        OnSearchInputChanged();
+    }
+
+    private void OnClickAdd()
+    {
+        _newFood = new();
+        _newFoodVisible = true;
     }
 }

@@ -3,20 +3,31 @@
 <div class="ibd-int-input">
     <p>@Title</p>
     <div>
-        <button type="button" @onclick="@OnClickDecrease" @onclick:stopPropagation="true">
-            <span class="material-symbols-outlined">arrow_circle_down</span>
-        </button>
         @if (ReadOnly)
         {
-            <input type="number" value="@CurrentValue" readonly />
+            <button type="button" class="readonly">
+                <span class="material-symbols-icon">arrow_circle_down</span>
+            </button>
         }
         else
         {
-            <input type="number" value="@CurrentValue" @onchange="OnValueChanged" />
+            <button type="button" @onclick="@OnClickDecrease" @onclick:stopPropagation="true">
+                <span class="material-symbols-outlined">arrow_circle_down</span>
+            </button>
         }
-        <button type="button" @onclick="@OnClickIncrease" @onclick:stopPropagation="true">
-            <span class="material-symbols-outlined">arrow_circle_up</span>
-        </button>
+        <input type="number" value="@CurrentValue" readonly />
+        @if (ReadOnly)
+        {
+            <button type="button" class="readonly">
+                <span class="material-symbols-icon">arrow_circle_up</span>
+            </button>
+        }
+        else
+        {
+            <button type="button" @onclick="@OnClickIncrease" @onclick:stopPropagation="true">
+                <span class="material-symbols-outlined">arrow_circle_up</span>
+            </button>
+        }
     </div>
     @if (EditContext != null && ValueExpression != null)
     {
@@ -33,7 +44,8 @@
     }
 </div>
 
-@code { 
+@code {
+    [Parameter] public int IncreaseCount { get; set; } = 1;
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
 
@@ -59,12 +71,14 @@
 
     private async Task OnClickIncrease()
     {
-        CurrentValue++;
+        CurrentValue = CurrentValue + IncreaseCount;
     }
 
     private async Task OnClickDecrease()
     {
         if (CurrentValue == 0) return;
-        CurrentValue--;
+        var newValue = CurrentValue - IncreaseCount;
+        if (newValue < 0) newValue = 0;
+        CurrentValue = newValue;
     }
 }

@@ -32,6 +32,9 @@
     <div class="symptom-searcher">
         <div>
             <IbdTextInput @bind-Value="@_searchString" @bind-Value:after="@OnSearchInputChanged" Title="Search Symptoms" />
+            <button @onclick="@OnClickAdd">
+                <span class="material-symbols-outlined">add</span>
+            </button>
         </div>
         @if (_suggestedSymptoms.Count > 0)
         {
@@ -40,9 +43,14 @@
                 {
                     <SymptomSmallCard Symptom="symptom" SymptomClicked="@OnSymptomClicked" />
                 }
+                <button @onclick="@OnShowMoreClicked">
+                    Show More
+                </button>
             </div>
         }
     </div>
+
+    <SymptomViewer Symptom="@_newSymptom" SymptomChanged="@OnNewSymptomChanged" @bind-Visible="@_newSymptomVisible"/>
 </Popup>
 
 
@@ -52,6 +60,9 @@
     private List<Symptom> _suggestedSymptoms = [];
     private string _searchString = string.Empty;
     private bool _popupVisible = false;
+    private int _showCount = 5;
+    private Symptom _newSymptom = new();
+    private bool _newSymptomVisible = false;
 
     protected override bool TryParseValueFromString(string? value, out Symptom? result, out string validationErrorMessage)
     {
@@ -63,13 +74,13 @@
     protected override async Task OnInitializedAsync()
     {
         _allSymptoms = await _sympDbService.GetAllAsync();
-        _suggestedSymptoms = _allSymptoms.Take(5).ToList();
+        _suggestedSymptoms = _allSymptoms.Take(_showCount).ToList();
         await base.OnInitializedAsync();
     }
 
     private void OnSearchInputChanged()
     {
-        _suggestedSymptoms = _allSymptoms.Where(x => x.Title.Contains(_searchString, StringComparison.CurrentCultureIgnoreCase)).Take(5).ToList();
+        _suggestedSymptoms = _allSymptoms.Where(x => x.Title.Contains(_searchString, StringComparison.CurrentCultureIgnoreCase)).Take(_showCount).ToList();
     }
 
     private async Task OnSymptomClicked(Symptom symptom)
@@ -77,7 +88,7 @@
         CurrentValue = symptom;
         await ValueChanged.InvokeAsync(CurrentValue);
         _searchString = string.Empty;
-        _suggestedSymptoms = _allSymptoms.Take(5).ToList();
+        _suggestedSymptoms = _allSymptoms.Take(_showCount).ToList();
         _popupVisible = false;
     }
 
@@ -95,5 +106,24 @@
     {
         CurrentValue = null;
         await ValueChanged.InvokeAsync(null);
+    }
+
+    private void OnShowMoreClicked()
+    {
+        _showCount = _showCount + 5;
+        OnSearchInputChanged();
+    }
+
+    private async Task OnNewSymptomChanged(Symptom symptom)
+    {
+        _allSymptoms = await _sympDbService.GetAllAsync();
+        _newSymptom = new();
+        OnSearchInputChanged();
+    }
+
+    private void OnClickAdd()
+    {
+        _newSymptom = new();
+        _newSymptomVisible = true;
     }
 }
