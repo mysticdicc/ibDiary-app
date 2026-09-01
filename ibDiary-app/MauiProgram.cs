@@ -70,6 +70,9 @@ namespace ibDiary_app
             builder.Services.AddSingleton<CalendarClientService>();
             builder.Services.AddSingleton<CalendarDayGenerationService>();
 
+            builder.Services.AddSingleton<MedicineOccuranceRepository>();
+            builder.Services.AddSingleton<MedicineOccuranceClientService>();
+
             builder.Services.AddSingleton<MedicineStateChangeRepository>();
             builder.Services.AddSingleton<MedicineStateChangeClientService>();
 

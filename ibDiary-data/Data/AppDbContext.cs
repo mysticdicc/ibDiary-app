@@ -32,6 +32,7 @@ namespace ibDiary_data.Data
         public DbSet<FoodItem> FoodItems { get; set; }
         public DbSet<FoodItemReport> FoodReports { get; set; }
         public DbSet<ScheduledNotification> ScheduledNotifications { get; set; }
+        public DbSet<MedicineDueAtOccurance> MedicineOccurances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -27,12 +27,12 @@ namespace ibDiary_app.Services
 
         public async Task<List<Medicine>> GetAllAsync()
         {
-            return await _dbService.Medicines.Include(x => x.MedicineSchedule).Include(x => x.StateChanges).ToListAsync();
+            return await _dbService.Medicines.Include(x => x.MedicineSchedule).Include(x => x.StateChanges).Include(x => x.MedicineOccurances).ToListAsync();
         }
 
         public async Task<Medicine?> GetByIdAsync(int id)
         {
-            return await _dbService.Medicines.Include(x => x.MedicineSchedule).FirstOrDefaultAsync(m => m.Id == id);
+            return await _dbService.Medicines.Include(x => x.MedicineSchedule).Include(x => x.MedicineOccurances).FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<bool> UpdateAsync(Medicine medicine)
@@ -56,6 +56,7 @@ namespace ibDiary_app.Services
             }
 
             dbItem.UpdateProperties(medicine);
+            dbItem.RegenerateOccurances(DateTime.UtcNow);
             var rows = await _dbService.SaveChangesAsync();
             return rows > 0 || changedState;
         }
@@ -63,11 +64,12 @@ namespace ibDiary_app.Services
         public async Task<int> AddAsync(Medicine medicine)
         {
             medicine.IsNew = false;
-
             medicine.MedicineSchedule.IsNew = false;
+
             await _dbService.MedicineSchedules.AddAsync(medicine.MedicineSchedule);
             await _dbService.SaveChangesAsync();
 
+            medicine.RegenerateOccurances(DateTime.UtcNow);
             medicine.MedicineScheduleId = medicine.MedicineSchedule.Id;
             await _dbService.Medicines.AddAsync(medicine);
             await _dbService.SaveChangesAsync();

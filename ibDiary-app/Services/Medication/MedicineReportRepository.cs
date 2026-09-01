@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ibDiary_app.Services.Medication;
 
 namespace ibDiary_app.Services
 {
@@ -14,10 +15,12 @@ namespace ibDiary_app.Services
     {
         private readonly AppDbContext _dbService;
         private readonly CalendarDayGenerationService _calendarService;
-        public MedicineReportRepository(AppDbContext connection, CalendarDayGenerationService cal)
+        private readonly MedicineOccuranceRepository _occuranceService;
+        public MedicineReportRepository(AppDbContext connection, CalendarDayGenerationService cal, MedicineOccuranceRepository occ)
         {
             _dbService = connection;
             _calendarService = cal;
+            _occuranceService = occ;
         }
 
         public async Task<List<MedicineReport>> GetAllAsync()
@@ -36,13 +39,25 @@ namespace ibDiary_app.Services
             if (dbItem == null) return false;
 
             dbItem.UpdateProperties(medicine);
+            await HandleDueAtUpdates(medicine);
             var rows = await _dbService.SaveChangesAsync();
             return rows > 0;
+        }
+
+        private async Task HandleDueAtUpdates(MedicineReport report)
+        {
+            var dbItem = await _occuranceService.GetByIdAsync(report.DueAt.Id);
+            if (dbItem == null) return;
+
+            if (report.MedicineTaken) dbItem.Status = MedicineDueAtStatus.Taken;
+            else dbItem.Status = MedicineDueAtStatus.Missed;
         }
 
         public async Task<int> AddAsync(MedicineReport medicine)
         {
             medicine.IsNew = false;
+            await HandleDueAtUpdates(medicine);
+
             await _dbService.MedicineReports.AddAsync(medicine);
             await _dbService.SaveChangesAsync();
 

@@ -19,7 +19,7 @@ namespace ibDiary_data.Models.Medication
         public DateTime SubmittedAt { get; set; }
         public DateTime MedicineTakenAt { get; set; }
         [NotMapped] public DateOnly MedicineTakenAtDate { get  => DateOnly.FromDateTime(MedicineTakenAt); }
-        public DateTime? DueAt { get; set; }
+        public MedicineDueAtOccurance DueAt { get; set; }
         public bool MedicineTaken { get; set; }
         [MaxLength(128, ErrorMessage = "Dose must not exceed 128 characters.")]
         public string Dose { get; set; }
@@ -33,13 +33,14 @@ namespace ibDiary_data.Models.Medication
             Medicine = new();
             SubmittedAt = DateTime.UtcNow;
             MedicineTakenAt = SubmittedAt;
+            DueAt = new();
             MedicineTaken = true;
             Dose = string.Empty;
             Notes = string.Empty;
             IsNew = true;
         }
 
-        public MedicineReport(Medicine medicine, DateTime dueDate)
+        public MedicineReport(Medicine medicine, MedicineDueAtOccurance dueDate)
         {
             Id = 0;
             Medicine = medicine;

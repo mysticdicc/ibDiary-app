@@ -426,36 +426,46 @@ button {
 }
 
 .ibd-int-input {
-    background-color: var(--background-light);
-    border-color: var(--border);
-    border-style: solid;
-    border-width: 1px;
-    box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
-    height: fit-content;
+    align-content: center;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
 
-    p {
-        text-align: center;
-        color: var(--text);
+    > p {
+        font-size: 0.8rem;
         margin: 0;
+        color: var(--text);
+        text-wrap: nowrap;
+        margin-right: auto;
+        margin-left: 5px;
+        margin-top: auto;
+        margin-bottom: auto;
     }
 
     > div {
         display: flex;
         flex-direction: row;
+        background-color: var(--background-light);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        height: fit-content;
 
         button {
-            background-color: var(--background-light);
+            background-color: var(--background-dark);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+
+            span {
+                font-size: 1rem;
+            }
         }
 
         > input {
-            height: 2rem;
+            height: auto;
             max-width: 4rem;
             background-color: var(--background-light);
             color: var(--text);
-            border-style: solid;
-            border-width: 1px;
-            border-color: var(--border);
-            padding: 5px;
+            border: 1px solid var(--border);
             text-align: center;
         }
 
@@ -1156,62 +1166,59 @@ button {
     > div {
         display: flex;
         flex-direction: column;
-        border-style: solid;
-        border-color: var(--border);
-        box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
         background-color: var(--background);
-        border-width: 1px;
         border-radius: 5px;
         margin: 10px;
         padding: 5px;
         gap: 5px;
 
-        header {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
+        .ibd-int-input {
+            padding: 0;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            background-color: var(--background-light);
 
-            h2 {
-                background-color: var(--secondary);
-                border-color: var(--border);
-                border-style: solid;
-                border-width: 1px;
-                border-radius: 10px;
-                padding-top: 5px;
-                padding-bottom: 5px;
-                padding-left: 10px;
-                padding-right: 10px;
-                box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
-                width: fit-content;
-                margin-left: auto;
+            > p {
                 margin-right: auto;
             }
         }
 
+        header {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
         > p {
             background-color: var(--background-light);
-            border-color: var(--border);
-            border-width: 1px;
-            border-style: solid;
+            border: 1px solid var(--border);
             border-radius: 5px;
-            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            box-shadow: var(--shadow);
             padding: 5px;
             margin: 0;
             text-align: center;
         }
 
-        h3 {
+        h3, h2 {
+            margin: 0;
             background-color: var(--secondary);
-            border-color: var(--border);
-            border-style: solid;
-            border-width: 1px;
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding-top: 5px;
             padding-bottom: 5px;
             padding-left: 10px;
             padding-right: 10px;
-            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
+            box-shadow: var(--shadow);
             width: fit-content;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
+        h3 {
             font-size: 1.2rem;
         }
 
@@ -1219,21 +1226,27 @@ button {
             display: flex;
             flex-direction: row;
 
-            button {
+            > button {
+                background-color: var(--background-dark);
+                box-shadow: var(--shadow);
+                border: 1px solid var(--border);
+                border-radius: 5px;
                 margin-left: auto;
+
+                span {
+                    font-size: 1.2rem;
+                }
             }
         }
 
-        button {
+        > button {
             background-color: var(--background-dark);
-            box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
-            border-color: var(--border);
-            border-style: solid;
-            border-width: 1px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             border-radius: 5px;
         }
 
-            button:last-of-type {
+            > button:last-of-type {
                 margin-bottom: 5px;
             }
     }

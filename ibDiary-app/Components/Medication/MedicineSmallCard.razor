@@ -31,7 +31,7 @@
 
     protected override void OnParametersSet()
     {
-        _report = new(Medicine, DateTime.UtcNow);
+        _report = new(Medicine, new(DateTime.UtcNow, Medicine));
         base.OnParametersSet();
     }
 

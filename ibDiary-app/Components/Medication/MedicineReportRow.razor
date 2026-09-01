@@ -3,7 +3,7 @@
     <p>@MedicineReport.Dose</p>
     @if (null != MedicineReport.DueAt)
     {
-        <p>@(MedicineReport.DueAt?.ToString("d/M h:mm tt") ?? string.Empty)</p>
+        <p>@(MedicineReport.DueAt.DueAt.ToString("d/M h:mm tt") ?? string.Empty)</p>
     }
     else
     {
