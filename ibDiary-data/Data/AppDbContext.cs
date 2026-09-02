@@ -2,6 +2,7 @@
 using ibDiary_data.Models.Food;
 using ibDiary_data.Models.Medication;
 using ibDiary_data.Models.Settings;
+using ibDiary_data.Models.Stats;
 using ibDiary_data.Models.Symptoms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -33,6 +34,7 @@ namespace ibDiary_data.Data
         public DbSet<FoodItemReport> FoodReports { get; set; }
         public DbSet<ScheduledNotification> ScheduledNotifications { get; set; }
         public DbSet<MedicineDueAtOccurance> MedicineOccurances { get; set; }
+        public DbSet<StatsSnapshot> StatsSnapshots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

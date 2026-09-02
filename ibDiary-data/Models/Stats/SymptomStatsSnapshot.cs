@@ -21,6 +21,17 @@ namespace ibDiary_data.Models.Stats
         public int TotalStateChanges { get; set; }
         public int MonthlyStateChanges { get; set; }
 
+        public SymptomStatsSnapshot()
+        {
+            Id = 0;
+            Symptom = new();
+            TotalReportsCount = 0;
+            MonthlyReportsCount = 0;
+            MonthlySeverityTrend = [];
+            TotalStateChanges = 0;
+            MonthlyStateChanges = 0;
+        }
+
         public SymptomStatsSnapshot(Symptom symptom)
         {
             Id = 0;
@@ -32,25 +43,27 @@ namespace ibDiary_data.Models.Stats
             MonthlyStateChanges = 0;
         }
 
-        public void GenerateStats(Symptom symptom, DateTime monthBefore)
+        public Task GenerateStats(Symptom symptom, DateOnly monthBefore)
         {
             var endDate = monthBefore.AddMonths(1);
             var reports = symptom.SymptomReports;
 
             TotalReportsCount = reports.Count;
-            var monthly = reports.Where(x => x.SubmittedFor >= monthBefore && x.SubmittedFor < endDate).ToList();
+            var monthly = reports.Where(x => x.SubmittedForDate >= monthBefore && x.SubmittedForDate < endDate).ToList();
             MonthlyReportsCount = monthly.Count;
 
             TotalStateChanges = symptom.StateChanges.Count;
-            var monthlySc = symptom.StateChanges.Where(x => x.ChangedAt >= monthBefore && x.ChangedAt < endDate).ToList();
+            var monthlySc = symptom.StateChanges.Where(x => x.ChangedAtDate >= monthBefore && x.ChangedAtDate < endDate).ToList();
             MonthlyStateChanges = monthlySc.Count;
 
             for (var date = monthBefore; date <= endDate; date = date.AddDays(1))
             {
-                var point = new SymptomSeverityTrendPoint(DateOnly.FromDateTime(date));
+                var point = new SymptomSeverityTrendPoint(date);
                 point.GenerateStats(symptom, monthBefore);
                 MonthlySeverityTrend.Add(point);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

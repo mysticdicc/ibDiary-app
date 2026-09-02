@@ -18,6 +18,15 @@ namespace ibDiary_data.Models.Stats
         public int MonthlyReportsCount { get; set; }
         public List<MealEatenTrendPoint> MealEatenByHour { get; set; }
 
+        public MealStatsSnapshot()
+        {
+            Id = 0;
+            Meal = new();
+            TotalReportsCount = 0;
+            MonthlyReportsCount = 0;
+            MealEatenByHour = [];
+        }
+
         public MealStatsSnapshot(Meal meal)
         {
             Id = 0;
@@ -27,13 +36,18 @@ namespace ibDiary_data.Models.Stats
             MealEatenByHour = [];
         } 
 
-        public void GenerateStats(Meal meal, DateTime monthBefore)
+        public Task GenerateStats(Meal meal, DateOnly monthBefore)
         {
             var endDate = monthBefore.AddMonths(1);
             var reports = meal.MealReports;
 
             TotalReportsCount = reports.Count;
-            var monthly = reports.Where(x => x.AteMealAt >= monthBefore && x.AteMealAt < endDate).ToList();
+            var monthly = reports
+                                .Where(x => 
+                                DateOnly.FromDateTime(x.AteMealAt) >= monthBefore && 
+                                DateOnly.FromDateTime(x.AteMealAt) < endDate)
+                                .ToList();
+
             MonthlyReportsCount = monthly.Count;
 
             MealEatenByHour = [];
@@ -47,6 +61,8 @@ namespace ibDiary_data.Models.Stats
                     MealEatenByHour.Add(point);
                 }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -17,6 +17,16 @@ namespace ibDiary_data.Models.Stats
         public TimeOnly StartHour { get; set; }
         public int Count { get; set; }
 
+        public FoodEatenTrendPoint()
+        {
+            var startDate = DateTime.UtcNow;
+
+            Id = 0;
+            Date = DateOnly.FromDateTime(startDate);
+            StartHour = TimeOnly.FromDateTime(startDate);
+            Count = 0;
+        }
+
         public FoodEatenTrendPoint(DateTime startDate)
         {
             Id = 0;
@@ -25,18 +35,20 @@ namespace ibDiary_data.Models.Stats
             Count = 0;
         }
 
-        public void GenerateStats(FoodItem food, DateTime monthBefore)
+        public Task GenerateStats(FoodItem food, DateOnly monthBefore)
         {
             var reports = food.FoodReports;
             var endHour = StartHour.AddHours(1);
 
             var dateReports = reports.Where(x => DateOnly.FromDateTime(x.AteFoodAt) == Date).ToList();
             var relevent = dateReports.Where(x => 
-                            TimeOnly.FromDateTime(x.CreatedAt) >= StartHour &&
-                            TimeOnly.FromDateTime(x.CreatedAt) <= endHour)
+                            TimeOnly.FromDateTime(x.AteFoodAt) >= StartHour &&
+                            TimeOnly.FromDateTime(x.AteFoodAt) <= endHour)
                             .ToList();
 
             Count = relevent.Count();
+
+            return Task.CompletedTask;
         }
     }
 }

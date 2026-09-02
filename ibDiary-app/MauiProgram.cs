@@ -12,6 +12,7 @@ using ibDiary_app.Services.Symptoms;
 using ibDiary_app.Services.System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ibDiary_app.Services.Stats;
 
 namespace ibDiary_app
 {
@@ -44,6 +45,26 @@ namespace ibDiary_app
             WorkManager.GetInstance(context)
                 .EnqueueUniquePeriodicWork(
                     "medicine_reminder_work",
+                    ExistingPeriodicWorkPolicy.CancelAndReenqueue!,
+                    workRequest
+                );
+        }
+
+        public static void SetupStatsService()
+        {
+            var context = Android.App.Application.Context;
+            var workName = "stats_generation_service";
+
+            WorkManager.GetInstance(context).CancelUniqueWork(workName);
+
+            var workRequest = new PeriodicWorkRequest.Builder(
+                typeof(StatsGenerationService),
+                TimeSpan.FromMinutes(15)
+            ).Build();
+
+            WorkManager.GetInstance(context)
+                .EnqueueUniquePeriodicWork(
+                    workName,
                     ExistingPeriodicWorkPolicy.CancelAndReenqueue!,
                     workRequest
                 );
@@ -104,6 +125,9 @@ namespace ibDiary_app
 
             builder.Services.AddSingleton<MealReportRepository>();
             builder.Services.AddSingleton<MealReportClientService>();
+
+            builder.Services.AddSingleton<StatsSnapshotRepository>();
+            builder.Services.AddSingleton<StatsSnapshotClientService>();
 
             builder.Services.AddSingleton<ScheduledNotificationRepository>();
             builder.Services.AddSingleton<ScheduledNotificationClientService>();

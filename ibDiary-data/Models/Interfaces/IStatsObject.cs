@@ -6,6 +6,6 @@ namespace ibDiary_data.Models.Interfaces
 {
     public interface IStatsObject<T> where T : class
     {
-        public void GenerateStats(T source, DateTime monthBefore);
+        public Task GenerateStats(T source, DateOnly monthBefore);
     }
 }

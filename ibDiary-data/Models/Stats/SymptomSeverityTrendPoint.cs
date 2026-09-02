@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ibDiary_data.Models.Stats
 {
@@ -17,6 +18,14 @@ namespace ibDiary_data.Models.Stats
         public double AverageSeverity { get; set; }
         public int ReportCount { get; set; }
 
+        public SymptomSeverityTrendPoint()
+        {
+            Id = 0;
+            Date = DateOnly.FromDateTime(DateTime.UtcNow);
+            AverageSeverity = 0;
+            ReportCount = 0;
+        }
+
         public SymptomSeverityTrendPoint(DateOnly date)
         {
             Id = 0;
@@ -25,12 +34,14 @@ namespace ibDiary_data.Models.Stats
             ReportCount = 0;
         }
 
-        public void GenerateStats(Symptom symptom, DateTime monthBefore)
+        public Task GenerateStats(Symptom symptom, DateOnly monthBefore)
         {
             var reports = symptom.SymptomReports.Where(x => x.SubmittedForDate == Date).ToList();
             ReportCount = reports.Count;
             var severity = reports.Select(x => x.Severity).ToList();
             AverageSeverity = severity.Count == 0 ? 0 : severity.Average();
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ibDiary_data.Models.Stats
 {
@@ -17,6 +18,14 @@ namespace ibDiary_data.Models.Stats
         public double AverageTaken { get; set; }
         public int ReportCount { get; set; }
         
+        public MedicineTakenTrendPoint()
+        {
+            Id = 0;
+            Date = DateOnly.FromDateTime(DateTime.UtcNow);
+            AverageTaken = 0;
+            ReportCount = 0;
+        }
+
         public MedicineTakenTrendPoint(DateOnly date)
         {
             Id = 0;
@@ -25,12 +34,14 @@ namespace ibDiary_data.Models.Stats
             ReportCount = 0;
         }
 
-        public void GenerateStats(Medicine medicine, DateTime monthBefore)
+        public Task GenerateStats(Medicine medicine, DateOnly monthBefore)
         {
             var reports = medicine.MedicineReports.Where(x => x.MedicineTakenAtDate == Date).ToList();
             ReportCount = reports.Count;
             var taken = reports.Where(x => x.MedicineTaken).Count();
             AverageTaken = ReportCount == 0 ? 0 : ((double)taken / ReportCount) * 100;
+
+            return Task.CompletedTask;
         }
     }
 }

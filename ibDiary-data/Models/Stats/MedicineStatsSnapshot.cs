@@ -20,6 +20,17 @@ namespace ibDiary_data.Models.Stats
         public int TotalStateChanges { get; set; }
         public int MonthlyStateChanges { get; set; }
 
+        public MedicineStatsSnapshot()
+        {
+            Id = 0;
+            Medicine = new();
+            TotalReportsCount = 0;
+            MonthlyReportsCount = 0;
+            MedicineTakenTrend = [];
+            TotalStateChanges = 0;
+            MonthlyStateChanges = 0;
+        }
+
         public MedicineStatsSnapshot(Medicine medicine)
         {
             Id = 0;
@@ -31,25 +42,27 @@ namespace ibDiary_data.Models.Stats
             MonthlyStateChanges = 0;
         }
 
-        public void GenerateStats(Medicine medicine, DateTime monthBefore)
+        public Task GenerateStats(Medicine medicine, DateOnly monthBefore)
         {
             var endDate = monthBefore.AddMonths(1);
             var reports = medicine.MedicineReports;
 
             TotalReportsCount = reports.Count;
-            var monthly = reports.Where(x => x.MedicineTakenAt >= monthBefore && x.MedicineTakenAt < endDate).ToList();
+            var monthly = reports.Where(x => x.MedicineTakenAtDate >= monthBefore && x.MedicineTakenAtDate < endDate).ToList();
             MonthlyReportsCount = reports.Count;
 
             TotalStateChanges = medicine.StateChanges.Count;
-            var monthlySc = medicine.StateChanges.Where(x => x.ChangedAt >= monthBefore && x.ChangedAt < endDate).ToList();
+            var monthlySc = medicine.StateChanges.Where(x => x.ChangedAtDate >= monthBefore && x.ChangedAtDate < endDate).ToList();
             MonthlyStateChanges = monthlySc.Count;
 
             for (var date = monthBefore; date <= endDate; date = date.AddDays(1))
             {
-                var point = new MedicineTakenTrendPoint(DateOnly.FromDateTime(date));
+                var point = new MedicineTakenTrendPoint(date);
                 point.GenerateStats(medicine, monthBefore);
                 MedicineTakenTrend.Add(point);
             }
+
+            return Task.CompletedTask;
         }
     }
 }
