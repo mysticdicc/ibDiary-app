@@ -11,14 +11,18 @@ namespace ibDiary_data.Models.Food
 {
     public class FoodItem : ICalendarUpdate
     {
-        [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
+        public int Id { get; set; }
         [Required(ErrorMessage = "Name cannot be empty.")]
         [MaxLength(128, ErrorMessage = "Name must not exceed 128 characters.")]
         public string Name { get; set; }
         [MaxLength(1024, ErrorMessage = "Description must not exceed 1024 characters.")]
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
-        [NotMapped] public DateOnly CreatedAtDate { get => DateOnly.FromDateTime(CreatedAt); }
+        [NotMapped] 
+        public DateOnly CreatedAtDate { get => DateOnly.FromDateTime(CreatedAt); }
+        public List<FoodItemReport> FoodReports { get; set; }
         public bool IsNew { get; set; }
 
         public FoodItem()
@@ -27,6 +31,7 @@ namespace ibDiary_data.Models.Food
             Name = string.Empty;
             Description = string.Empty;
             CreatedAt = DateTime.UtcNow;
+            FoodReports = [];
             IsNew = true;
         }
 
@@ -34,6 +39,7 @@ namespace ibDiary_data.Models.Food
         {
             Name = food.Name;
             Description = food.Description;
+            FoodReports = [];
         }
 
         public DateOnly GetDate() => CreatedAtDate;

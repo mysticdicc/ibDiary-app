@@ -12,7 +12,9 @@ namespace ibDiary_data.Models.Symptoms
 {
     public class Symptom : ICalendarUpdate
     {
-        [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
+        public int Id { get; set; }
         [Required(ErrorMessage = "Name cannot be empty.")]
         [MaxLength(128, ErrorMessage = "Name must not be longer than 128 characters.")]
         public string Title { get; set; }
@@ -22,8 +24,12 @@ namespace ibDiary_data.Models.Symptoms
         public bool IsNew { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime StartedAt { get; set; }
-        [NotMapped] public DateOnly CreatedAtDate { get => DateOnly.FromDateTime(CreatedAt); }
-        [NotMapped][JsonIgnore] public List<SymptomStateChange> StateChanges { get; set; }
+        [NotMapped] 
+        public DateOnly CreatedAtDate { get => DateOnly.FromDateTime(CreatedAt); }
+        [NotMapped]
+        [JsonIgnore] 
+        public List<SymptomStateChange> StateChanges { get; set; }
+        public List<SymptomReport> SymptomReports { get; set; }
         public Symptom()
         {
             Id = 0;
@@ -34,6 +40,7 @@ namespace ibDiary_data.Models.Symptoms
             StateChanges = [];
             CreatedAt = DateTime.UtcNow;
             StartedAt = CreatedAt;
+            SymptomReports = [];
         }
 
         public static Symptom FromDbEntry(int id, PropertyValues originalValues)
@@ -57,6 +64,8 @@ namespace ibDiary_data.Models.Symptoms
             Title = symptom.Title;
             Description = symptom.Description;
             Active = symptom.Active;
+            StateChanges = symptom.StateChanges;
+            SymptomReports = symptom.SymptomReports;
         }
 
         public bool HasChangedState(Symptom symptom)

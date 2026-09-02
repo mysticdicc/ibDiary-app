@@ -41,6 +41,7 @@ namespace ibDiary_data.Models.Medication
         public List<MedicineDueAtOccurance> MedicineOccurances { get; set; }
         public bool Active { get; set; }
         public bool IsNew { get; set; }
+        public List<MedicineReport> MedicineReports { get; set; }
 
         public Medicine()
         {
@@ -55,6 +56,7 @@ namespace ibDiary_data.Models.Medication
             MedicineOccurances = [];
             IsNew = true;
             MedicineSchedule = new();
+            MedicineReports = [];
         }
 
         public void RegenerateOccurances(DateTime upToUtc)
@@ -161,6 +163,7 @@ namespace ibDiary_data.Models.Medication
             PrescribedAt = medicine.PrescribedAt;
             Active = medicine.Active;
             MedicineSchedule = medicine.MedicineSchedule;
+            MedicineReports = medicine.MedicineReports;
         }
 
         public bool HasChangedState(Medicine medicine)
