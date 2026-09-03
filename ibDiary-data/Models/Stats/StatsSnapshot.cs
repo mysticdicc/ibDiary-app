@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 using System.Text;
 
 namespace ibDiary_data.Models.Stats
@@ -20,29 +21,43 @@ namespace ibDiary_data.Models.Stats
         public DateOnly MonthEnd { get; set; }
         [NotMapped]
         public DateOnly MonthBefore { get => MonthEnd.AddMonths(-1); }
+        [StatsSummary("Your total medicines increased by {0} to {1}.", "Your total medicines decreased by {0} to {1}.")]
         public int MedicineCount { get; set; }
+        [StatsSummary("Your active medicines increased by {0} to {1}.", "Your active medicines decreased by {0} to {1}.")]
         public int ActiveMedicineCount { get; set; }
         [NotMapped]
+        [StatsSummary("Your inactive medicines increased by {0} to {1}.", "Your inactive medicines decreased by {0} to {1}.")]
         public int InactiveMedicinesCount { get => MedicineCount - ActiveMedicineCount; }
         public List<MedicineStatsSnapshot> MedicineStats { get; set; }
+        [StatsSummary("Your total symptom count increased by {0} to {1}.", "Your total symptom count decreased by {0} to {1}.")]
         public int SymptomCount { get; set; }
+        [StatsSummary("Your active symptom count increased by {0} to {1}.", "Your active symptom count decreased by {0} to {1}.")]
         public int ActiveSymptomCount { get; set; }
         [NotMapped]
+        [StatsSummary("Your inactive symptom count increased by {0} to {1}.", "Your inactive symptom count decreased by {0} to {1}.")]
         public int InactiveSymptomsCount { get => SymptomCount - ActiveSymptomCount; }
         public List<SymptomStatsSnapshot> SymptomStats { get; set; }
         public int TotalMedicineReports { get; set; }
+        [StatsSummary("You logged {0} more medicine reports than last month with a total of {1}.", "You logged {0} less medicine reports this month with a total of {1}.")]
         public int MonthlyMedicalReports { get; set; }
+        [StatsSummary("You took medicine {1} times, {0} more than last month.", "You took medicine {1} times, {0} less than last month.")]
         public int MonthlyMedicinesTaken { get; set; }
         [NotMapped]
+        [StatsSummary("You missed medicine {1} times this month, {0} more than last month.", "You missed medicine {1} times this month, {0} less than last month.")]
         public int MonthlyMedicinesNotTaken { get => MonthlyMedicalReports - MonthlyMedicinesTaken; }
         public int TotalSymptomReports { get; set; }
+        [StatsSummary("You logged {0} more symptom reports than last month with a total of {1}.", "You logged {0} less symptom reports this month with a total of {1}.")]
         public int MonthlySymptomReports { get; set; }
+        [StatsSummary("You ate {1} unique food items, {0} more than last month.", "You are {1} unique food items, {0} less than last month.")]
         public int UniqueMonthlyFoodItems { get; set; }
+        [StatsSummary("You ate {1} unique meals, {0} more than last month.", "You are {1} unique meals, {0} less than last month.")]
         public int UniqueMonthlyMeals { get; set; }
         public int TotalFoodReports { get; set; }
+        [StatsSummary("You logged {0} more food reports than last month with a total of {1}.", "You logged {0} less food reports this month with a total of {1}.")]
         public int MonthlyFoodReports { get; set; }
         public List<FoodStatsSnapshot> FoodStats { get; set; }
         public int TotalMealReports { get; set; }
+        [StatsSummary("You logged {0} more meal reports than last month with a total of {1}.", "You logged {0} less meal reports this month with a total of {1}.")]
         public int MonthlyMealReports { get; set; }
         public List<MealStatsSnapshot> MealStats { get; set; }
         [NotMapped]
@@ -205,6 +220,39 @@ namespace ibDiary_data.Models.Stats
                 await snapshot.GenerateStats(meal, MonthBefore);
                 MealStats.Add(snapshot);
             }
+        }
+
+        public List<string> BuildSummaries(StatsSnapshot lastMonth)
+        {
+            var list = new List<string>();
+
+            foreach (var prop in typeof(StatsSnapshot).GetProperties())
+            {
+                var attr = prop.GetCustomAttribute<StatsSummaryAttribute>();
+                if (attr is null)
+                    continue;
+
+                var currentValue = prop.GetValue(this);
+                var previousValue = prop.GetValue(lastMonth);
+
+                if (currentValue is not int current || previousValue is not int previous)
+                    continue;
+
+                if (current == previous)
+                    continue;
+
+                var delta = Math.Abs(current - previous);
+                var template = current > previous
+                    ? attr.IncreaseText
+                    : attr.DecreaseText;
+
+                if (string.IsNullOrWhiteSpace(template))
+                    continue;
+
+                list.Add(string.Format(template, delta, current));
+            }
+
+            return list;
         }
     }
 }

@@ -3,26 +3,14 @@
 <div class="ibd-int-input">
     <p>@Title</p>
     <div>
-        @if (ReadOnly)
-        {
-            <button type="button" class="readonly">
-                <span class="material-symbols-icon">arrow_circle_down</span>
-            </button>
-        }
-        else
+        @if (!ReadOnly)
         {
             <button type="button" @onclick="@OnClickDecrease" @onclick:stopPropagation="true">
                 <span class="material-symbols-outlined">arrow_circle_down</span>
             </button>
         }
         <input type="number" value="@CurrentValue" readonly />
-        @if (ReadOnly)
-        {
-            <button type="button" class="readonly">
-                <span class="material-symbols-icon">arrow_circle_up</span>
-            </button>
-        }
-        else
+        @if (!ReadOnly)
         {
             <button type="button" @onclick="@OnClickIncrease" @onclick:stopPropagation="true">
                 <span class="material-symbols-outlined">arrow_circle_up</span>

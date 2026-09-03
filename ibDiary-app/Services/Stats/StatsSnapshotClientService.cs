@@ -93,5 +93,19 @@ namespace ibDiary_app.Services.Stats
                 return false;
             }
         }
+
+        public async Task<StatsSnapshot?> GetByDateAsync(DateOnly date)
+        {
+            try
+            {
+                var snapshot = await _repo.GetByDateAsync(date);
+                return snapshot;
+            }
+            catch (Exception ex)
+            {
+                _notifier.ShowNotification("Error", ex.Message);
+                return null;
+            }
+        }
     }
 }

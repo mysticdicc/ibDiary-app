@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ibDiary_app.Services.System
+namespace ibDiary_app.Services.Settings
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class SettingAttribute : Attribute

@@ -1,0 +1,66 @@
+﻿@page "/stats"
+@inject StatsSnapshotClientService _statsService
+
+<article class="stats-page">
+    <h2>Stats</h2>
+    <div>
+        <h3>Reports (All Time)</h3>
+        <div>
+            <IbdIntInput Value="@_currentSnapshot.TotalReports" ValueExpression="@(() => _currentSnapshot.TotalReports)" Title="Total" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.TotalFoodReports" ValueExpression="@(() => _currentSnapshot.TotalFoodReports)" Title="Food" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.TotalMealReports" ValueExpression="@(() => _currentSnapshot.TotalMealReports)" Title="Meal" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.TotalMedicineReports" ValueExpression="@(() => _currentSnapshot.TotalMedicineReports)" Title="Medicine" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.TotalSymptomReports" ValueExpression="@(() => _currentSnapshot.TotalSymptomReports)" Title="Symptom" ReadOnly="true" />
+        </div>
+        <h3>Reports (Month)</h3>
+        <div>
+            <IbdIntInput Value="@_currentSnapshot.TotalMonthlyReports" ValueExpression="@(() => _currentSnapshot.TotalMonthlyReports)" Title="Total" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.MonthlyFoodReports" ValueExpression="@(() => _currentSnapshot.MonthlyFoodReports)" Title="Food" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.MonthlyMealReports" ValueExpression="@(() => _currentSnapshot.MonthlyMealReports)" Title="Meal" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.MonthlyMedicalReports" ValueExpression="@(() => _currentSnapshot.MonthlyMedicalReports)" Title="Medicine" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.MonthlySymptomReports" ValueExpression="@(() => _currentSnapshot.MonthlySymptomReports)" Title="Symptom" ReadOnly="true" />
+        </div>
+    </div>
+    <div>
+        <h3>Medicines</h3>
+        <div>
+            <IbdIntInput Value="@_currentSnapshot.MedicineCount" ValueExpression="@(() => _currentSnapshot.MedicineCount)" Title="Total" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.ActiveMedicineCount" ValueExpression="@(() => _currentSnapshot.ActiveMedicineCount)" Title="Active" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.InactiveMedicinesCount" ValueExpression="@(() => _currentSnapshot.InactiveMedicinesCount)" Title="Inactive" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.MonthlyMedicinesTaken" ValueExpression="@(() => _currentSnapshot.MonthlyMedicinesTaken)" Title="Taken (Month)" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.MonthlyMedicinesNotTaken" ValueExpression="@(() => _currentSnapshot.MonthlyMedicinesNotTaken)" Title="Missed (Month)" ReadOnly="true" />
+        </div>
+    </div>
+    <div>
+        <h3>Symptoms</h3>
+        <div>
+            <IbdIntInput Value="@_currentSnapshot.SymptomCount" ValueExpression="@(() => _currentSnapshot.SymptomCount)" Title="Total" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.ActiveSymptomCount" ValueExpression="@(() => _currentSnapshot.ActiveSymptomCount)" Title="Active" ReadOnly="true" />
+            <IbdIntInput Value="@_currentSnapshot.InactiveSymptomsCount" ValueExpression="@(() => _currentSnapshot.InactiveSymptomsCount)" Title="Inactive" ReadOnly="true" />
+        </div>
+    </div>
+    <div>
+        <h3>Foods Items</h3>
+        <div>
+            <IbdIntInput Value="@_currentSnapshot.UniqueMonthlyFoodItems" ValueExpression="@(() => _currentSnapshot.UniqueMonthlyFoodItems)" Title="Unique Eaten (Month)" ReadOnly="true" />
+        </div>
+    </div>
+    <div>
+        <h3>Meals</h3>
+        <div>
+            <IbdIntInput Value="@_currentSnapshot.UniqueMonthlyMeals" ValueExpression="@(() => _currentSnapshot.UniqueMonthlyMeals)" Title="Unique Eaten (Month)" ReadOnly="true" />
+        </div>
+    </div>
+</article>
+
+@code {
+    private StatsSnapshot _currentSnapshot = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var date = DateOnly.FromDateTime(DateTime.UtcNow);
+        var snapshot = await _statsService.GetByDateAsync(date);
+        if (null != snapshot) _currentSnapshot = snapshot;
+        await base.OnInitializedAsync();
+    }
+}

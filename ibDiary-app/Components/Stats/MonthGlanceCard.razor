@@ -1,0 +1,39 @@
+﻿@inject NavigationManager _navManager
+@inject StatsSnapshotClientService _statsService
+
+<div class="month-glance-card">
+    <h3>This Month</h3>
+    @foreach (var summary in _snapshot.BuildSummaries(_lastMonth)
+            .OrderBy(_ => Random.Shared.Next())
+            .Take(5))
+    {
+        <p>@summary</p>
+    }
+    <button @onclick="@OnClickMoreStats">
+        More Stats
+    </button>
+</div>
+
+@code {
+    private StatsSnapshot _snapshot = new();
+    private StatsSnapshot _lastMonth = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var date = DateOnly.FromDateTime(DateTime.UtcNow);
+        var lastMonth = date.AddMonths(-1);
+
+        var snapshot = await _statsService.GetByDateAsync(date);
+        if (null != snapshot) _snapshot = snapshot;
+
+        var monthSnapshot = await _statsService.GetByDateAsync(lastMonth);
+        if (null != monthSnapshot) _lastMonth = monthSnapshot;
+
+        await base.OnInitializedAsync();
+    }
+
+    private void OnClickMoreStats()
+    {
+        _navManager.NavigateTo("/stats");
+    }
+}

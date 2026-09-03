@@ -203,22 +203,6 @@ button {
         display: flex;
         flex-direction: row;
 
-        .nav:has(.material-symbols-outlined) {
-            flex: 0;
-            align-items: center;
-            justify-content: center;
-            display: flex;
-
-            span {
-                font-size: 1.2rem;
-            }
-        }
-
-        .nav:not(:has(.material-symbols-outlined)) {
-            flex: 1;
-            font-size: 1.1rem;
-        }
-
         .nav {
             background-color: rgba(0,0,0,0);
             color: var(--text);
@@ -227,6 +211,8 @@ button {
             justify-content: center;
             align-content: center;
             padding: 5px;
+            flex: 1;
+            font-size: 1.1rem;
 
             p {
                 margin: 0;
@@ -1495,5 +1481,95 @@ button {
         border-radius: 10px;
         box-shadow: var(--shadow);
         padding: 5px;
+    }
+}
+
+.month-glance-card {
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 10px;
+    padding: 5px;
+    background-color: var(--background);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    h3 {
+        background-color: var(--secondary);
+        width: fit-content;
+        margin: 0;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 5px 10px 5px 10px;
+        margin: 0 auto 0 auto;
+    }
+
+    p {
+        margin: 0;
+        padding: 0 5px 0 5px;
+        background-color: var(--background-light);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    button {
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 10px 0 10px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        background-color: var(--background-dark);
+    }
+}
+
+.stats-page {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+
+    h2, h3 {
+        background-color: var(--secondary);
+        width: fit-content;
+        margin: 0;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 5px 10px 5px 10px;
+        margin: 5px auto 2px auto;
+    }
+
+    > div {
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 5px;
+        background-color: var(--background);
+        display: flex;
+        flex-direction: column;
+
+        > div {
+            flex-wrap: wrap;
+            display: flex;
+
+            .ibd-int-input {
+                width: 50%;
+
+                p {
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+
+                input {
+                    width: 100%;
+                    max-width: 100%;
+                }
+            }
+        }
     }
 }

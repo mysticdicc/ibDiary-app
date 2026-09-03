@@ -57,7 +57,7 @@ namespace ibDiary_app.Services.Stats
             var snapshot = new StatsSnapshot(monthEnd);
             await snapshot.GenerateStats(_dbContext!, monthEnd);
 
-            var dbItem = await _repo.GetByDateAsync(monthEnd);
+            var dbItem = await _repo?.GetByDateAsync(monthEnd) ?? null;
             if (dbItem != null)
             {
                 dbItem.UpdateProperties(snapshot);

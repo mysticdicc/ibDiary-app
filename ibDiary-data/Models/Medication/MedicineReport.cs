@@ -46,7 +46,7 @@ namespace ibDiary_data.Models.Medication
             Medicine = medicine;
             MedicineId = medicine.Id;
             DueAt = dueDate;
-            MedicineTakenAt = DateTime.UtcNow;
+            MedicineTakenAt = dueDate.DueAt;
             SubmittedAt = DateTime.UtcNow;
             MedicineTaken = true;
             Dose = medicine.Dose;

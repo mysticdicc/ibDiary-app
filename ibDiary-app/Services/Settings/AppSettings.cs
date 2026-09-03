@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text;
 
-namespace ibDiary_app.Services.System
+namespace ibDiary_app.Services.Settings
 {
     public class AppSettings
     {
