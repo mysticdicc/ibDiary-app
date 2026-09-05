@@ -29,12 +29,6 @@
     private bool _reportViewerVisible = false;
     private MedicineReport _report = new();
 
-    protected override void OnParametersSet()
-    {
-        _report = new(Medicine, new(DateTime.UtcNow, Medicine));
-        base.OnParametersSet();
-    }
-
     private async Task OnClickRow()
     {
         await MedicineClicked.InvokeAsync(Medicine);
@@ -42,6 +36,7 @@
 
     private async Task OnClickOpenReport()
     {
+        _report = new(Medicine, new(DateTime.UtcNow, Medicine));
         _reportViewerVisible = true;
     }
 

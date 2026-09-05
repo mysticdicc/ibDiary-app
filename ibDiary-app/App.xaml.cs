@@ -25,7 +25,6 @@
             base.OnStart();
             await MauiProgram.RequestNotificationPermission();
             MauiProgram.SetupMedicineReminders();
-            MauiProgram.SetupStatsService();
         }
     }
 }

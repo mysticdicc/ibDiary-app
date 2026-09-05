@@ -1,5 +1,7 @@
 ﻿@page "/stats"
+@implements IDisposable
 @inject StatsSnapshotClientService _statsService
+@inject ComponentUpdateService _updateService
 
 <article class="stats-page">
     <h2>Stats</h2>
@@ -58,9 +60,26 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await RefreshAsync();
+        _updateService.SubscribeToComponentUpdates(RefreshCallbackAsync);
+        await base.OnInitializedAsync();
+    }
+
+    private async void RefreshCallbackAsync(object? sender, ICalendarUpdate? update)
+    {
+        await InvokeAsync(RefreshAsync);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _updateService.UnsubscribeFromComponentUpdates(RefreshCallbackAsync);
+    }
+
+    private async Task RefreshAsync()
+    {
         var date = DateOnly.FromDateTime(DateTime.UtcNow);
         var snapshot = await _statsService.GetByDateAsync(date);
         if (null != snapshot) _currentSnapshot = snapshot;
-        await base.OnInitializedAsync();
     }
 }

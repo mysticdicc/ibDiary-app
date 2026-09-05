@@ -50,26 +50,6 @@ namespace ibDiary_app
                 );
         }
 
-        public static void SetupStatsService()
-        {
-            var context = Android.App.Application.Context;
-            var workName = "stats_generation_service";
-
-            WorkManager.GetInstance(context).CancelUniqueWork(workName);
-
-            var workRequest = new PeriodicWorkRequest.Builder(
-                typeof(StatsGenerationService),
-                TimeSpan.FromMinutes(15)
-            ).Build();
-
-            WorkManager.GetInstance(context)
-                .EnqueueUniquePeriodicWork(
-                    workName,
-                    ExistingPeriodicWorkPolicy.CancelAndReenqueue!,
-                    workRequest
-                );
-        }
-
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -90,6 +70,10 @@ namespace ibDiary_app
             builder.Services.AddSingleton<CalendarRepositoryService>();
             builder.Services.AddSingleton<CalendarClientService>();
             builder.Services.AddSingleton<CalendarDayGenerationService>();
+
+            builder.Services.AddSingleton<StatsSnapshotRepository>();
+            builder.Services.AddSingleton<StatsSnapshotClientService>();
+            builder.Services.AddSingleton<StatsGenerationService>();
 
             builder.Services.AddSingleton<MedicineOccuranceRepository>();
             builder.Services.AddSingleton<MedicineOccuranceClientService>();
@@ -125,9 +109,6 @@ namespace ibDiary_app
 
             builder.Services.AddSingleton<MealReportRepository>();
             builder.Services.AddSingleton<MealReportClientService>();
-
-            builder.Services.AddSingleton<StatsSnapshotRepository>();
-            builder.Services.AddSingleton<StatsSnapshotClientService>();
 
             builder.Services.AddSingleton<ScheduledNotificationRepository>();
             builder.Services.AddSingleton<ScheduledNotificationClientService>();

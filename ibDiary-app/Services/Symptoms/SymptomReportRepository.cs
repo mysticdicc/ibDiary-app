@@ -1,8 +1,9 @@
-﻿using ibDiary_data.Data;
+﻿using ibDiary_app.Services.Calendar;
+using ibDiary_app.Services.Stats;
+using ibDiary_data.Data;
 using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Medication;
 using ibDiary_data.Models.Symptoms;
-using ibDiary_app.Services.Calendar;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,17 @@ namespace ibDiary_app.Services
     {
         private readonly AppDbContext _dbService;
         private readonly CalendarDayGenerationService _calendarService;
-        public SymptomReportRepository(AppDbContext connection, CalendarDayGenerationService cal)
+        private readonly StatsGenerationService _statsGenerator;
+
+        public SymptomReportRepository(
+            AppDbContext connection, 
+            CalendarDayGenerationService cal,
+            StatsGenerationService stats
+            )
         {
             _dbService = connection;
             _calendarService = cal;
+            _statsGenerator = stats;
         }
 
         public async Task<List<SymptomReport>> GetAllAsync()
@@ -38,6 +46,8 @@ namespace ibDiary_app.Services
             dbItem.UpdateProperties(report);
             var rows = await _dbService.SaveChangesAsync();
 
+            await _statsGenerator.RequestStatsUpdateAsync();
+
             return rows > 0;
         }
 
@@ -48,6 +58,7 @@ namespace ibDiary_app.Services
             await _dbService.SaveChangesAsync();
 
             await _calendarService.NotifyUpdateCalendarDayAsync(report);
+            await _statsGenerator.RequestStatsUpdateAsync();
 
             return report.Id;
         }
@@ -59,6 +70,9 @@ namespace ibDiary_app.Services
 
             _dbService.SymptomReports.Remove(dbItem);
             var rows = await _dbService.SaveChangesAsync();
+
+            await _statsGenerator.RequestStatsUpdateAsync();
+
             return rows > 0;
         }
     }

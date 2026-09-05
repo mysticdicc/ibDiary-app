@@ -79,7 +79,7 @@
         await base.OnInitializedAsync();
     }
 
-    private async void RefreshCallbackAsync(object? sender, ICalendarUpdate update)
+    private async void RefreshCallbackAsync(object? sender, ICalendarUpdate? update)
     {
         _notifications = await _notificationService.GetAllAsync();
     }

@@ -38,7 +38,7 @@ namespace ibDiary_data.Models.Stats
         public int InactiveSymptomsCount { get => SymptomCount - ActiveSymptomCount; }
         public List<SymptomStatsSnapshot> SymptomStats { get; set; }
         public int TotalMedicineReports { get; set; }
-        [StatsSummary("You logged {0} more medicine reports than last month with a total of {1}.", "You logged {0} less medicine reports this month with a total of {1}.")]
+        [StatsSummary("You logged {0} more medicine reports than last month.", "You logged {0} less medicine reports than last month.")]
         public int MonthlyMedicalReports { get; set; }
         [StatsSummary("You took medicine {1} times, {0} more than last month.", "You took medicine {1} times, {0} less than last month.")]
         public int MonthlyMedicinesTaken { get; set; }
@@ -57,7 +57,7 @@ namespace ibDiary_data.Models.Stats
         public int MonthlyFoodReports { get; set; }
         public List<FoodStatsSnapshot> FoodStats { get; set; }
         public int TotalMealReports { get; set; }
-        [StatsSummary("You logged {0} more meal reports than last month with a total of {1}.", "You logged {0} less meal reports this month with a total of {1}.")]
+        [StatsSummary("You logged {0} more meal reports than last mon th with a total of {1}.", "You logged {0} less meal reports this month with a total of {1}.")]
         public int MonthlyMealReports { get; set; }
         public List<MealStatsSnapshot> MealStats { get; set; }
         [NotMapped]

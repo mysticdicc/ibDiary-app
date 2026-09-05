@@ -1,7 +1,8 @@
-﻿using ibDiary_data.Data;
+﻿using ibDiary_app.Services.Calendar;
+using ibDiary_app.Services.Stats;
+using ibDiary_data.Data;
 using ibDiary_data.Models.Food;
 using ibDiary_data.Models.Interfaces;
-using ibDiary_app.Services.Calendar;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,17 @@ namespace ibDiary_app.Services.Food
     {
         private readonly AppDbContext _dbService;
         private readonly CalendarDayGenerationService _calendarService;
+        private readonly StatsGenerationService _statsGenerator;
 
-        public FoodItemReportRepository(AppDbContext connection, CalendarDayGenerationService cal)
+        public FoodItemReportRepository(
+            AppDbContext connection, 
+            CalendarDayGenerationService cal,
+            StatsGenerationService stats
+            )
         {
             _dbService = connection;
             _calendarService = cal;
+            _statsGenerator = stats;
         }
 
         public async Task<List<FoodItemReport>> GetAllAsync()
@@ -38,6 +45,8 @@ namespace ibDiary_app.Services.Food
             dbItem.UpdateProperties(report);
             var rows = await _dbService.SaveChangesAsync();
 
+            await _statsGenerator.RequestStatsUpdateAsync();
+
             return rows > 0;
         }
 
@@ -48,6 +57,7 @@ namespace ibDiary_app.Services.Food
             await _dbService.SaveChangesAsync();
 
             await _calendarService.NotifyUpdateCalendarDayAsync(report);
+            await _statsGenerator.RequestStatsUpdateAsync();
 
             return report.Id;
         }
@@ -59,6 +69,9 @@ namespace ibDiary_app.Services.Food
 
             _dbService.FoodReports.Remove(dbItem);
             var rows = await _dbService.SaveChangesAsync();
+
+            await _statsGenerator.RequestStatsUpdateAsync();
+
             return rows > 0;
         }
     }

@@ -1,13 +1,14 @@
-﻿using ibDiary_data.Data;
+﻿using ibDiary_app.Services.Calendar;
+using ibDiary_app.Services.Medication;
+using ibDiary_app.Services.Stats;
+using ibDiary_data.Data;
 using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Medication;
 using ibDiary_data.Models.Symptoms;
-using ibDiary_app.Services.Calendar;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ibDiary_app.Services.Medication;
 
 namespace ibDiary_app.Services
 {
@@ -16,11 +17,18 @@ namespace ibDiary_app.Services
         private readonly AppDbContext _dbService;
         private readonly CalendarDayGenerationService _calendarService;
         private readonly MedicineOccuranceRepository _occuranceService;
-        public MedicineReportRepository(AppDbContext connection, CalendarDayGenerationService cal, MedicineOccuranceRepository occ)
+        private readonly StatsGenerationService _statsGenerator;
+        public MedicineReportRepository(
+            AppDbContext connection, 
+            CalendarDayGenerationService cal, 
+            MedicineOccuranceRepository occ,
+            StatsGenerationService stats
+            )
         {
             _dbService = connection;
             _calendarService = cal;
             _occuranceService = occ;
+            _statsGenerator = stats;
         }
 
         public async Task<List<MedicineReport>> GetAllAsync()
@@ -41,16 +49,25 @@ namespace ibDiary_app.Services
             dbItem.UpdateProperties(medicine);
             await HandleDueAtUpdates(medicine);
             var rows = await _dbService.SaveChangesAsync();
+
+            await _statsGenerator.RequestStatsUpdateAsync();
+
             return rows > 0;
         }
 
         private async Task HandleDueAtUpdates(MedicineReport report)
         {
             var dbItem = await _occuranceService.GetByIdAsync(report.DueAt.Id);
-            if (dbItem == null) return;
-
-            if (report.MedicineTaken) dbItem.Status = MedicineDueAtStatus.Taken;
-            else dbItem.Status = MedicineDueAtStatus.Missed;
+            if (dbItem == null)
+            {
+                if (report.MedicineTaken) report.DueAt.Status = MedicineDueAtStatus.Taken;
+                else report.DueAt.Status = MedicineDueAtStatus.Missed;
+            }
+            else
+            {
+                if (report.MedicineTaken) dbItem.Status = MedicineDueAtStatus.Taken;
+                else dbItem.Status = MedicineDueAtStatus.Missed;
+            }
         }
 
         public async Task<int> AddAsync(MedicineReport medicine)
@@ -62,6 +79,7 @@ namespace ibDiary_app.Services
             await _dbService.SaveChangesAsync();
 
             await _calendarService.NotifyUpdateCalendarDayAsync(medicine);
+            await _statsGenerator.RequestStatsUpdateAsync();
 
             return medicine.Id;
         }
@@ -73,6 +91,9 @@ namespace ibDiary_app.Services
 
             _dbService.MedicineReports.Remove(dbItem);
             var rows = await _dbService.SaveChangesAsync();
+
+            await _statsGenerator.RequestStatsUpdateAsync();
+
             return rows > 0;
         }
 

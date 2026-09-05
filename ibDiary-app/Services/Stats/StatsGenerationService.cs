@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using AndroidX.Work;
+using ibDiary_app.Services.System;
 using ibDiary_data.Data;
 using ibDiary_data.Models.Stats;
 using System;
@@ -8,56 +9,64 @@ using System.Text;
 
 namespace ibDiary_app.Services.Stats
 {
-    public class StatsGenerationService(Context context, WorkerParameters parameters) : Worker(context, parameters)
+    public class StatsGenerationService(
+        AppDbContext dbContext, 
+        StatsSnapshotRepository repo, 
+        ClientNotificationService notifier,
+        ComponentUpdateService updater)
     {
-        private AppDbContext? _dbContext;
-        private StatsSnapshotRepository? _repo;
+        private readonly AppDbContext _dbContext = dbContext;
+        private readonly StatsSnapshotRepository _repo = repo;
+        private readonly ClientNotificationService _notifier = notifier;
+        private readonly ComponentUpdateService _updater = updater;
+        private SemaphoreSlim _semaphore = new(1, 1);
+        private TimeSpan _debounce = TimeSpan.FromSeconds(10);
+        private CancellationTokenSource? cts;
+        private readonly object _debounceLock = new();
 
-        public override Result DoWork()
+        public Task RequestStatsUpdateAsync()
         {
-            return DoWorkAsync().GetAwaiter().GetResult()!;
-        }
-
-        public async Task<Result?> DoWorkAsync()
-        {
-            try
+            CancellationToken token;
+            TimeSpan delay = _debounce;
+            lock (_debounceLock)
             {
-                if (ServicesNeedLoading())
+                cts?.Cancel();
+                cts?.Dispose();
+                cts = new CancellationTokenSource();
+                token = cts.Token;
+            }
+
+            _ = Task.Run(async () =>
+            {
+                bool locked = false;
+
+                try
                 {
-                    LoadServices();
-                    if (ServicesNeedLoading()) return Result.InvokeRetry();
+                    await Task.Delay(delay, token);
+                    await _semaphore.WaitAsync(token);
+                    locked = true;
+                    await GenerateStatsSnapshotAsync(DateOnly.FromDateTime(DateTime.UtcNow));
+                }
+                catch(OperationCanceledException)
+                { }
+                catch(Exception ex)
+                {
+                    _notifier.ShowNotification("Stats Generation Error", ex.Message);
                 }
 
-                var date = DateOnly.FromDateTime(DateTime.UtcNow);
-                await GenerateStatsSnapshotAsync(date);
-                return Result.InvokeSuccess();
-            }
-            catch
-            {
-                return Result.InvokeRetry();
-            }
+                if (locked) _semaphore.Release();
+            });
+
+            return Task.CompletedTask;
         }
 
-        private bool ServicesNeedLoading()
-        {
-            if (_dbContext == null) return true;
-            if (_repo == null) return true;
-            return false;
-        }
-
-        private void LoadServices()
-        {
-            var services = IPlatformApplication.Current?.Services;
-            _dbContext = services?.GetService<AppDbContext>();
-            _repo = services?.GetService<StatsSnapshotRepository>();
-        }
 
         public async Task<StatsSnapshot> GenerateStatsSnapshotAsync(DateOnly monthEnd)
         {
             var snapshot = new StatsSnapshot(monthEnd);
-            await snapshot.GenerateStats(_dbContext!, monthEnd);
+            await snapshot.GenerateStats(_dbContext, monthEnd);
 
-            var dbItem = await _repo?.GetByDateAsync(monthEnd) ?? null;
+            var dbItem = await _repo.GetByDateAsync(monthEnd);
             if (dbItem != null)
             {
                 dbItem.UpdateProperties(snapshot);
@@ -68,6 +77,7 @@ namespace ibDiary_app.Services.Stats
                 await _repo.AddAsync(snapshot);
             }
 
+            _updater.NotifiyComponentUpdate(null);
             return dbItem ?? snapshot;
         }
     }

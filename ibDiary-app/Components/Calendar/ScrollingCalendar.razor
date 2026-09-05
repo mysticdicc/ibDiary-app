@@ -36,7 +36,7 @@
     private bool _filterVisible = false;
     private CalendarFilter _filter = new();
 
-    private async void RefreshHomeCallbackAsync(object? sender, ICalendarUpdate update)
+    private async void RefreshHomeCallbackAsync(object? sender, ICalendarUpdate? update)
     {
         await LoadCalendarDataAsync();
         _filter = new();

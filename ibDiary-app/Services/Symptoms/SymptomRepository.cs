@@ -1,9 +1,10 @@
-﻿using ibDiary_data.Data;
+﻿using ibDiary_app.Services.Calendar;
+using ibDiary_app.Services.Stats;
+using ibDiary_app.Services.Symptoms;
+using ibDiary_data.Data;
 using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Medication;
 using ibDiary_data.Models.Symptoms;
-using ibDiary_app.Services.Calendar;
-using ibDiary_app.Services.Symptoms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,19 @@ namespace ibDiary_app.Services
         private readonly AppDbContext _dbService;
         private readonly SymptomStateChangeRepository _sympStateChangeRepo;
         private readonly CalendarDayGenerationService _calService;
+        private readonly StatsGenerationService _statsGenerator;
 
-        public SymptomRepository(AppDbContext connection, SymptomStateChangeRepository sympStateChangeRepo, CalendarDayGenerationService cal)
+        public SymptomRepository(
+            AppDbContext connection, 
+            SymptomStateChangeRepository sympStateChangeRepo, 
+            CalendarDayGenerationService cal,
+            StatsGenerationService stats
+            )
         {
             _dbService = connection;
             _sympStateChangeRepo = sympStateChangeRepo;
             _calService = cal;
+            _statsGenerator = stats;
         }
 
         public async Task<List<Symptom>> GetAllAsync()
@@ -57,6 +65,8 @@ namespace ibDiary_app.Services
             dbItem.UpdateProperties(symptom);
             var rows = await _dbService.SaveChangesAsync();
 
+            await _statsGenerator.RequestStatsUpdateAsync();
+
             return rows > 0 || changedState;
         }
 
@@ -67,6 +77,7 @@ namespace ibDiary_app.Services
             await _dbService.SaveChangesAsync();
 
             await _calService.NotifyUpdateCalendarDayAsync(symptom);
+            await _statsGenerator.RequestStatsUpdateAsync();
 
             return symptom.Id;
         }
@@ -78,6 +89,9 @@ namespace ibDiary_app.Services
 
             _dbService.Symptoms.Remove(dbItem);
             var rows = await _dbService.SaveChangesAsync();
+
+            await _statsGenerator.RequestStatsUpdateAsync();
+
             return rows > 0;
         }
     }

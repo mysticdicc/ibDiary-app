@@ -34,10 +34,15 @@
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     private MedicineReport _report = new();
+    private MedicineReport? _sourceReport;
 
     protected override void OnParametersSet()
     {
-        if (MedicineReport != _report) _report = MedicineReport.Clone();
+        if (!ReferenceEquals(_sourceReport, MedicineReport))
+        {
+            _sourceReport = MedicineReport;
+            _report = MedicineReport.Clone();
+        }
         base.OnParametersSet();
     }
 
