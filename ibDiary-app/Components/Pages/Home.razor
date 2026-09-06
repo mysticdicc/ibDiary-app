@@ -107,8 +107,8 @@
 
     private async void RefreshHomeCallbackAsync(object? sender, ICalendarUpdate? update)
     {
-        await RefreshHomeAsync();
-        StateHasChanged();
+        await InvokeAsync(RefreshHomeAsync);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

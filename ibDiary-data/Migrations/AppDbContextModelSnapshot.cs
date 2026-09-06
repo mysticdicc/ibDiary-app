@@ -27,7 +27,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasKey("Date");
 
-                    b.ToTable("CalendarDays");
+                    b.ToTable("CalendarDays", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Food.FoodItem", b =>
@@ -64,7 +64,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("MealId");
 
-                    b.ToTable("FoodItems");
+                    b.ToTable("FoodItems", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Food.FoodItemReport", b =>
@@ -99,7 +99,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("FoodItemId");
 
-                    b.ToTable("FoodReports");
+                    b.ToTable("FoodReports", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Food.Meal", b =>
@@ -131,7 +131,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("CalendarDayDate");
 
-                    b.ToTable("Meals");
+                    b.ToTable("Meals", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Food.MealReport", b =>
@@ -166,7 +166,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("MealId");
 
-                    b.ToTable("MealReports");
+                    b.ToTable("MealReports", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Medication.Medicine", b =>
@@ -217,7 +217,7 @@ namespace ibDiary_data.Migrations
                     b.HasIndex("MedicineScheduleId")
                         .IsUnique();
 
-                    b.ToTable("Medicines");
+                    b.ToTable("Medicines", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Medication.MedicineDueAtOccurance", b =>
@@ -242,7 +242,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("MedicineId");
 
-                    b.ToTable("MedicineOccurances");
+                    b.ToTable("MedicineOccurances", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Medication.MedicineReport", b =>
@@ -290,7 +290,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("MedicineId");
 
-                    b.ToTable("MedicineReports");
+                    b.ToTable("MedicineReports", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Medication.MedicineSchedule", b =>
@@ -319,7 +319,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MedicineSchedules");
+                    b.ToTable("MedicineSchedules", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Medication.MedicineStateChange", b =>
@@ -354,7 +354,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("MedicineId");
 
-                    b.ToTable("MedicineStateChanges");
+                    b.ToTable("MedicineStateChanges", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Settings.ScheduledNotification", b =>
@@ -394,7 +394,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("CalendarDayDate");
 
-                    b.ToTable("ScheduledNotifications");
+                    b.ToTable("ScheduledNotifications", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.FoodEatenTrendPoint", b =>
@@ -419,7 +419,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("FoodStatsSnapshotId");
 
-                    b.ToTable("FoodEatenTrendPoint");
+                    b.ToTable("FoodEatenTrendPoint", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.FoodStatsSnapshot", b =>
@@ -446,7 +446,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("StatsSnapshotId");
 
-                    b.ToTable("FoodStatsSnapshot");
+                    b.ToTable("FoodStatsSnapshot", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.MealEatenTrendPoint", b =>
@@ -471,7 +471,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("MealStatsSnapshotId");
 
-                    b.ToTable("MealEatenTrendPoint");
+                    b.ToTable("MealEatenTrendPoint", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.MealStatsSnapshot", b =>
@@ -498,7 +498,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("StatsSnapshotId");
 
-                    b.ToTable("MealStatsSnapshot");
+                    b.ToTable("MealStatsSnapshot", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.MedicineStatsSnapshot", b =>
@@ -531,7 +531,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("StatsSnapshotId");
 
-                    b.ToTable("MedicineStatsSnapshot");
+                    b.ToTable("MedicineStatsSnapshot", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.MedicineTakenTrendPoint", b =>
@@ -556,7 +556,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("MedicineStatsSnapshotId");
 
-                    b.ToTable("MedicineTakenTrendPoint");
+                    b.ToTable("MedicineTakenTrendPoint", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.StatsSnapshot", b =>
@@ -618,7 +618,7 @@ namespace ibDiary_data.Migrations
                     b.HasIndex("MonthEnd")
                         .IsUnique();
 
-                    b.ToTable("StatsSnapshots");
+                    b.ToTable("StatsSnapshots", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.SymptomSeverityTrendPoint", b =>
@@ -643,7 +643,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("SymptomStatsSnapshotId");
 
-                    b.ToTable("SymptomSeverityTrendPoint");
+                    b.ToTable("SymptomSeverityTrendPoint", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Stats.SymptomStatsSnapshot", b =>
@@ -676,7 +676,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("SymptomId");
 
-                    b.ToTable("SymptomStatsSnapshot");
+                    b.ToTable("SymptomStatsSnapshot", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Symptoms.Symptom", b =>
@@ -714,7 +714,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("CalendarDayDate");
 
-                    b.ToTable("Symptoms");
+                    b.ToTable("Symptoms", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Symptoms.SymptomReport", b =>
@@ -757,7 +757,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("SymptomId");
 
-                    b.ToTable("SymptomReports");
+                    b.ToTable("SymptomReports", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Symptoms.SymptomStateChange", b =>
@@ -792,7 +792,7 @@ namespace ibDiary_data.Migrations
 
                     b.HasIndex("SymptomId");
 
-                    b.ToTable("SymptomStateChanges");
+                    b.ToTable("SymptomStateChanges", (string)null);
                 });
 
             modelBuilder.Entity("ibDiary_data.Models.Food.FoodItem", b =>

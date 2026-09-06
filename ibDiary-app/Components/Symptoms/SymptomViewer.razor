@@ -6,13 +6,13 @@
         <DataAnnotationsValidator />
 
         <div class="symptom-viewer">
-            @if (!Symptom.IsNew && Symptom.StateChanges.Count > 0)
+            @if (!Symptom.IsNew)
             {
                 <div>
-                    <button @onclick="@(() => ChangeTab("sym"))">
+                    <button type="button" @onclick="@(() => ChangeTab("sym"))">
                         Medicine
                     </button>
-                    <button @onclick="@(() => ChangeTab("his"))">
+                    <button type="button" @onclick="@(() => ChangeTab("his"))">
                         History
                     </button>
                 </div>
@@ -32,16 +32,8 @@
             }
             @if (_historyVisible)
             {
-                <div class="state-change-list">
-                    <header>
-                        <h2>History</h2>
-                    </header>
-                    <div>
-                        @foreach (var change in Symptom.StateChanges)
-                        {
-                            <SymptomStateChangeRow StateChange="change" />
-                        }
-                    </div>
+                <div class="symptom-history">
+                    <ScrollingCalendar FilterBarEnabled="false" Values="@_historyData" Filter="@_filter" />
                 </div>
             }
             <div>
@@ -58,22 +50,61 @@
 
 @code {
     [Parameter] required public Symptom Symptom { get; set; }
+    private Symptom _symptom = new();
+    private Symptom _source = new();
+
     [Parameter] public EventCallback<Symptom> SymptomChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     private string _title = string.Empty;
     private bool _symptomVisible = true;
     private bool _historyVisible = false;
-    private Symptom _symptom = new();
+
+    private List<CalendarDay> _historyData = [];
+    private CalendarFilter _filter = new();
 
     protected override void OnParametersSet()
     {
-        if (_symptom != Symptom)
+        if (!ReferenceEquals(_source, Symptom))
         {
+            _source = Symptom;
             _symptom = Symptom.Clone();
             _title = _symptom.IsNew ? "Add Symptom" : _symptom.Title;
+            GenerateCalendarDays();
+            StateHasChanged();
         }
         base.OnParametersSet();
+    }
+
+    private void GenerateCalendarDays()
+    {
+        _historyData = [];
+
+        var dates = _symptom.SymptomReports.Select(x => x.GetDate()).ToList();
+        dates.AddRange(_symptom.StateChanges.Select(x => x.GetDate()).ToList());
+
+        foreach (var date in dates.Distinct())
+        {
+            var day = new CalendarDay(date);
+
+            var sympReports = _symptom.SymptomReports.Where(x => x.GetDate() == date).ToList();
+            foreach (var report in sympReports)
+            {
+                report.AddToCalendarDay(day);
+            }
+
+            var stateChanges = _symptom.StateChanges.Where(x => x.GetDate() == date).ToList();
+            foreach (var sc in stateChanges)
+            {
+                sc.AddToCalendarDay(day);
+            }
+
+            if (date == _symptom.GetDate()) _symptom.AddToCalendarDay(day);
+
+            _historyData.Add(day);
+        }
+
+        _filter.ShowInactive = false;
     }
 
     private async Task OnClickCancel()

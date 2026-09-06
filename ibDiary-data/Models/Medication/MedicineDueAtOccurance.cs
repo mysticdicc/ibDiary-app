@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ibDiary_data.Models.Medication
 {
@@ -11,6 +12,7 @@ namespace ibDiary_data.Models.Medication
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [JsonIgnore]
         public Medicine Medicine { get; set; }
         public MedicineDueAtStatus Status { get; set; }
         public DateTime DueAt { get; set; }

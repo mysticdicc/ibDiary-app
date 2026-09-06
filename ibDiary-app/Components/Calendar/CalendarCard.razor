@@ -21,7 +21,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -38,7 +38,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -55,7 +55,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -71,7 +71,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -80,14 +80,14 @@
                 @if (Day.MedicineStateChanges.Count > 0)
                 {
                     <div>
-                        <p @onclick="@(() => OpenTab("msc"))">Day.MedicineStateChanges.Count medicine edits were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
+                        <p @onclick="@(() => OpenTab("msc"))">@Day.MedicineStateChanges.Count medicine edits were logged. <span class="material-symbols-outlined">arrow_drop_down</span></p>
                         @if (_medicineStateChangesVisible)
                         {
                             @foreach (var item in Day.MedicineStateChanges)
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -103,7 +103,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -119,7 +119,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -135,7 +135,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -151,7 +151,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -167,7 +167,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
                         }
@@ -183,7 +183,7 @@
                             {
                                 @foreach (var update in item.GetCalendarUpdate())
                                 {
-                                    <p>@update</p>
+                                    <p @onclick="@(() => OpenUpdate(item))">@update</p>
                                 }
                             }
 
@@ -198,6 +198,8 @@
         }
     </div>
 </div>
+
+<CalendarUpdateViewerHost @ref="_viewerHost"/>
 
 @code {
     [Parameter] required public DateOnly Date { get; set; }
@@ -215,6 +217,8 @@
     private bool _createdMealsVisible = false;
     private bool _mealReportsVisible = false;
     private bool _createdNotificationsVisible = false;
+
+    private CalendarUpdateViewerHost? _viewerHost;
 
     protected override Task OnParametersSetAsync()
     {
@@ -279,5 +283,10 @@
                 _createdNotificationsVisible = !_createdNotificationsVisible;
                 break;
         }
+    }
+
+    private void OpenUpdate(ICalendarUpdate update)
+    {
+        _viewerHost?.OpenCalendarUpdate(update);
     }
 }

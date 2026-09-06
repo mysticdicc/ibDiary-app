@@ -32,47 +32,14 @@
     </div>
 </Popup>
 
-<MedicineViewer Medicine="@_medicine" MedicineChanged="@OnItemChanged" @bind-Visible="@_medicineVisible"/>
-<MedicineReportViewer MedicineReport="@_medReport" MedicineReportChanged="@OnItemChanged" @bind-Visible="@_medicineReportVisible" />
-
-<SymptomViewer Symptom="@_symptom" SymptomChanged="@OnItemChanged" @bind-Visible="@_symptomVisible" />
-<SymptomReportViewer SymptomReport="@_sympReport" SymptomReportChanged="@OnItemChanged" @bind-Visible="@_sympReportVisible" />
-
-<FoodItemViewer Food="@_food" FoodChanged="@OnItemChanged" @bind-Visible="@_foodVisible" />
-<FoodItemReportViewer Report="@_foodReport" ReportChanged="@OnItemChanged" @bind-Visible="@_foodReportVisible" />
-
-<MealViewer Meal="@_meal" MealChanged="@OnItemChanged" @bind-Visible="@_mealVisible" />
-<MealReportViewer Report="@_mealReport" ReportChanged="@OnItemChanged" @bind-Visible="@_mealReportVisible" />
+<CalendarUpdateViewerHost @ref="_viewerHost"/>
 
 @code {
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     [Parameter] public EventCallback<ICalendarUpdate> ItemChanged { get; set; }
     [Parameter] public bool HasOwnControl { get; set; } = true;
-
-    private Medicine _medicine = new();
-    private bool _medicineVisible = false;
-
-    private MedicineReport _medReport = new();
-    private bool _medicineReportVisible = false;
-
-    private Symptom _symptom = new();
-    private bool _symptomVisible = false;
-
-    private SymptomReport _sympReport = new();
-    private bool _sympReportVisible = false;
-
-    private FoodItem _food = new();
-    private bool _foodVisible = false;
-
-    private FoodItemReport _foodReport = new();
-    private bool _foodReportVisible = false;
-
-    private Meal _meal = new();
-    private bool _mealVisible = false;
-
-    private MealReport _mealReport = new();
-    private bool _mealReportVisible = false;
+    private CalendarUpdateViewerHost? _viewerHost;
 
     private async Task OnVisibleChamged(bool visible)
     {
@@ -81,50 +48,42 @@
 
     private void MedicineClicked()
     {
-        _medicine = new();
-        _medicineVisible = true;
+        _viewerHost?.OpenCalendarUpdate(new Medicine());
     }
 
     private void MedicineReportClicked()
     {
-        _medReport = new();
-        _medicineReportVisible = true;
+        _viewerHost?.OpenCalendarUpdate(new MedicineReport());
     }
 
     private void SymptomClicked()
     {
-        _symptom = new();
-        _symptomVisible = true;
+        _viewerHost?.OpenCalendarUpdate(new Symptom());
     }
 
     private void SymptomReportClicked()
     {
-        _sympReport = new();
-        _sympReportVisible = true;
+        _viewerHost?.OpenCalendarUpdate(new SymptomReport());
     }
 
     private void FoodClicked()
     {
-        _food = new();
-        _foodVisible = true;
+        _viewerHost?.OpenCalendarUpdate(new FoodItem());
     }
 
     private void FoodReportClicked()
     {
-        _foodReport = new();
-        _foodReportVisible = true;
+        _viewerHost?.OpenCalendarUpdate(new FoodItemReport());
     }
 
     private void MealClicked()
     {
-        _meal = new();
-        _mealVisible = true;
+        _viewerHost?.OpenCalendarUpdate(new Meal());
     }
 
     private void MealReportClicked()
     {
-        _mealReport = new();
-        _mealReportVisible = true;
+        _viewerHost?.OpenCalendarUpdate(new MealReport());
     }
 
     private async Task OnClickAdd()

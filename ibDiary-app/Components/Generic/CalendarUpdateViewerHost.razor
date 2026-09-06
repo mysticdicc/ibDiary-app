@@ -1,0 +1,82 @@
+﻿@inject ComponentUpdateService _updateService
+
+<MedicineViewer Medicine="@_medicine" MedicineChanged="@OnItemChanged" @bind-Visible="@_medicineVisible" />
+<MedicineReportViewer MedicineReport="@_medReport" MedicineReportChanged="@OnItemChanged" @bind-Visible="@_medicineReportVisible" />
+
+<SymptomViewer Symptom="@_symptom" SymptomChanged="@OnItemChanged" @bind-Visible="@_symptomVisible" />
+<SymptomReportViewer SymptomReport="@_sympReport" SymptomReportChanged="@OnItemChanged" @bind-Visible="@_sympReportVisible" />
+
+<FoodItemViewer Food="@_food" FoodChanged="@OnItemChanged" @bind-Visible="@_foodVisible" />
+<FoodItemReportViewer Report="@_foodReport" ReportChanged="@OnItemChanged" @bind-Visible="@_foodReportVisible" />
+
+<MealViewer Meal="@_meal" MealChanged="@OnItemChanged" @bind-Visible="@_mealVisible" />
+<MealReportViewer Report="@_mealReport" ReportChanged="@OnItemChanged" @bind-Visible="@_mealReportVisible" />
+
+<ScheduledNotificationViewer Notification="@_notification" NotificationChanged="@OnItemChanged" @bind-Visible="@_notificationVisible"/>
+
+@code {
+    [Parameter] public EventCallback<ICalendarUpdate> ItemChanged { get; set; }
+
+    private Medicine _medicine = new();
+    private bool _medicineVisible = false;
+
+    private MedicineReport _medReport = new();
+    private bool _medicineReportVisible = false;
+
+    private Symptom _symptom = new();
+    private bool _symptomVisible = false;
+
+    private SymptomReport _sympReport = new();
+    private bool _sympReportVisible = false;
+
+    private FoodItem _food = new();
+    private bool _foodVisible = false;
+
+    private FoodItemReport _foodReport = new();
+    private bool _foodReportVisible = false;
+
+    private Meal _meal = new();
+    private bool _mealVisible = false;
+
+    private MealReport _mealReport = new();
+    private bool _mealReportVisible = false;
+
+    private ScheduledNotification _notification = new(ScheduledNotificationType.Food);
+    private bool _notificationVisible = false;
+
+    private async Task OnItemChanged(ICalendarUpdate item)
+    {
+        await ItemChanged.InvokeAsync(item);
+        _updateService.NotifiyComponentUpdate(item);
+    }
+
+    private void Reset()
+    {
+        _medicineVisible = _medicineReportVisible = _symptomVisible = _sympReportVisible =
+        _foodVisible = _foodReportVisible = _mealVisible = _mealReportVisible = _notificationVisible = false;
+    }
+
+    public void OpenCalendarUpdate(ICalendarUpdate update)
+    {
+        Reset();
+        switch (update)
+        {
+            case Medicine x: _medicine = x; _medicineVisible = true; break;
+            case MedicineReport x: _medReport = x; _medicineReportVisible = true; break;
+            case MedicineStateChange x: _medicine = x.MedicineAfter; _medicineVisible = true; break;
+
+            case Symptom x: _symptom = x; _symptomVisible = true; break;
+            case SymptomReport x: _sympReport = x; _sympReportVisible = true; break;
+            case SymptomStateChange x: _symptom = x.SymptomAfter; _symptomVisible = true; break;
+
+            case FoodItem x: _food = x; _foodVisible = true; break;
+            case FoodItemReport x: _foodReport = x; _foodReportVisible = true; break;
+
+            case Meal x: _meal = x; _mealVisible = true; break;
+            case MealReport x: _mealReport = x; _mealReportVisible = true; break;
+
+            case ScheduledNotification x: _notification = x; _notificationVisible = true; break;
+        }
+        StateHasChanged();
+    }
+}

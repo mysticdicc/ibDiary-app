@@ -6,13 +6,13 @@
         <DataAnnotationsValidator />
 
         <div class="medicine-viewer">
-            @if (!_medicine.IsNew && _medicine.StateChanges.Count > 0)
+            @if (!_medicine.IsNew)
             {
                 <div>
-                    <button @onclick="@(() => ChangeTab("med"))">
+                    <button type="button" @onclick="@(() => ChangeTab("med"))">
                         Medicine
                     </button>
-                    <button @onclick="@(() => ChangeTab("his"))">
+                    <button type="button" @onclick="@(() => ChangeTab("his"))">
                         History
                     </button>
                 </div>
@@ -41,13 +41,8 @@
             }
             @if (_historyVisible)
             {
-                <div class="state-change-list">
-                    <div>
-                        @foreach (var change in _medicine.StateChanges)
-                        {
-                            <MedicineStateChangeRow StateChange="change" />
-                        }
-                    </div>
+                <div class="medicine-history">
+                    <ScrollingCalendar FilterBarEnabled="false" Values="@_historyData" Filter="@_filter" />
                 </div>
             }
             <div>
@@ -65,22 +60,62 @@
 
 @code {
     [Parameter] required public Medicine Medicine { get; set; }
+    private Medicine _medicine = new();
+    private Medicine? _source;
+
     [Parameter] public EventCallback<Medicine> MedicineChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
-    private Medicine _medicine = new();
+
     private string _title = string.Empty;
     private bool _medicineVisible = true;
     private bool _historyVisible = false;
 
+    private List<CalendarDay> _historyData = [];
+    private CalendarFilter _filter = new();
+
     protected override void OnParametersSet()
     {
-        if (_medicine != Medicine)
+        if (!ReferenceEquals(_source, Medicine))
         {
             _medicine = Medicine.Clone();
             _title = _medicine.IsNew ? "Add Medicine" : _medicine.Name;
+            GenerateCalendarDays();
+            StateHasChanged();
         }
+
         base.OnParametersSet();
+    }
+
+    private void GenerateCalendarDays()
+    {
+        _historyData = [];
+
+        var dates = _medicine.MedicineReports.Select(x => x.GetDate()).ToList();
+        dates.AddRange(_medicine.StateChanges.Select(x => x.GetDate()).ToList());
+
+        foreach (var date in dates.Distinct())
+        {
+            var day = new CalendarDay(date);
+
+            var reports = _medicine.MedicineReports.Where(x => x.GetDate() == date).ToList();
+            foreach (var report in reports)
+            {
+                report.AddToCalendarDay(day);
+            }
+
+            var states = _medicine.StateChanges.Where(x => x.GetDate() == date).ToList();
+            foreach (var state in states)
+            {
+                state.AddToCalendarDay(day);
+            }
+
+            if (date == _medicine.GetDate()) _medicine.AddToCalendarDay(day);
+
+            _historyData.Add(day);
+        }
+
+        _filter.ShowInactive = false;
     }
 
     private async Task OnClickCancel()

@@ -158,9 +158,9 @@ namespace ibDiary_data.Models.Stats
             ActiveMedicineCount = medicines.Count(x => x.Active);
             TotalMedicineReports = medicines.Sum(x => x.MedicineReports.Count);
             MonthlyMedicalReports = medicines.Sum(x =>
-                x.MedicineReports.Count(r => r.MedicineTakenAtDate >= MonthBefore && r.MedicineTakenAtDate < MonthEnd));
+                x.MedicineReports.Count(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
             MonthlyMedicinesTaken = medicines.Sum(x =>
-                x.MedicineReports.Count(r => r.MedicineTaken && r.MedicineTakenAtDate >= MonthBefore && r.MedicineTakenAtDate < MonthEnd));
+                x.MedicineReports.Count(r => r.MedicineTaken && r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
 
             foreach (var medicine in medicines)
             {
@@ -178,7 +178,7 @@ namespace ibDiary_data.Models.Stats
             ActiveSymptomCount = symptoms.Count(x => x.Active);
             TotalSymptomReports = symptoms.Sum(x => x.SymptomReports.Count);
             MonthlySymptomReports = symptoms.Sum(x =>
-                x.SymptomReports.Count(r => r.SubmittedForDate >= MonthBefore && r.SubmittedForDate < MonthEnd));
+                x.SymptomReports.Count(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
 
             foreach (var symptom in symptoms)
             {
@@ -193,9 +193,9 @@ namespace ibDiary_data.Models.Stats
 
             TotalFoodReports = foods.Sum(x => x.FoodReports.Count);
             MonthlyFoodReports = foods.Sum(x =>
-                x.FoodReports.Count(r => DateOnly.FromDateTime(r.AteFoodAt) >= MonthBefore && DateOnly.FromDateTime(r.AteFoodAt) < MonthEnd));
+                x.FoodReports.Count(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
             UniqueMonthlyFoodItems = foods.Count(x =>
-                x.FoodReports.Any(r => DateOnly.FromDateTime(r.AteFoodAt) >= MonthBefore && DateOnly.FromDateTime(r.AteFoodAt) < MonthEnd));
+                x.FoodReports.Any(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
 
             foreach (var food in foods)
             {
@@ -210,9 +210,9 @@ namespace ibDiary_data.Models.Stats
 
             TotalMealReports = meals.Sum(x => x.MealReports.Count);
             MonthlyMealReports = meals.Sum(x =>
-                x.MealReports.Count(r => DateOnly.FromDateTime(r.AteMealAt) >= MonthBefore && DateOnly.FromDateTime(r.AteMealAt) < MonthEnd));
+                x.MealReports.Count(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
             UniqueMonthlyMeals = meals.Count(x =>
-                x.MealReports.Any(r => DateOnly.FromDateTime(r.AteMealAt) >= MonthBefore && DateOnly.FromDateTime(r.AteMealAt) < MonthEnd));
+                x.MealReports.Any(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
 
             foreach (var meal in meals)
             {

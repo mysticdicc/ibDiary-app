@@ -587,12 +587,12 @@ button {
         flex-direction: row;
         justify-content: center;
 
-        .ibd-checkbox {
+        > .ibd-checkbox {
             margin-top: auto;
             margin-bottom: auto;
         }
 
-        button {
+        > button {
             flex: 1;
             background-color: rgba(0,0,0,0);
         }
@@ -604,12 +604,6 @@ button {
     display: flex;
     flex-direction: column;
     padding: 5px;
-
-    header {
-        z-index: 1050;
-        position: sticky;
-        top: 0;
-    }
 
     div {
         overflow-x: hidden;
@@ -799,7 +793,7 @@ button {
         display: flex;
         flex-direction: row;
 
-        .ibd-checkbox {
+        > .ibd-checkbox {
             margin-top: auto;
             margin-bottom: auto;
         }
@@ -836,7 +830,7 @@ button {
         position: sticky;
         top: 0;
 
-        button {
+        > button {
             margin-left: auto;
             background-color: var(--background-dark);
         }
@@ -848,7 +842,7 @@ button {
         transform: translate(-50%, 0);
         top: calc(var(--safe-top) + 15%);
         background-color: rgba(0,6,54,0.5);
-        border-radius: 5px;
+        border-radius: 5px; 
         padding: 5px;
         padding-left: 20px;
         padding-right: 20px;
@@ -882,7 +876,7 @@ button {
     min-height: fit-content;
     box-shadow: 3px 3px 3px rgba(49, 1, 82, 1);
 
-    header {
+    > header {
         padding: 5px;
         background-color: var(--background-dark);
         color: var(--text);

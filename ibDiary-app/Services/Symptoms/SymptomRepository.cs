@@ -33,14 +33,22 @@ namespace ibDiary_app.Services
             _statsGenerator = stats;
         }
 
+        private IQueryable<Symptom> GetQuery()
+        {
+            return _dbService.Symptoms
+                .Include(x => x.StateChanges)
+                .Include(x => x.SymptomReports)
+                    .ThenInclude(x => x.Medication);
+        }
+
         public async Task<List<Symptom>> GetAllAsync()
         {
-            return await _dbService.Symptoms.Include(x => x.StateChanges).ToListAsync();
+            return await GetQuery().ToListAsync();
         }
 
         public async Task<Symptom?> GetByIdAsync(int id)
         {
-            return await _dbService.FindAsync<Symptom>(id) ?? null;
+            return await GetQuery().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<bool> UpdateAsync(Symptom symptom)

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ibDiary_data.Models.Medication
 {
@@ -15,6 +16,7 @@ namespace ibDiary_data.Models.Medication
         [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
         public int MedicineId { get; set; }
         [NotNewCalendarObject(ErrorMessage = "Medicine is required.")]
+        [JsonIgnore]
         public Medicine Medicine { get; set; }
         public DateTime SubmittedAt { get; set; }
         public DateTime MedicineTakenAt { get; set; }

@@ -83,9 +83,6 @@ namespace ibDiary_data.Models.Symptoms
 
             foreach (var property in typeof(Symptom).GetProperties())
             {
-                if (property.Name == nameof(StateChanges) || property.Name == nameof(IsNew))
-                    continue;
-
                 if (property.CanWrite)
                 {
                     property.SetValue(clone, property.GetValue(this));
