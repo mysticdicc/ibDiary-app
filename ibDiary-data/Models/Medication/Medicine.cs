@@ -63,7 +63,7 @@ namespace ibDiary_data.Models.Medication
         {
             if (MedicineSchedule.Type == MedicineScheduleType.AsNeeded)
             {
-                MedicineOccurances = [];
+                MedicineOccurances.Clear();
                 return;
             }
 
@@ -162,13 +162,20 @@ namespace ibDiary_data.Models.Medication
             Notes = medicine.Notes;
             PrescribedAt = medicine.PrescribedAt;
             Active = medicine.Active;
-            MedicineSchedule = medicine.MedicineSchedule;
+            MedicineSchedule.UpdateProperties(medicine.MedicineSchedule);
             MedicineReports = medicine.MedicineReports;
             MedicineOccurances = medicine.MedicineOccurances;
         }
 
         public bool HasChangedState(Medicine medicine)
         {
+            var scheduleChanged =
+                MedicineSchedule.Type != medicine.MedicineSchedule.Type ||
+                MedicineSchedule.IntervalType != medicine.MedicineSchedule.IntervalType ||
+                MedicineSchedule.IntervalValue != medicine.MedicineSchedule.IntervalValue ||
+                MedicineSchedule.AmountPerDay != medicine.MedicineSchedule.AmountPerDay ||
+                MedicineSchedule.StartedAt != medicine.MedicineSchedule.StartedAt;
+
             return
                 Name != medicine.Name ||
                 Dose != medicine.Dose ||
@@ -176,8 +183,7 @@ namespace ibDiary_data.Models.Medication
                 Notes != medicine.Notes ||
                 PrescribedAt != medicine.PrescribedAt ||
                 Active != medicine.Active ||
-                MedicineSchedule != medicine.MedicineSchedule ||
-                MedicineOccurances != medicine.MedicineOccurances;
+                scheduleChanged;
         }
 
         public Medicine Clone()

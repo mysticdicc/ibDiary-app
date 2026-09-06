@@ -37,7 +37,8 @@ namespace ibDiary_app.Services.Medication
                     var clone = medicine.Clone();
                     clone.RegenerateOccurances(DateTime.UtcNow);
 
-                    if (clone.HasChangedState(medicine))
+                    if (clone.MedicineSchedule.Type != MedicineScheduleType.AsNeeded &&
+                        clone.HasChangedState(medicine))
                     {
                         await _medicineService.UpdateAsync(clone);
                     }
