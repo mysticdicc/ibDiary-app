@@ -44,8 +44,8 @@ namespace ibDiary_data.Models.Stats
             TotalReportsCount = reports.Count;
             var monthly = reports
                                 .Where(x => 
-                                DateOnly.FromDateTime(x.AteMealAt) >= monthBefore && 
-                                DateOnly.FromDateTime(x.AteMealAt) < endDate)
+                                x.GetDate() > monthBefore && 
+                                x.GetDate() <= endDate)
                                 .ToList();
 
             MonthlyReportsCount = monthly.Count;

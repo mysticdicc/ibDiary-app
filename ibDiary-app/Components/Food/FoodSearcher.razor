@@ -2,7 +2,7 @@
 @inject FoodItemClientService _foodService
 
 <div class="searcher-preview food-searcher-preview">
-    <button @onclick="@OnClickSearch">
+    <button type="button" @onclick="@OnClickSearch">
         <p>Search Food</p>
         <span class="material-symbols-outlined">search</span>
     </button>
@@ -32,7 +32,7 @@
     <div class="food-item-searcher">
         <div>
             <IbdTextInput @bind-Value="@_searchString" @bind-Value:after="@OnSearchInputChanged" Title="Search Food Items" />
-            <button @onclick="@OnClickAdd">
+            <button type="button" @onclick="@OnClickAdd">
                 <span class="material-symbols-outlined">add</span>
             </button>
         </div>
@@ -43,7 +43,7 @@
                 {
                     <FoodItemSmallCard Food="food" FoodClicked="@OnFoodClicked" />
                 }
-                <button @onclick="@OnShowMoreClicked">
+                <button type="button" @onclick="@OnShowMoreClicked">
                     Show More
                 </button>
             </div>

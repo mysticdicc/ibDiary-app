@@ -2,7 +2,7 @@
 @inject MedicineClientService _medDbService
 
 <div class="searcher-preview medicine-searcher-preview">
-    <button @onclick="@OnClickSearch">
+    <button type="button" @onclick="@OnClickSearch">
         <p>Search Medicine</p>
         <span class="material-symbols-outlined">search</span>
     </button>
@@ -32,7 +32,7 @@
     <div class="medicine-searcher">
         <div>
             <IbdTextInput @bind-Value="@_searchString" @bind-Value:after="@OnSearchInputChanged" Title="Search Medicine" />
-            <button @onclick="@OnClickAdd">
+            <button type="button" @onclick="@OnClickAdd">
                 <span class="material-symbols-outlined">add</span>
             </button>
         </div>
@@ -43,7 +43,7 @@
                 {
                     <MedicineSmallCard Medicine="medicine" MedicineClicked="@OnMedicineClicked" />
                 }
-                <button @onclick="@OnShowMoreClicked">
+                <button type="button" @onclick="@OnShowMoreClicked">
                     Show More
                 </button>
             </div>

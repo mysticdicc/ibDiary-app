@@ -680,7 +680,7 @@ button {
             background-color: rgba(0,0,0,0);
             height: 1rem;
             padding: 3px;
-            margin-right: 5rem;
+            margin-right: 2rem;
             display: flex;
 
             span {
@@ -1566,4 +1566,98 @@ button {
             }
         }
     }
+
+    .stats-viewer {
+        margin: 5px;
+    }
+}
+
+.stats-viewer {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 5px;
+
+    header {
+        display: flex;
+        flex-direction: row;
+
+        h4 {
+            background-color: var(--secondary);
+            width: fit-content;
+            margin: 0;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            padding: 5px 10px 5px 10px;
+            margin: 5px auto 2px auto;
+        }
+    }
+
+    > div {
+        width: 100%;
+        padding: 5px;
+    }
+
+    > div:has(.ibd-int-input) {
+        flex-wrap: wrap;
+        display: flex;
+
+        .ibd-int-input {
+            width: 50%;
+
+            p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            input {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+.apexcharts-text,
+.apexcharts-legend-text,
+.apexcharts-xaxis text,
+.apexcharts-yaxis text {
+    fill: var(--text) !important;
+    font-family: "Roboto" !important;
+}
+
+.apexcharts-gridline {
+    stroke: rgba(255, 255, 255, 0.15) !important;
+}
+
+.apexcharts-tooltip {
+    background: var(--background-dark) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+}
+
+.apexcharts-title-text {
+    fill: var(--text) !important;
+    font-family: "Roboto" !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    background-color: var(--secondary) !important;
+    width: fit-content !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: var(--shadow) !important;
+    padding: 5px 10px 5px 10px !important;
+}
+
+.apexcharts-line-series .apexcharts-series path.apexcharts-line {
+    stroke: var(--secondary) !important;
+}
+
+.chart-wrapper {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 5px;
 }

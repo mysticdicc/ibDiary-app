@@ -53,7 +53,6 @@ namespace ibDiary_app.Services
                 dbItem.Id,
                 _dbService.Entry(dbItem).OriginalValues
             );
-            clone.MedicineSchedule = dbItem.MedicineSchedule;
             _dbService.Entry(clone).State = EntityState.Detached;
 
             bool changedState = dbItem.HasChangedState(clone);

@@ -12,10 +12,14 @@ namespace ibDiary_data.Models.Calendar
 {
     public class CalendarDay
     {
-        [Key] public DateOnly Date { get; set; }
-        [NotMapped] public string DayOfWeek { get => Date.DayOfWeek.ToString(); }
-        [NotMapped] public string Month { get => Date.ToString("MMMM");  }
-        [NotMapped] public string Year { get => Date.Year.ToString(); }
+        [Key] 
+        public DateOnly Date { get; set; }
+        [NotMapped] 
+        public string DayOfWeek { get => Date.DayOfWeek.ToString(); }
+        [NotMapped] 
+        public string Month { get => Date.ToString("MMMM");  }
+        [NotMapped] 
+        public string Year { get => Date.Year.ToString(); }
         public List<MedicineReport> MedicineReports { get; set; }
         public List<MedicineStateChange> MedicineStateChanges { get; set; }
         public List<SymptomReport> SymptomReports { get; set; }
@@ -28,6 +32,12 @@ namespace ibDiary_data.Models.Calendar
         public List<MealReport> MealReports { get; set; }
         public List<ScheduledNotification> CreatedNotifications { get; set; }
         public bool IsNew { get; set; }
+        [NotMapped] 
+        public int ItemCount { get => MedicineReports.Count + MedicineStateChanges.Count + SymptomReports.Count + SymptomStateChanges.Count +
+                CreatedMedicines.Count + CreatedSymptoms.Count + CreatedFoods.Count + FoodReports.Count + CreatedMeals.Count + MealReports.Count +
+                CreatedNotifications.Count; 
+        } 
+
 
         public CalendarDay()
         {

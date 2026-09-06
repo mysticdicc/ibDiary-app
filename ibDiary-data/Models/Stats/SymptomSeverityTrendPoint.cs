@@ -36,7 +36,7 @@ namespace ibDiary_data.Models.Stats
 
         public Task GenerateStats(Symptom symptom, DateOnly monthBefore)
         {
-            var reports = symptom.SymptomReports.Where(x => x.SubmittedForDate == Date).ToList();
+            var reports = symptom.SymptomReports.Where(x => x.GetDate() == Date).ToList();
             ReportCount = reports.Count;
             var severity = reports.Select(x => x.Severity).ToList();
             AverageSeverity = severity.Count == 0 ? 0 : severity.Average();

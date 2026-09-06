@@ -5,7 +5,7 @@
     <div>
         @if (null != Day)
         {
-            if (_dayUpdates.Count == 0)
+            if (Day.ItemCount == 0)
             {
                 <p>No activity.</p>
             }
@@ -199,12 +199,14 @@
     </div>
 </div>
 
-<CalendarUpdateViewerHost @ref="_viewerHost"/>
+@if (Day?.ItemCount > 0)
+{
+    <CalendarUpdateViewerHost @ref="_viewerHost" />
+}
 
 @code {
     [Parameter] required public DateOnly Date { get; set; }
     [Parameter] public CalendarDay? Day { get; set; }
-    private List<ICalendarUpdate> _dayUpdates = [];
 
     private bool _symptomStateChangesVisible = false;
     private bool _createdSymptomsVisible = false;
@@ -219,31 +221,6 @@
     private bool _createdNotificationsVisible = false;
 
     private CalendarUpdateViewerHost? _viewerHost;
-
-    protected override Task OnParametersSetAsync()
-    {
-        _dayUpdates.Clear();
-
-        if (null != Day)
-        {
-            _dayUpdates.AddRange(Day.SymptomStateChanges);
-            _dayUpdates.AddRange(Day.CreatedSymptoms);
-            _dayUpdates.AddRange(Day.SymptomReports);
-            _dayUpdates.AddRange(Day.CreatedMedicines);
-            _dayUpdates.AddRange(Day.MedicineStateChanges);
-            _dayUpdates.AddRange(Day.MedicineReports);
-            _dayUpdates.AddRange(Day.CreatedFoods);
-            _dayUpdates.AddRange(Day.FoodReports);
-            _dayUpdates.AddRange(Day.CreatedMeals);
-            _dayUpdates.AddRange(Day.MealReports);
-            _dayUpdates.AddRange(Day.CreatedNotifications);
-
-            _dayUpdates = _dayUpdates.OrderByDescending(x => x.GetDate()).ToList();
-        }
-        else _dayUpdates = [];
-
-        return base.OnParametersSetAsync();
-    }
 
     private void OpenTab(string tab)
     {

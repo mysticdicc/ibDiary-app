@@ -33,7 +33,7 @@ namespace ibDiary_data.Models.Medication
         [NotMapped] 
         public virtual DateOnly PrescribedAtDate { get => DateOnly.FromDateTime(PrescribedAt) ; }
         public int MedicineScheduleId { get; set; }
-        virtual public MedicineSchedule MedicineSchedule { get; set; }
+        public MedicineSchedule MedicineSchedule { get; set; }
         [JsonIgnore]
         [NotMapped] 
         public List<MedicineStateChange> StateChanges { get; set; }
@@ -164,6 +164,7 @@ namespace ibDiary_data.Models.Medication
             Active = medicine.Active;
             MedicineSchedule = medicine.MedicineSchedule;
             MedicineReports = medicine.MedicineReports;
+            MedicineOccurances = medicine.MedicineOccurances;
         }
 
         public bool HasChangedState(Medicine medicine)

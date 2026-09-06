@@ -17,6 +17,8 @@ namespace ibDiary_app.Services.Stats
         private IQueryable<StatsSnapshot> GetSnapshotQuery()
         {
             return _dbService.Set<StatsSnapshot>()
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Include(x => x.MedicineStats)
                     .ThenInclude(x => x.Medicine)
                 .Include(x => x.MedicineStats)

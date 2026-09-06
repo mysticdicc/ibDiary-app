@@ -1,0 +1,66 @@
+﻿<div class="food-stats-viewer stats-viewer">
+    <header>
+        <h4>@_stats.Meal.Name</h4>
+    </header>
+    <div>
+        <IbdIntInput Value="@_stats.TotalReportsCount" ValueExpression="@(() => _stats.TotalReportsCount)" Title="Total Reports" ReadOnly="true" />
+        <IbdIntInput Value="@_stats.MonthlyReportsCount" ValueExpression="@(() => _stats.MonthlyReportsCount)" Title="Monthly Reports" ReadOnly="true" />
+    </div>
+    <div>
+        <div class="chart-wrapper">
+            <ApexChart TItem="MealEatenTrendPoint" Title="Meal Eaten By Hour" Options="@_chartOptions">
+                <ApexPointSeries TItem="MealEatenTrendPoint"
+                                 Items="@_stats.MealEatenByHour"
+                                 XValue="x => x.Date"
+                                 YValue="x => x.Count"
+                                 SeriesType="SeriesType.Line" />
+            </ApexChart>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public MealStatsSnapshot Stats { get; set; } = new();
+    private MealStatsSnapshot _stats { get; set; } = new();
+    private readonly ApexChartOptions<MealEatenTrendPoint> _chartOptions = new()
+    {
+        Chart = new Chart
+        {
+            Height = "200",
+            ParentHeightOffset = 0
+        },
+        Legend = new Legend { Show = false },
+        DataLabels = new DataLabels { Enabled = false },
+        Stroke = new Stroke { Width = 3, Curve = Curve.Smooth },
+        Xaxis = new XAxis
+        {
+            TickAmount = 8,
+            Labels = new XAxisLabels
+            {
+                Rotate = -90,
+                RotateAlways = true,
+                HideOverlappingLabels = false,
+                Trim = false,
+                MinHeight = 70,
+                MaxHeight = 70
+            }
+        },
+
+        Grid = new Grid
+        {
+            Padding = new Padding
+            {
+                Top = 0,
+                Right = 10,
+                Bottom = 0,
+                Left = 0
+            }
+        }
+    };
+
+    protected override void OnParametersSet()
+    {
+        if (Stats != _stats) _stats = Stats;
+        base.OnParametersSet();
+    }
+}

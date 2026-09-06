@@ -1,0 +1,81 @@
+﻿<div class="medicine-stats-viewer stats-viewer">
+    <header>
+        <h4>@_stats.Medicine.Name</h4>
+    </header>
+    <div>
+        <IbdIntInput Value="@_stats.TotalReportsCount" ValueExpression="@(() => _stats.TotalReportsCount)" Title="Total Reports" ReadOnly="true"/>
+        <IbdIntInput Value="@_stats.MonthlyReportsCount" ValueExpression="@(() => _stats.MonthlyReportsCount)" Title="Monthly Reports" ReadOnly="true"/>
+        <IbdIntInput Value="@_stats.TotalStateChanges" ValueExpression="@(() => _stats.TotalStateChanges)" Title="Total State Changes" ReadOnly="true" />
+        <IbdIntInput Value="@_stats.MonthlyStateChanges" ValueExpression="@(() => _stats.MonthlyStateChanges)" Title="Monthly State Changes" ReadOnly="true" />
+    </div>
+    <div>
+        <div class="chart-wrapper">
+            <ApexChart TItem="MedicineTakenTrendPoint" Title="Medicine Taken" Options="@_chartOptions">
+                <ApexPointSeries TItem="MedicineTakenTrendPoint"
+                                 Items="@_stats.MedicineTakenTrend"
+                                 Name="Medicine Taken Trend"
+                                 XValue="x => x.Date"
+                                 YValue="x => Math.Round((decimal)x.AverageTaken, 2)"
+                                 SeriesType="SeriesType.Line" />
+            </ApexChart>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public MedicineStatsSnapshot Stats { get; set; } = new();
+    private MedicineStatsSnapshot _stats = new();
+    private readonly ApexChartOptions<MedicineTakenTrendPoint> _chartOptions = new()
+    {
+        Chart = new Chart
+        {
+            Height = "200",
+            ParentHeightOffset = 0
+        },
+        Legend = new Legend { Show = false },
+        DataLabels = new DataLabels { Enabled = true },
+        Stroke = new Stroke { Width = 3, Curve = Curve.Smooth },
+        Xaxis = new XAxis
+        {
+            TickAmount = 8,
+            Labels = new XAxisLabels
+            {
+                Rotate = -90,
+                RotateAlways = true,
+                HideOverlappingLabels = false,
+                Trim = false,
+                MinHeight = 70,
+                MaxHeight = 70
+            }
+        },
+        Yaxis = new List<YAxis>
+        {
+            new()
+            {
+                Min = 0,
+                Max = 100,
+                TickAmount = 5,
+                Labels = new YAxisLabels
+                {
+                    Formatter = "function (value) { return value.toFixed(0) + '%'; }"
+                }
+            }
+        },
+        Grid = new Grid
+        {
+            Padding = new Padding
+            {
+                Top = 0,
+                Right = 10,
+                Bottom = 0,
+                Left = 0
+            }
+        }
+    };
+
+    protected override void OnParametersSet()
+    {
+        if (Stats != _stats) _stats = Stats;
+        base.OnParametersSet();
+    }
+}

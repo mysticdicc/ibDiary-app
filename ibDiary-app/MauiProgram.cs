@@ -13,6 +13,7 @@ using ibDiary_app.Services.System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ibDiary_app.Services.Stats;
+using ApexCharts;
 
 namespace ibDiary_app
 {
@@ -62,6 +63,8 @@ namespace ibDiary_app
             var settings = new AppSettings();
             settings.Load();
             builder.Services.AddSingleton(settings);
+
+            builder.Services.AddApexChartsMaui();
 
             builder.Services.AddSingleton<ClientNotificationService>();
             builder.Services.AddSingleton<ConfirmationService>();

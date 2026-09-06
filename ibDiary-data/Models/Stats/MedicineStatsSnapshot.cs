@@ -48,11 +48,11 @@ namespace ibDiary_data.Models.Stats
             var reports = medicine.MedicineReports;
 
             TotalReportsCount = reports.Count;
-            var monthly = reports.Where(x => x.MedicineTakenAtDate >= monthBefore && x.MedicineTakenAtDate < endDate).ToList();
+            var monthly = reports.Where(x => x.GetDate() > monthBefore && x.GetDate() <= endDate).ToList();
             MonthlyReportsCount = reports.Count;
 
             TotalStateChanges = medicine.StateChanges.Count;
-            var monthlySc = medicine.StateChanges.Where(x => x.ChangedAtDate >= monthBefore && x.ChangedAtDate < endDate).ToList();
+            var monthlySc = medicine.StateChanges.Where(x => x.GetDate() > monthBefore && x.GetDate() <= endDate).ToList();
             MonthlyStateChanges = monthlySc.Count;
 
             for (var date = monthBefore; date <= endDate; date = date.AddDays(1))

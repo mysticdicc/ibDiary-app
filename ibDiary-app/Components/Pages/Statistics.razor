@@ -32,6 +32,10 @@
             <IbdIntInput Value="@_currentSnapshot.MonthlyMedicinesTaken" ValueExpression="@(() => _currentSnapshot.MonthlyMedicinesTaken)" Title="Taken (Month)" ReadOnly="true" />
             <IbdIntInput Value="@_currentSnapshot.MonthlyMedicinesNotTaken" ValueExpression="@(() => _currentSnapshot.MonthlyMedicinesNotTaken)" Title="Missed (Month)" ReadOnly="true" />
         </div>
+        @foreach (var snapshot in _currentSnapshot.MedicineStats)
+        {
+            <MedicineStatsSnapshotViewer Stats="@snapshot"/>
+        }
     </div>
     <div>
         <h3>Symptoms</h3>
@@ -40,18 +44,30 @@
             <IbdIntInput Value="@_currentSnapshot.ActiveSymptomCount" ValueExpression="@(() => _currentSnapshot.ActiveSymptomCount)" Title="Active" ReadOnly="true" />
             <IbdIntInput Value="@_currentSnapshot.InactiveSymptomsCount" ValueExpression="@(() => _currentSnapshot.InactiveSymptomsCount)" Title="Inactive" ReadOnly="true" />
         </div>
+        @foreach (var snapshot in _currentSnapshot.SymptomStats)
+        {
+            <SymptomStatsSnapshotViewer Stats="@snapshot"/>
+        }
     </div>
     <div>
         <h3>Foods Items</h3>
         <div>
             <IbdIntInput Value="@_currentSnapshot.UniqueMonthlyFoodItems" ValueExpression="@(() => _currentSnapshot.UniqueMonthlyFoodItems)" Title="Unique Eaten (Month)" ReadOnly="true" />
         </div>
+        @foreach (var snapshot in _currentSnapshot.FoodStats)
+        {
+            <FoodStatsSnapshotViewer Stats="@snapshot"/>
+        }
     </div>
     <div>
         <h3>Meals</h3>
         <div>
             <IbdIntInput Value="@_currentSnapshot.UniqueMonthlyMeals" ValueExpression="@(() => _currentSnapshot.UniqueMonthlyMeals)" Title="Unique Eaten (Month)" ReadOnly="true" />
         </div>
+        @foreach (var snapshot in _currentSnapshot.MealStats)
+        {
+            <MealStatsSnapshotViewer Stats="@snapshot"/>
+        }
     </div>
 </article>
 
