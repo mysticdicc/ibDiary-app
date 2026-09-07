@@ -48,6 +48,13 @@ namespace ibDiary_app.Services.Stats
 
         public async Task<bool> UpdateAsync(StatsSnapshot snapshot)
         {
+            var entry = _dbService.Entry(snapshot);
+            if (entry.State != EntityState.Detached)
+            {
+                var rowsTracked = await _dbService.SaveChangesAsync();
+                return rowsTracked > 0;
+            }
+
             var dbItem = await GetByIdAsync(snapshot.Id);
             if (dbItem == null) return false;
 

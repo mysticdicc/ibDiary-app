@@ -1,14 +1,11 @@
 ﻿using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Medication;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class MedicineStatsSnapshot : IStatsObject<Medicine>
+    public class MedicineStatsSnapshot : IStatsObject<Medicine>, IUpdatableObject<MedicineStatsSnapshot>, IMergableListItem<List<MedicineStatsSnapshot>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -49,12 +46,13 @@ namespace ibDiary_data.Models.Stats
 
             TotalReportsCount = reports.Count;
             var monthly = reports.Where(x => x.GetDate() > monthBefore && x.GetDate() <= endDate).ToList();
-            MonthlyReportsCount = reports.Count;
+            MonthlyReportsCount = monthly.Count;
 
             TotalStateChanges = medicine.StateChanges.Count;
             var monthlySc = medicine.StateChanges.Where(x => x.GetDate() > monthBefore && x.GetDate() <= endDate).ToList();
             MonthlyStateChanges = monthlySc.Count;
 
+            MedicineTakenTrend = [];
             for (var date = monthBefore; date <= endDate; date = date.AddDays(1))
             {
                 var point = new MedicineTakenTrendPoint(date);
@@ -63,6 +61,29 @@ namespace ibDiary_data.Models.Stats
             }
 
             return Task.CompletedTask;
+        }
+
+        public void UpdateProperties(MedicineStatsSnapshot source)
+        {
+            TotalReportsCount = source.TotalReportsCount;
+            MonthlyReportsCount = source.MonthlyReportsCount;
+            TotalStateChanges = source.TotalStateChanges;
+            MonthlyStateChanges = source.MonthlyStateChanges;
+
+            foreach (var item in source.MedicineTakenTrend)
+            {
+                item.MergeToList(MedicineTakenTrend);
+            }
+
+            MedicineTakenTrend.RemoveAll(existing =>
+                !source.MedicineTakenTrend.Any(x => x.Date == existing.Date));
+        }
+
+        public void MergeToList(List<MedicineStatsSnapshot> target)
+        {
+            var existing = target.FirstOrDefault(x => x.Medicine == Medicine);
+            if (existing == null) target.Add(this);
+            else existing.UpdateProperties(this);
         }
     }
 }

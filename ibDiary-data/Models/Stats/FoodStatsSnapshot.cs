@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class FoodStatsSnapshot : IStatsObject<FoodItem>
+    public class FoodStatsSnapshot : IStatsObject<FoodItem>, IUpdatableObject<FoodStatsSnapshot>, IMergableListItem<List<FoodStatsSnapshot>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -62,6 +62,27 @@ namespace ibDiary_data.Models.Stats
             }
 
             return Task.CompletedTask;
+        }
+
+        public void UpdateProperties(FoodStatsSnapshot source)
+        {
+            TotalReportsCount = source.TotalReportsCount;
+            MonthlyReportsCount = source.MonthlyReportsCount;
+
+            foreach (var item in source.FoodEatenByHour)
+            {
+                item.MergeToList(FoodEatenByHour);
+            }
+
+            FoodEatenByHour.RemoveAll(existing =>
+                !source.FoodEatenByHour.Any(x => x.Date == existing.Date && x.StartHour == existing.StartHour));
+        }
+
+        public void MergeToList(List<FoodStatsSnapshot> target)
+        {
+            var existing = target.FirstOrDefault(x => x.Food == Food);
+            if (existing == null) target.Add(this);
+            else existing.UpdateProperties(this);
         }
     }
 }

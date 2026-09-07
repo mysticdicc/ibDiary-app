@@ -1,15 +1,11 @@
 ﻿using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Symptoms;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class SymptomSeverityTrendPoint : IStatsObject<Symptom>
+    public class SymptomSeverityTrendPoint : IStatsObject<Symptom>, IUpdatableObject<SymptomSeverityTrendPoint>, IMergableListItem<List<SymptomSeverityTrendPoint>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -42,6 +38,19 @@ namespace ibDiary_data.Models.Stats
             AverageSeverity = severity.Count == 0 ? 0 : severity.Average();
 
             return Task.CompletedTask;
+        }
+
+        public void UpdateProperties(SymptomSeverityTrendPoint source)
+        {
+            AverageSeverity = source.AverageSeverity;
+            ReportCount = source.ReportCount;
+        }
+
+        public void MergeToList(List<SymptomSeverityTrendPoint> target)
+        {
+            var existing = target.FirstOrDefault(x => x.Date == Date);
+            if (existing == null) target.Add(this);
+            else existing.UpdateProperties(this);
         }
     }
 }

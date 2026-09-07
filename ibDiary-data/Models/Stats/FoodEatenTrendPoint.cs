@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class FoodEatenTrendPoint : IStatsObject<FoodItem>
+    public class FoodEatenTrendPoint : IStatsObject<FoodItem>, IUpdatableObject<FoodEatenTrendPoint>, IMergableListItem<List<FoodEatenTrendPoint>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -49,6 +51,26 @@ namespace ibDiary_data.Models.Stats
             Count = relevent.Count();
 
             return Task.CompletedTask;
+        }
+
+        public void UpdateProperties(FoodEatenTrendPoint source)
+        {
+            Date = source.Date;
+            StartHour = source.StartHour;
+            Count = source.Count;
+        }
+
+        public void MergeToList(List<FoodEatenTrendPoint> source)
+        {
+            var existing = source.FirstOrDefault(x => x.Date == Date && x.StartHour == StartHour);
+            if (existing == null)
+            {
+                source.Add(this);
+            }
+            else
+            {
+                existing.UpdateProperties(this);
+            }
         }
     }
 }

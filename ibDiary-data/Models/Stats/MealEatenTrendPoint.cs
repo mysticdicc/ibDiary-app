@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class MealEatenTrendPoint : IStatsObject<Meal>
+    public class MealEatenTrendPoint : IStatsObject<Meal>, IUpdatableObject<MealEatenTrendPoint>, IMergableListItem<List<MealEatenTrendPoint>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -48,6 +48,20 @@ namespace ibDiary_data.Models.Stats
             Count = relevent.Count();
 
             return Task.CompletedTask;
+        }
+
+        public void UpdateProperties(MealEatenTrendPoint source)
+        {
+            Date = source.Date;
+            StartHour = source.StartHour;
+            Count = source.Count;
+        }
+
+        public void MergeToList(List<MealEatenTrendPoint> target)
+        {
+            var existing = target.FirstOrDefault(x => x.Date == Date && x.StartHour == StartHour);
+            if (null == existing) target.Add(this);
+            else existing.UpdateProperties(this);
         }
     }
 }

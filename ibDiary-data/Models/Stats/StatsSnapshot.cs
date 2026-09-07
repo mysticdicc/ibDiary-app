@@ -13,7 +13,7 @@ using System.Text;
 namespace ibDiary_data.Models.Stats
 {
     [Index(nameof(MonthEnd), IsUnique = true)]
-    public class StatsSnapshot : IStatsObject<AppDbContext>
+    public class StatsSnapshot : IStatsObject<AppDbContext>, IUpdatableObject<StatsSnapshot>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -120,10 +120,8 @@ namespace ibDiary_data.Models.Stats
             MonthEnd = snapshot.MonthEnd;
             MedicineCount = snapshot.MedicineCount;
             ActiveMedicineCount = snapshot.ActiveMedicineCount;
-            MedicineStats = snapshot.MedicineStats;
             SymptomCount = snapshot.SymptomCount;
             ActiveSymptomCount = snapshot.ActiveSymptomCount;
-            SymptomStats = snapshot.SymptomStats;
             TotalMedicineReports = snapshot.TotalMedicineReports;
             MonthlyMedicalReports = snapshot.MonthlyMedicalReports;
             MonthlyMedicinesTaken = snapshot.MonthlyMedicinesTaken;
@@ -133,10 +131,57 @@ namespace ibDiary_data.Models.Stats
             UniqueMonthlyMeals = snapshot.UniqueMonthlyMeals;
             TotalFoodReports = snapshot.TotalFoodReports;
             MonthlyFoodReports = snapshot.MonthlyFoodReports;
-            FoodStats = snapshot.FoodStats;
             TotalMealReports = snapshot.TotalMealReports;
             MonthlyMealReports = snapshot.MonthlyMealReports;
-            MealStats = snapshot.MealStats;
+
+            MergeMedicineStats(snapshot.MedicineStats);
+            MergeSymptomStats(snapshot.SymptomStats);
+            MergeFoodStats(snapshot.FoodStats);
+            MergeMealStats(snapshot.MealStats);
+        }
+
+        private void MergeMedicineStats(List<MedicineStatsSnapshot> source)
+        {
+            foreach (var item in source)
+            {
+                item.MergeToList(MedicineStats);
+            }
+
+            MedicineStats.RemoveAll(existing =>
+                !source.Any(x => x.Medicine.Id == existing.Medicine.Id));
+        }
+
+        private void MergeSymptomStats(List<SymptomStatsSnapshot> source)
+        {
+            foreach (var item in source)
+            {
+                item.MergeToList(SymptomStats);
+            }
+
+            SymptomStats.RemoveAll(existing =>
+                !source.Any(x => x.Symptom.Id == existing.Symptom.Id));
+        }
+
+        private void MergeFoodStats(List<FoodStatsSnapshot> source)
+        {
+            foreach (var item in source)
+            {
+                item.MergeToList(FoodStats);
+            }
+
+            FoodStats.RemoveAll(existing =>
+                !source.Any(x => x.Food.Id == existing.Food.Id));
+        }
+
+        private void MergeMealStats(List<MealStatsSnapshot> source)
+        {
+            foreach (var item in source)
+            {
+                item.MergeToList(MealStats);
+            }
+
+            MealStats.RemoveAll(existing =>
+                !source.Any(x => x.Meal.Id == existing.Meal.Id));
         }
 
         public async Task GenerateStats(AppDbContext context, DateOnly monthEnd)

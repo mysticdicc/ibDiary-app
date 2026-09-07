@@ -80,7 +80,7 @@ namespace ibDiary_app
 
             builder.Services.AddScoped<StatsSnapshotRepository>();
             builder.Services.AddScoped<StatsSnapshotClientService>();
-            builder.Services.AddScoped<StatsGenerationService>();
+            builder.Services.AddSingleton<StatsGenerationService>();
 
             builder.Services.AddScoped<MedicineOccuranceRepository>();
             builder.Services.AddScoped<MedicineOccuranceClientService>();

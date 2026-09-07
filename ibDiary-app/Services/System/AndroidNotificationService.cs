@@ -92,7 +92,7 @@ namespace ibDiary_app.Services.System
                 }
                 else if (reports.Count > 1)
                 {
-                    SendNotification("IbDiary Medicine Reminder", $"You have {reports.Count} medicines due reports.", 3);
+                    SendNotification("IbDiary Medicine Reminder", $"You are due to take {reports.Count} medicines.", 3);
                 }
             }
         }

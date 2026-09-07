@@ -1,15 +1,11 @@
 ﻿using ibDiary_data.Models.Interfaces;
-using ibDiary_data.Models.Medication;
 using ibDiary_data.Models.Symptoms;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class SymptomStatsSnapshot : IStatsObject<Symptom>
+    public class SymptomStatsSnapshot : IStatsObject<Symptom>, IUpdatableObject<SymptomStatsSnapshot>, IMergableListItem<List<SymptomStatsSnapshot>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -56,6 +52,7 @@ namespace ibDiary_data.Models.Stats
             var monthlySc = symptom.StateChanges.Where(x => x.ChangedAtDate > monthBefore && x.ChangedAtDate <= endDate).ToList();
             MonthlyStateChanges = monthlySc.Count;
 
+            MonthlySeverityTrend = [];
             for (var date = monthBefore; date <= endDate; date = date.AddDays(1))
             {
                 var point = new SymptomSeverityTrendPoint(date);
@@ -64,6 +61,29 @@ namespace ibDiary_data.Models.Stats
             }
 
             return Task.CompletedTask;
+        }
+
+        public void UpdateProperties(SymptomStatsSnapshot source)
+        {
+            TotalReportsCount = source.TotalReportsCount;
+            MonthlyReportsCount = source.MonthlyReportsCount;
+            TotalStateChanges = source.TotalStateChanges;
+            MonthlyStateChanges = source.MonthlyStateChanges;
+
+            foreach (var item in source.MonthlySeverityTrend)
+            {
+                item.MergeToList(MonthlySeverityTrend);
+            }
+
+            MonthlySeverityTrend.RemoveAll(existing =>
+                !source.MonthlySeverityTrend.Any(x => x.Date == existing.Date));
+        }
+
+        public void MergeToList(List<SymptomStatsSnapshot> target)
+        {
+            var existing = target.FirstOrDefault(x => x.Symptom == Symptom);
+            if (existing == null) target.Add(this);
+            else existing.UpdateProperties(this);
         }
     }
 }

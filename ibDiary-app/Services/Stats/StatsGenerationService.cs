@@ -66,7 +66,25 @@ namespace ibDiary_app.Services.Stats
             var snapshot = new StatsSnapshot(monthEnd);
             await snapshot.GenerateStats(context, monthEnd);
 
-            var dbItem = await context.StatsSnapshots.Where(x => x.MonthEnd == monthEnd).FirstOrDefaultAsync();
+            var dbItem = await context.StatsSnapshots
+                                .AsSplitQuery()
+                                .Include(x => x.MedicineStats)
+                                    .ThenInclude(x => x.Medicine)
+                                .Include(x => x.MedicineStats)
+                                    .ThenInclude(x => x.MedicineTakenTrend)
+                                .Include(x => x.SymptomStats)
+                                    .ThenInclude(x => x.Symptom)
+                                .Include(x => x.SymptomStats)
+                                    .ThenInclude(x => x.MonthlySeverityTrend)
+                                .Include(x => x.FoodStats)
+                                    .ThenInclude(x => x.Food)
+                                .Include(x => x.FoodStats)
+                                    .ThenInclude(x => x.FoodEatenByHour)
+                                .Include(x => x.MealStats)
+                                    .ThenInclude(x => x.Meal)
+                                .Include(x => x.MealStats)
+                                    .ThenInclude(x => x.MealEatenByHour)
+                                .Where(x => x.MonthEnd == monthEnd).FirstOrDefaultAsync();
 
             if (dbItem != null)
             {

@@ -1,15 +1,11 @@
 ﻿using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Medication;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class MedicineTakenTrendPoint : IStatsObject<Medicine>
+    public class MedicineTakenTrendPoint : IStatsObject<Medicine>, IUpdatableObject<MedicineTakenTrendPoint>, IMergableListItem<List<MedicineTakenTrendPoint>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -17,7 +13,7 @@ namespace ibDiary_data.Models.Stats
         public DateOnly Date { get; set; }
         public double AverageTaken { get; set; }
         public int ReportCount { get; set; }
-        
+
         public MedicineTakenTrendPoint()
         {
             Id = 0;
@@ -38,10 +34,24 @@ namespace ibDiary_data.Models.Stats
         {
             var reports = medicine.MedicineReports.Where(x => x.GetDate() == Date).ToList();
             ReportCount = reports.Count;
-            var taken = reports.Where(x => x.MedicineTaken).Count();
+            var taken = reports.Count(x => x.MedicineTaken);
             AverageTaken = ReportCount == 0 ? 0 : ((double)taken / ReportCount) * 100;
 
             return Task.CompletedTask;
+        }
+
+        public void UpdateProperties(MedicineTakenTrendPoint source)
+        {
+            Date = source.Date;
+            AverageTaken = source.AverageTaken;
+            ReportCount = source.ReportCount;
+        }
+
+        public void MergeToList(List<MedicineTakenTrendPoint> target)
+        {
+            var existing = target.FirstOrDefault(x => x.Date == Date);
+            if (existing == null) target.Add(this);
+            else existing.UpdateProperties(this);
         }
     }
 }
