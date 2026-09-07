@@ -35,7 +35,6 @@ namespace ibDiary_data.Models.Medication
 
         public void UpdateProperties(MedicineSchedule schedule)
         {
-            Medicine = schedule.Medicine;
             Type = schedule.Type;
             IntervalType = schedule.IntervalType;
             IntervalValue = schedule.IntervalValue;

@@ -43,11 +43,12 @@ namespace ibDiary_app.Services.Medication
                         await _medicineService.UpdateAsync(clone);
                     }
 
-                    var uncompleted = clone.MedicineOccurances.Where(x => x.Status == MedicineDueAtStatus.Pending);
+                    var fresh = await _medicineService.GetByIdAsync(medicine.Id);
+                    if (null == fresh) continue;
 
-                    foreach (var occ in uncompleted)
+                    foreach (var occ in fresh.MedicineOccurances.Where(x => x.Status == MedicineDueAtStatus.Pending))
                     {
-                        pendingReports.Add(new(medicine, occ));
+                        pendingReports.Add(new MedicineReport(fresh, occ));
                     }
                 }
 

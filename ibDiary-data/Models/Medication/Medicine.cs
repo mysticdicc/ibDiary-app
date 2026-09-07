@@ -162,9 +162,88 @@ namespace ibDiary_data.Models.Medication
             Notes = medicine.Notes;
             PrescribedAt = medicine.PrescribedAt;
             Active = medicine.Active;
+
             MedicineSchedule.UpdateProperties(medicine.MedicineSchedule);
-            MedicineReports = medicine.MedicineReports;
-            MedicineOccurances = medicine.MedicineOccurances;
+
+            UpdateOccurances(medicine.MedicineOccurances);
+            UpdateReports(medicine.MedicineReports);
+        }
+
+        private void UpdateOccurances(List<MedicineDueAtOccurance> incoming)
+        {
+            var existingById = MedicineOccurances.ToDictionary(x => x.Id);
+            var merged = new List<MedicineDueAtOccurance>();
+
+            foreach (var src in incoming)
+            {
+                if (src.Id > 0 && existingById.TryGetValue(src.Id, out var tracked))
+                {
+                    tracked.Status = src.Status;
+                    tracked.DueAt = src.DueAt;
+                    tracked.CreatedAt = src.CreatedAt;
+                    tracked.Medicine = this;
+                    merged.Add(tracked);
+                    continue;
+                }
+
+                var created = new MedicineDueAtOccurance
+                {
+                    Id = src.Id,
+                    Status = src.Status,
+                    DueAt = src.DueAt,
+                    CreatedAt = src.CreatedAt,
+                    Medicine = this
+                };
+
+                merged.Add(created);
+            }
+
+            MedicineOccurances = merged;
+        }
+
+        private void UpdateReports(List<MedicineReport> incoming)
+        {
+            var existingById = MedicineReports.ToDictionary(x => x.Id);
+            var occById = MedicineOccurances.Where(x => x.Id > 0).ToDictionary(x => x.Id);
+            var merged = new List<MedicineReport>();
+
+            foreach (var src in incoming)
+            {
+                var dueAt = (src.DueAt?.Id > 0 && occById.TryGetValue(src.DueAt.Id, out var trackedOcc))
+                    ? trackedOcc
+                    : src.DueAt;
+
+                if (src.Id > 0 && existingById.TryGetValue(src.Id, out var tracked))
+                {
+                    tracked.Medicine = this;
+                    tracked.MedicineId = Id;
+                    tracked.SubmittedAt = src.SubmittedAt;
+                    tracked.MedicineTakenAt = src.MedicineTakenAt;
+                    tracked.MedicineTaken = src.MedicineTaken;
+                    tracked.Dose = src.Dose;
+                    tracked.Notes = src.Notes;
+                    tracked.DueAt = dueAt;
+                    merged.Add(tracked);
+                    continue;
+                }
+
+                var created = new MedicineReport
+                {
+                    Id = src.Id,
+                    Medicine = this,
+                    MedicineId = Id,
+                    SubmittedAt = src.SubmittedAt,
+                    MedicineTakenAt = src.MedicineTakenAt,
+                    MedicineTaken = src.MedicineTaken,
+                    Dose = src.Dose,
+                    Notes = src.Notes,
+                    DueAt = dueAt
+                };
+
+                merged.Add(created);
+            }
+
+            MedicineReports = merged;
         }
 
         public bool HasChangedState(Medicine medicine)
@@ -176,6 +255,18 @@ namespace ibDiary_data.Models.Medication
                 MedicineSchedule.AmountPerDay != medicine.MedicineSchedule.AmountPerDay ||
                 MedicineSchedule.StartedAt != medicine.MedicineSchedule.StartedAt;
 
+            var thisOcc = MedicineOccurances
+                .OrderBy(x => x.DueAt)
+                .ThenBy(x => x.Id)
+                .Select(x => new { x.Id, x.DueAt, x.Status });
+
+            var otherOcc = medicine.MedicineOccurances
+                .OrderBy(x => x.DueAt)
+                .ThenBy(x => x.Id)
+                .Select(x => new { x.Id, x.DueAt, x.Status });
+
+            var occChanged = !thisOcc.SequenceEqual(otherOcc);
+
             return
                 Name != medicine.Name ||
                 Dose != medicine.Dose ||
@@ -183,7 +274,8 @@ namespace ibDiary_data.Models.Medication
                 Notes != medicine.Notes ||
                 PrescribedAt != medicine.PrescribedAt ||
                 Active != medicine.Active ||
-                scheduleChanged;
+                scheduleChanged ||
+                occChanged;
         }
 
         public Medicine Clone()
@@ -197,6 +289,15 @@ namespace ibDiary_data.Models.Medication
                     property.SetValue(clone, property.GetValue(this));
                 }
             }
+
+            clone.MedicineOccurances = MedicineOccurances
+                .Select(o =>
+                {
+                    var c = o.Clone();
+                    c.Medicine = clone;
+                    return c;
+                })
+                .ToList();
 
             return clone;
         }

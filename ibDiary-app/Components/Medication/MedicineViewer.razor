@@ -79,6 +79,7 @@
         if (!ReferenceEquals(_source, Medicine))
         {
             _medicine = Medicine.Clone();
+            _source = Medicine;
             _title = _medicine.IsNew ? "Add Medicine" : _medicine.Name;
             GenerateCalendarDays();
             StateHasChanged();

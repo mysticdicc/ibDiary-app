@@ -35,12 +35,24 @@ namespace ibDiary_app.Services
 
         public async Task<List<Medicine>> GetAllAsync()
         {
-            return await _dbService.Medicines.Include(x => x.MedicineSchedule).Include(x => x.StateChanges).Include(x => x.MedicineOccurances).ToListAsync();
+            return await _dbService.Medicines
+                .Include(x => x.MedicineSchedule)
+                .Include(x => x.StateChanges)
+                .Include(x => x.MedicineOccurances)
+                .Include(x => x.MedicineReports)
+                    .ThenInclude(x => x.DueAt)
+                .ToListAsync();
         }
 
         public async Task<Medicine?> GetByIdAsync(int id)
         {
-            return await _dbService.Medicines.Include(x => x.MedicineSchedule).Include(x => x.MedicineOccurances).FirstOrDefaultAsync(m => m.Id == id);
+            return await _dbService.Medicines
+                .Include(x => x.MedicineSchedule)
+                .Include(x => x.StateChanges)
+                .Include(x => x.MedicineOccurances)
+                .Include(x => x.MedicineReports)
+                    .ThenInclude(x => x.DueAt)
+                .FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<bool> UpdateAsync(Medicine medicine)

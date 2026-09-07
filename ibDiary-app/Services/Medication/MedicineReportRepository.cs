@@ -16,18 +16,15 @@ namespace ibDiary_app.Services
     {
         private readonly AppDbContext _dbService;
         private readonly CalendarDayGenerationService _calendarService;
-        private readonly MedicineOccuranceRepository _occuranceService;
         private readonly StatsGenerationService _statsGenerator;
         public MedicineReportRepository(
             AppDbContext connection, 
             CalendarDayGenerationService cal, 
-            MedicineOccuranceRepository occ,
             StatsGenerationService stats
             )
         {
             _dbService = connection;
             _calendarService = cal;
-            _occuranceService = occ;
             _statsGenerator = stats;
         }
 
@@ -41,13 +38,13 @@ namespace ibDiary_app.Services
             return await _dbService.FindAsync<MedicineReport>(id) ?? null;
         }
 
-        public async Task<bool> UpdateAsync(MedicineReport medicine)
+        public async Task<bool> UpdateAsync(MedicineReport report)
         {
-            var dbItem = await GetByIdAsync(medicine.Id);
+            var dbItem = await GetByIdAsync(report.Id);
             if (dbItem == null) return false;
 
-            dbItem.UpdateProperties(medicine);
-            await HandleDueAtUpdates(medicine);
+            dbItem.UpdateProperties(report);
+            await HandleDueAtUpdates(report);
             var rows = await _dbService.SaveChangesAsync();
 
             await _statsGenerator.RequestStatsUpdateAsync();
@@ -57,31 +54,40 @@ namespace ibDiary_app.Services
 
         private async Task HandleDueAtUpdates(MedicineReport report)
         {
-            var dbItem = await _occuranceService.GetByIdAsync(report.DueAt.Id);
+            var dbItem = await _dbService.MedicineOccurances.FindAsync(report.DueAt.Id);
+
             if (dbItem == null)
             {
                 if (report.MedicineTaken) report.DueAt.Status = MedicineDueAtStatus.Taken;
                 else report.DueAt.Status = MedicineDueAtStatus.Missed;
+                return;
             }
-            else
-            {
-                if (report.MedicineTaken) dbItem.Status = MedicineDueAtStatus.Taken;
-                else dbItem.Status = MedicineDueAtStatus.Missed;
-            }
+
+            if (report.MedicineTaken) dbItem.Status = MedicineDueAtStatus.Taken;
+            else dbItem.Status = MedicineDueAtStatus.Missed;
+            report.DueAt = dbItem;
         }
 
-        public async Task<int> AddAsync(MedicineReport medicine)
+        public async Task<int> AddAsync(MedicineReport report)
         {
-            medicine.IsNew = false;
-            await HandleDueAtUpdates(medicine);
+            report.IsNew = false;
+            var medicine = await _dbService.Medicines.FindAsync(report.Medicine.Id);
+            if (null != medicine)
+            {
+                report.Medicine = medicine;
+                report.MedicineId = medicine.Id;
+                report.DueAt.Medicine = medicine;
+            }
 
-            await _dbService.MedicineReports.AddAsync(medicine);
+            await HandleDueAtUpdates(report);
+
+            await _dbService.MedicineReports.AddAsync(report);
             await _dbService.SaveChangesAsync();
 
-            await _calendarService.NotifyUpdateCalendarDayAsync(medicine);
+            await _calendarService.NotifyUpdateCalendarDayAsync(report);
             await _statsGenerator.RequestStatsUpdateAsync();
 
-            return medicine.Id;
+            return report.Id;
         }
 
         public async Task<bool> DeleteAsync(MedicineReport medicine)

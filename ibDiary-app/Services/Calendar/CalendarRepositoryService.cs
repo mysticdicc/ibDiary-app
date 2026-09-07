@@ -17,6 +17,22 @@ namespace ibDiary_app.Services.Calendar
             _dbService = context;
         }
 
+        private IQueryable<CalendarDay> GetCalendarDays()
+        {
+            return _dbService.Set<CalendarDay>()
+                        .Include(x => x.MedicineReports)
+                        .Include(x => x.MedicineStateChanges)
+                        .Include(x => x.SymptomReports)
+                        .Include(x => x.SymptomStateChanges)
+                        .Include(x => x.CreatedMedicines)
+                        .Include(x => x.CreatedSymptoms)
+                        .Include(x => x.CreatedFoods)
+                        .Include(x => x.FoodReports)
+                        .Include(x => x.CreatedMeals)
+                        .Include(x => x.MealReports)
+                        .Include(x => x.CreatedNotifications);
+        }
+
         public async Task<bool> AddAsync(CalendarDay item)
         {
             await _dbService.CalendarDays.AddAsync(item);
@@ -59,55 +75,28 @@ namespace ibDiary_app.Services.Calendar
 
         public async Task<List<CalendarDay>> GetAllAsync()
         {
-            var list = 
-                await _dbService.CalendarDays
-                    .Include(x => x.MedicineReports)
-                    .Include(x => x.MedicineStateChanges)
-                    .Include(x => x.SymptomReports)
-                    .Include(x => x.SymptomStateChanges)
-                    .Include(x => x.CreatedFoods)
-                    .Include(x => x.FoodReports)
-                    .Include(x => x.CreatedMeals)
-                    .Include(x => x.MealReports)
-                    .ToListAsync();
-
-            return list;
+            return await GetCalendarDays().ToListAsync();
         }
 
         public async Task<CalendarDay?> GetByIdAsync(DateOnly date)
         {
-            var day =
-                await _dbService.CalendarDays
-                    .Include(x => x.MedicineReports)
-                    .Include(x => x.MedicineStateChanges)
-                    .Include(x => x.SymptomReports)
-                    .Include(x => x.SymptomStateChanges)
-                    .Include(x => x.CreatedFoods)
-                    .Include(x => x.FoodReports)
-                    .Include(x => x.CreatedMeals)
-                    .Include(x => x.MealReports)
-                    .FirstOrDefaultAsync(x => x.Date == date);
-
-            return day;
+            return await GetCalendarDays().FirstOrDefaultAsync(x => x.Date == date);
         }
 
         public async Task<List<CalendarDay>> GetFromDateAsync(DateOnly from)
         {
-            return await _dbService.CalendarDays
-                .Where(d => d.Date >= from)
-                .Include(x => x.MedicineReports)
-                .Include(x => x.MedicineStateChanges)
-                .Include(x => x.SymptomReports)
-                .Include(x => x.SymptomStateChanges)
-                .Include(x => x.CreatedFoods)
-                .Include(x => x.FoodReports)
-                .Include(x => x.CreatedMeals)
-                .Include(x => x.MealReports)
-                .ToListAsync();
+            return await GetCalendarDays().Where(x => x.Date >= from).ToListAsync();
         }
 
         public async Task<bool> UpdateAsync(CalendarDay item)
         {
+            var entry = _dbService.Entry(item);
+            if (entry.State != EntityState.Detached)
+            {
+                var tracked = await _dbService.SaveChangesAsync();
+                return tracked > 0;
+            }
+
             var dbItem = await GetByIdAsync(item.Date);
             if (dbItem == null) return false;
 

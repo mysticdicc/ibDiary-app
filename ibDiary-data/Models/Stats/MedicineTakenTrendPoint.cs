@@ -36,7 +36,7 @@ namespace ibDiary_data.Models.Stats
 
         public Task GenerateStats(Medicine medicine, DateOnly monthBefore)
         {
-            var reports = medicine.MedicineReports.Where(x => x.MedicineTakenAtDate == Date).ToList();
+            var reports = medicine.MedicineReports.Where(x => x.GetDate() == Date).ToList();
             ReportCount = reports.Count;
             var taken = reports.Where(x => x.MedicineTaken).Count();
             AverageTaken = ReportCount == 0 ? 0 : ((double)taken / ReportCount) * 100;

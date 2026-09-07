@@ -70,51 +70,51 @@ namespace ibDiary_app
             builder.Services.AddSingleton<ConfirmationService>();
             builder.Services.AddSingleton<ComponentUpdateService>();
 
-            builder.Services.AddSingleton<CalendarRepositoryService>();
-            builder.Services.AddSingleton<CalendarClientService>();
-            builder.Services.AddSingleton<CalendarDayGenerationService>();
+            builder.Services.AddScoped<CalendarRepositoryService>();
+            builder.Services.AddScoped<CalendarClientService>();
+            builder.Services.AddScoped<CalendarDayGenerationService>();
 
-            builder.Services.AddSingleton<StatsSnapshotRepository>();
-            builder.Services.AddSingleton<StatsSnapshotClientService>();
-            builder.Services.AddSingleton<StatsGenerationService>();
+            builder.Services.AddScoped<StatsSnapshotRepository>();
+            builder.Services.AddScoped<StatsSnapshotClientService>();
+            builder.Services.AddScoped<StatsGenerationService>();
 
-            builder.Services.AddSingleton<MedicineOccuranceRepository>();
-            builder.Services.AddSingleton<MedicineOccuranceClientService>();
+            builder.Services.AddScoped<MedicineOccuranceRepository>();
+            builder.Services.AddScoped<MedicineOccuranceClientService>();
 
-            builder.Services.AddSingleton<MedicineStateChangeRepository>();
-            builder.Services.AddSingleton<MedicineStateChangeClientService>();
+            builder.Services.AddScoped<MedicineStateChangeRepository>();
+            builder.Services.AddScoped<MedicineStateChangeClientService>();
 
-            builder.Services.AddSingleton<MedicineRepository>();
-            builder.Services.AddSingleton<MedicineClientService>();
+            builder.Services.AddScoped<MedicineRepository>();
+            builder.Services.AddScoped<MedicineClientService>();
 
-            builder.Services.AddSingleton<MedicineReportRepository>();
-            builder.Services.AddSingleton<MedicineReportClientService>();
+            builder.Services.AddScoped<MedicineReportRepository>();
+            builder.Services.AddScoped<MedicineReportClientService>();
 
-            builder.Services.AddSingleton<SymptomReportRepository>();
-            builder.Services.AddSingleton<SymptomReportClientService>();
+            builder.Services.AddScoped<SymptomReportRepository>();
+            builder.Services.AddScoped<SymptomReportClientService>();
 
-            builder.Services.AddSingleton<SymptomStateChangeRepository>();
-            builder.Services.AddSingleton<SymptomStateChangeClientService>();
+            builder.Services.AddScoped<SymptomStateChangeRepository>();
+            builder.Services.AddScoped<SymptomStateChangeClientService>();
 
-            builder.Services.AddSingleton<SymptomRepository>();
-            builder.Services.AddSingleton<SymptomClientService>();
+            builder.Services.AddScoped<SymptomRepository>();
+            builder.Services.AddScoped<SymptomClientService>();
 
-            builder.Services.AddSingleton<PendingMedicineReportService>();
+            builder.Services.AddScoped<PendingMedicineReportService>();
 
-            builder.Services.AddSingleton<FoodItemRepository>();
-            builder.Services.AddSingleton<FoodItemClientService>();
+            builder.Services.AddScoped<FoodItemRepository>();
+            builder.Services.AddScoped<FoodItemClientService>();
 
-            builder.Services.AddSingleton<FoodItemReportRepository>();
-            builder.Services.AddSingleton<FoodItemReportClientService>();
+            builder.Services.AddScoped<FoodItemReportRepository>();
+            builder.Services.AddScoped<FoodItemReportClientService>();
 
-            builder.Services.AddSingleton<MealRepository>();
-            builder.Services.AddSingleton<MealClientService>();
+            builder.Services.AddScoped<MealRepository>();
+            builder.Services.AddScoped<MealClientService>();
 
-            builder.Services.AddSingleton<MealReportRepository>();
-            builder.Services.AddSingleton<MealReportClientService>();
+            builder.Services.AddScoped<MealReportRepository>();
+            builder.Services.AddScoped<MealReportClientService>();
 
-            builder.Services.AddSingleton<ScheduledNotificationRepository>();
-            builder.Services.AddSingleton<ScheduledNotificationClientService>();
+            builder.Services.AddScoped<ScheduledNotificationRepository>();
+            builder.Services.AddScoped<ScheduledNotificationClientService>();
 
             builder
                 .UseMauiApp<App>()

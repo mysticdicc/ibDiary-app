@@ -47,8 +47,9 @@ namespace ibDiary_app.Services.Medication
         {
             medicine.IsNew = false;
             await _dbService.MedicineStateChanges.AddAsync(medicine);
-            await _calendarService.NotifyUpdateCalendarDayAsync(medicine);
+            await _dbService.SaveChangesAsync();
 
+            await _calendarService.NotifyUpdateCalendarDayAsync(medicine);
             await _statsGenerator.RequestStatsUpdateAsync();
 
             return medicine.Id;
