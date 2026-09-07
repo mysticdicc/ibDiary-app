@@ -3,6 +3,7 @@ using AndroidX.Work;
 using ibDiary_app.Services.System;
 using ibDiary_data.Data;
 using ibDiary_data.Models.Stats;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,13 +11,11 @@ using System.Text;
 namespace ibDiary_app.Services.Stats
 {
     public class StatsGenerationService(
-        AppDbContext dbContext, 
-        StatsSnapshotRepository repo, 
+        IDbContextFactory<AppDbContext> dbFactory, 
         ClientNotificationService notifier,
         ComponentUpdateService updater)
     {
-        private readonly AppDbContext _dbContext = dbContext;
-        private readonly StatsSnapshotRepository _repo = repo;
+        private readonly IDbContextFactory<AppDbContext> _dbFactory = dbFactory;
         private readonly ClientNotificationService _notifier = notifier;
         private readonly ComponentUpdateService _updater = updater;
         private SemaphoreSlim _semaphore = new(1, 1);
@@ -63,19 +62,22 @@ namespace ibDiary_app.Services.Stats
 
         public async Task<StatsSnapshot> GenerateStatsSnapshotAsync(DateOnly monthEnd)
         {
+            var context = await _dbFactory.CreateDbContextAsync();
             var snapshot = new StatsSnapshot(monthEnd);
-            await snapshot.GenerateStats(_dbContext, monthEnd);
+            await snapshot.GenerateStats(context, monthEnd);
 
-            var dbItem = await _repo.GetByDateAsync(monthEnd);
+            var dbItem = await context.StatsSnapshots.Where(x => x.MonthEnd == monthEnd).FirstOrDefaultAsync();
+
             if (dbItem != null)
             {
                 dbItem.UpdateProperties(snapshot);
-                await _repo.UpdateAsync(dbItem);
             }
             else
             {
-                await _repo.AddAsync(snapshot);
+                await context.StatsSnapshots.AddAsync(snapshot);
             }
+
+            await context.SaveChangesAsync();
 
             _updater.NotifiyComponentUpdate(null);
             return dbItem ?? snapshot;

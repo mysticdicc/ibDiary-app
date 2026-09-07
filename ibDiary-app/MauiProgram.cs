@@ -60,6 +60,10 @@ namespace ibDiary_app
                 options.UseSqlite($"Filename={dbPath}")
             );
 
+            builder.Services.AddDbContextFactory<AppDbContext>(options =>
+                 options.UseSqlite($"Filename={dbPath}")
+            );
+
             var settings = new AppSettings();
             settings.Load();
             builder.Services.AddSingleton(settings);
@@ -134,6 +138,7 @@ namespace ibDiary_app
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 dbContext.Database.Migrate();
+                dbContext.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL;");
             }
 
             return app;
