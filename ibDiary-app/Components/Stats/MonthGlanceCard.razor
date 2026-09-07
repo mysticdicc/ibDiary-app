@@ -1,5 +1,6 @@
 ﻿@inject NavigationManager _navManager
 @inject StatsSnapshotClientService _statsService
+@inject StatsGenerationService _statsGenService
 
 @if (_snapshot.BuildSummaries(_lastMonth).Count > 0)
 {
@@ -29,6 +30,7 @@
 
         var snapshot = await _statsService.GetByDateAsync(date);
         if (null != snapshot) _snapshot = snapshot;
+        else await _statsGenService.RequestStatsUpdateAsync();
 
         var monthSnapshot = await _statsService.GetByDateAsync(lastMonth);
         if (null != monthSnapshot) _lastMonth = monthSnapshot;

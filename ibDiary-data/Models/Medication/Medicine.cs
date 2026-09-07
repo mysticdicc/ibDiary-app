@@ -246,6 +246,22 @@ namespace ibDiary_data.Models.Medication
             MedicineReports = merged;
         }
 
+        public bool HasUserChangedState(Medicine b)
+        {
+            return
+                Name != b.Name ||
+                Dose != b.Dose ||
+                PrescribedBy != b.PrescribedBy ||
+                Notes != b.Notes ||
+                PrescribedAt != b.PrescribedAt ||
+                Active != b.Active ||
+                MedicineSchedule.Type != b.MedicineSchedule.Type ||
+                MedicineSchedule.IntervalType != b.MedicineSchedule.IntervalType ||
+                MedicineSchedule.IntervalValue != b.MedicineSchedule.IntervalValue ||
+                MedicineSchedule.AmountPerDay != b.MedicineSchedule.AmountPerDay ||
+                MedicineSchedule.StartedAt != b.MedicineSchedule.StartedAt;
+        }
+
         public bool HasChangedState(Medicine medicine)
         {
             var scheduleChanged =

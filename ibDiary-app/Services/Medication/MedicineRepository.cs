@@ -67,7 +67,7 @@ namespace ibDiary_app.Services
             );
             _dbService.Entry(clone).State = EntityState.Detached;
 
-            bool changedState = dbItem.HasChangedState(clone);
+            bool changedState = dbItem.HasUserChangedState(clone);
             if (changedState)
             {
                 var stateChange = new MedicineStateChange(medicine.Clone(), clone);
