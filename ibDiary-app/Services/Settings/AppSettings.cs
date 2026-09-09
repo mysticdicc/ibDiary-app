@@ -19,6 +19,10 @@ namespace ibDiary_app.Services.Settings
         public int MinutesBetweenNotifications { get; set; } = 15;
         [Setting(null)]
         public DateTime? NotificationsLastSent { get; set; } = DateTime.MinValue;
+        [Setting("UTC")]
+        public string TimeZoneId { get; set; } = TimeZoneInfo.Utc.Id;
+        [Setting(true)]
+        public bool IsFirstLaunch { get; set; } = true;
 
         public void Load()
         {

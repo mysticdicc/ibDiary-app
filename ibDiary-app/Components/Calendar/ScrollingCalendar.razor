@@ -1,5 +1,6 @@
 ﻿@inject CalendarClientService _calDbService
 @inject ComponentUpdateService _updateService
+@inject DateLocalisationService _dateService
 @implements IDisposable
 @inject IJSRuntime _jsRuntime
 
@@ -79,8 +80,8 @@
 
     private async Task LoadCalendarDataAsync()
     {
-        _today = DateOnly.FromDateTime(DateTime.UtcNow);
-        _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-_dayOffset));
+        _today = DateOnly.FromDateTime(_dateService.GetCurrentLocalTime());
+        _oldDate = DateOnly.FromDateTime(_dateService.GetCurrentLocalTime().AddDays(-_dayOffset));
 
         var days = new List<CalendarDay>();
 

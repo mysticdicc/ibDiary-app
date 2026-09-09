@@ -17,6 +17,12 @@
 <article class="settings-page">
     <div>
         <header>
+            <h2>Personal</h2>
+        </header>
+        <IbdSelect Options="@_timeZoneOptions" @bind-Value="@_selectTimeZone" @bind-Value:after="@OnTimeZoneChanged" Title="Time Zone"/>
+    </div>
+    <div>
+        <header>
             <h2>Backups</h2>
         </header>
         <button @onclick="@OnClickDownloadBackup">Download Backup</button>
@@ -71,9 +77,16 @@
     private List<ScheduledNotification> _notifications = [];
     private ScheduledNotification _currentNotification = new(ScheduledNotificationType.Food);
     private bool _notificationViewerVisible = false;
+    private IbdSelectOption? _selectTimeZone;
+    private List<IbdSelectOption> _timeZoneOptions = [];
 
     protected override async Task OnInitializedAsync()
     {
+        foreach (var timezone in TimeZoneInfo.GetSystemTimeZones())
+        {
+            _timeZoneOptions.Add(new(timezone.DisplayName, timezone));
+        }
+
         _notifications = await _notificationService.GetAllAsync();
         _updateService.SubscribeToComponentUpdates(RefreshCallbackAsync);
         await base.OnInitializedAsync();
@@ -153,5 +166,13 @@
     {
         _currentNotification = new(ScheduledNotificationType.Food);
         _notificationViewerVisible = true;
+    }
+
+    private void OnTimeZoneChanged()
+    {
+        if (_selectTimeZone is null) return;
+        if (_selectTimeZone.Value is null || _selectTimeZone.Value is not TimeZoneInfo timezone) return;
+        _settings.TimeZoneId = timezone.Id;
+        _settings.Save();
     }
 }

@@ -22,10 +22,10 @@ namespace ibDiary_data.Models.Symptoms
         public string Description { get; set; }
         public bool Active { get; set; }
         public bool IsNew { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime StartedAt { get; set; }
+        public DateTime CreatedAtUtc { get; set; }
+        public DateTime StartedAtUtc { get; set; }
         [NotMapped] 
-        public DateOnly CreatedAtDate { get => DateOnly.FromDateTime(CreatedAt); }
+        public DateOnly CreatedAtUtcDate { get => DateOnly.FromDateTime(CreatedAtUtc); }
         [NotMapped]
         [JsonIgnore] 
         public List<SymptomStateChange> StateChanges { get; set; }
@@ -38,8 +38,8 @@ namespace ibDiary_data.Models.Symptoms
             Active = true;
             IsNew = true;
             StateChanges = [];
-            CreatedAt = DateTime.UtcNow;
-            StartedAt = CreatedAt;
+            CreatedAtUtc = DateTime.UtcNow;
+            StartedAtUtc = CreatedAtUtc;
             SymptomReports = [];
         }
 
@@ -92,7 +92,7 @@ namespace ibDiary_data.Models.Symptoms
             return clone;
         }
 
-        public DateOnly GetDate() => CreatedAtDate;
+        public DateOnly GetDate() => CreatedAtUtcDate;
 
         public void AddToCalendarDay(CalendarDay day)
         {

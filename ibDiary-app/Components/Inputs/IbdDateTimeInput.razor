@@ -10,6 +10,9 @@
     {
         <input type="datetime-local" value="@CurrentValue.ToString("yyyy-MM-ddTHH:mm")" @onchange="@OnValueChanged" />
     }
+    <button @onclick="@OnClickNow" @onclick:stopPropagation="true">
+        Now
+    </button>
     @if (EditContext != null && ValueExpression != null)
     {
         var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();
@@ -50,5 +53,11 @@
             CurrentValue = dateTime;
             await ValueChanged.InvokeAsync(CurrentValue);
         }
+    }
+
+    private async Task OnClickNow()
+    {
+        CurrentValue = DateTime.UtcNow;
+        await ValueChanged.InvokeAsync(CurrentValue);
     }
 }
