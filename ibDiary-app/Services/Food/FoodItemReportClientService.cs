@@ -4,20 +4,22 @@ using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ibDiary_data.Models.Food.Dto;
 
 namespace ibDiary_app.Services.Food
 {
-    public class FoodItemReportClientService(FoodItemReportRepository repo, ClientNotificationService notifService) : IDatabaseService<FoodItemReport>
+    public class FoodItemReportClientService(FoodItemReportRepository repo, ClientNotificationService notifService, DtoMappingService dtoService) : IDatabaseService<FoodItemReportDto>
     {
         private readonly FoodItemReportRepository _repo = repo;
         private readonly ClientNotificationService _notifier = notifService;
+        private readonly DtoMappingService _dtoService = dtoService;
 
-        public async Task<List<FoodItemReport>> GetAllAsync()
+        public async Task<List<FoodItemReportDto>> GetAllAsync()
         {
             try
             {
                 var list = await _repo.GetAllAsync();
-                return list;
+                return _dtoService.ToDtoList(list);
             }
             catch (Exception ex)
             {
@@ -26,12 +28,13 @@ namespace ibDiary_app.Services.Food
             }
         }
 
-        public async Task<FoodItemReport?> GetByIdAsync(int id)
+        public async Task<FoodItemReportDto?> GetByIdAsync(int id)
         {
             try
             {
                 var report = await _repo.GetByIdAsync(id);
-                return report;
+                if (report == null) return null;
+                return _dtoService.ToDto(report);
             }
             catch (Exception ex)
             {
@@ -40,14 +43,15 @@ namespace ibDiary_app.Services.Food
             }
         }
 
-        public async Task<bool> UpdateAsync(FoodItemReport report)
+        public async Task<bool> UpdateAsync(FoodItemReportDto report)
         {
             try
             {
-                var result = await _repo.UpdateAsync(report);
+                var item = _dtoService.FromDto(report);
+                var result = await _repo.UpdateAsync(item);
 
-                if (!result) _notifier.ShowNotification("Update Report", "No changes were made to the report.");
-                else _notifier.ShowNotification("Update Report", "Updated successfully.");
+                if (!result) _notifier.ShowNotification("Update Food Report", "No changes were made to the report.");
+                else _notifier.ShowNotification("Update Food Report", "Updated successfully.");
 
                 return result;
             }
@@ -58,14 +62,15 @@ namespace ibDiary_app.Services.Food
             }
         }
 
-        public async Task<int> AddAsync(FoodItemReport report)
+        public async Task<int> AddAsync(FoodItemReportDto report)
         {
             try
             {
-                var result = await _repo.AddAsync(report);
+                var item = _dtoService.FromDto(report);
+                var result = await _repo.AddAsync(item);
 
-                if (result == 0) _notifier.ShowNotification("Unspecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Report Added", "Added successfully.");
+                if (result == 0) _notifier.ShowNotification("Add Food Report", "No changes were made to the database.");
+                else _notifier.ShowNotification("Add Food Report", "Added successfully.");
 
                 return result;
             }
@@ -76,14 +81,15 @@ namespace ibDiary_app.Services.Food
             }
         }
 
-        public async Task<bool> DeleteAsync(FoodItemReport report)
+        public async Task<bool> DeleteAsync(FoodItemReportDto report)
         {
             try
             {
-                var result = await _repo.DeleteAsync(report);
+                var item = _dtoService.FromDto(report);
+                var result = await _repo.DeleteAsync(item);
 
-                if (!result) _notifier.ShowNotification("Unspecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Delete Report", "Deleted successfully.");
+                if (!result) _notifier.ShowNotification("Delete Food Report", "Unspecified error, no changes were made to the database.");
+                else _notifier.ShowNotification("Delete Food Report", "Deleted successfully.");
 
                 return result;
             }

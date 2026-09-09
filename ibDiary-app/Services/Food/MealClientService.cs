@@ -1,23 +1,24 @@
 ﻿using ibDiary_data.Models.Food;
+using ibDiary_data.Models.Food.Dto;
 using ibDiary_data.Models.Interfaces;
 using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ibDiary_app.Services.Food
 {
-    public class MealClientService(MealRepository repo, ClientNotificationService notificationService) : IDatabaseService<Meal>
+    public class MealClientService(MealRepository repo, ClientNotificationService notificationService, DtoMappingService dtoService) : IDatabaseService<MealDto>
     {
         private readonly MealRepository _repo = repo;
         private readonly ClientNotificationService _notifier = notificationService;
+        private readonly DtoMappingService _dtoService = dtoService;
 
-        public async Task<List<Meal>> GetAllAsync()
+        public async Task<List<MealDto>> GetAllAsync()
         {
             try
             {
                 var list = await _repo.GetAllAsync();
-                return list;
+                return _dtoService.ToDtoList(list);
             }
             catch (Exception ex)
             {
@@ -26,12 +27,14 @@ namespace ibDiary_app.Services.Food
             }
         }
 
-        public async Task<Meal?> GetByIdAsync(int id)
+        public async Task<MealDto?> GetByIdAsync(int id)
         {
             try
             {
                 var meal = await _repo.GetByIdAsync(id);
-                return meal;
+                if (meal == null) return null;
+
+                return _dtoService.ToDto(meal);
             }
             catch (Exception ex)
             {
@@ -40,11 +43,12 @@ namespace ibDiary_app.Services.Food
             }
         }
 
-        public async Task<bool> UpdateAsync(Meal meal)
+        public async Task<bool> UpdateAsync(MealDto meal)
         {
             try
             {
-                var result = await _repo.UpdateAsync(meal);
+                var item = _dtoService.FromDto(meal);
+                var result = await _repo.UpdateAsync(item);
 
                 if (!result) _notifier.ShowNotification("Update Meal", "No changes were made to the meal.");
                 else _notifier.ShowNotification("Update Meal", "Updated successfully.");
@@ -58,14 +62,15 @@ namespace ibDiary_app.Services.Food
             }
         }
 
-        public async Task<int> AddAsync(Meal meal)
+        public async Task<int> AddAsync(MealDto meal)
         {
             try
             {
-                var result = await _repo.AddAsync(meal);
+                var item = _dtoService.FromDto(meal);
+                var result = await _repo.AddAsync(item);
 
-                if (result == 0) _notifier.ShowNotification("Unspecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Meal Added", "Added successfully.");
+                if (result == 0) _notifier.ShowNotification("Add Meal", "No changes were made to the meal.");
+                else _notifier.ShowNotification("Add Meal", "Added successfully.");
 
                 return result;
             }
@@ -76,13 +81,14 @@ namespace ibDiary_app.Services.Food
             }
         }
 
-        public async Task<bool> DeleteAsync(Meal meal)
+        public async Task<bool> DeleteAsync(MealDto meal)
         {
             try
             {
-                var result = await _repo.DeleteAsync(meal);
+                var item = _dtoService.FromDto(meal);
+                var result = await _repo.DeleteAsync(item);
 
-                if (!result) _notifier.ShowNotification("Unspecified Error", "No changes were made to the database.");
+                if (!result) _notifier.ShowNotification("Delete Meal", "No changes were made to the database.");
                 else _notifier.ShowNotification("Delete Meal", "Deleted successfully.");
 
                 return result;

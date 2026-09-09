@@ -1,20 +1,25 @@
 ﻿using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Settings;
+using ibDiary_data.Models.Settings.Dto;
 using ibDiary_app.Services.System;
 
 namespace ibDiary_app.Services.Settings
 {
-    public class ScheduledNotificationClientService(ScheduledNotificationRepository repo, ClientNotificationService notifService) : IDatabaseService<ScheduledNotification>
+    public class ScheduledNotificationClientService(
+        ScheduledNotificationRepository repo,
+        ClientNotificationService notifService,
+        DtoMappingService dtoService) : IDatabaseService<ScheduledNotificationDto>
     {
         private readonly ScheduledNotificationRepository _repo = repo;
         private readonly ClientNotificationService _notifier = notifService;
+        private readonly DtoMappingService _dtoService = dtoService;
 
-        public async Task<List<ScheduledNotification>> GetAllAsync()
+        public async Task<List<ScheduledNotificationDto>> GetAllAsync()
         {
             try
             {
                 var list = await _repo.GetAllAsync();
-                return list;
+                return _dtoService.ToDtoList(list);
             }
             catch (Exception ex)
             {
@@ -23,12 +28,14 @@ namespace ibDiary_app.Services.Settings
             }
         }
 
-        public async Task<ScheduledNotification?> GetByIdAsync(int id)
+        public async Task<ScheduledNotificationDto?> GetByIdAsync(int id)
         {
             try
             {
                 var notification = await _repo.GetByIdAsync(id);
-                return notification;
+                if (notification == null) return null;
+
+                return _dtoService.ToDto(notification);
             }
             catch (Exception ex)
             {
@@ -37,11 +44,12 @@ namespace ibDiary_app.Services.Settings
             }
         }
 
-        public async Task<bool> UpdateAsync(ScheduledNotification notification)
+        public async Task<bool> UpdateAsync(ScheduledNotificationDto notification)
         {
             try
             {
-                var result = await _repo.UpdateAsync(notification);
+                var item = _dtoService.FromDto(notification);
+                var result = await _repo.UpdateAsync(item);
 
                 if (!result) _notifier.ShowNotification("Update Notification", "No changes were made to the notification.");
                 else _notifier.ShowNotification("Update Notification", "Updated successfully.");
@@ -55,14 +63,15 @@ namespace ibDiary_app.Services.Settings
             }
         }
 
-        public async Task<int> AddAsync(ScheduledNotification notification)
+        public async Task<int> AddAsync(ScheduledNotificationDto notification)
         {
             try
             {
-                var result = await _repo.AddAsync(notification);
+                var item = _dtoService.FromDto(notification);
+                var result = await _repo.AddAsync(item);
 
-                if (result == 0) _notifier.ShowNotification("Unspecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Notification Added", "Added successfully.");
+                if (result == 0) _notifier.ShowNotification("Add Notification", "No changes were made to the database.");
+                else _notifier.ShowNotification("Add Notification", "Added successfully.");
 
                 return result;
             }
@@ -73,13 +82,14 @@ namespace ibDiary_app.Services.Settings
             }
         }
 
-        public async Task<bool> DeleteAsync(ScheduledNotification notification)
+        public async Task<bool> DeleteAsync(ScheduledNotificationDto notification)
         {
             try
             {
-                var result = await _repo.DeleteAsync(notification);
+                var item = _dtoService.FromDto(notification);
+                var result = await _repo.DeleteAsync(item);
 
-                if (!result) _notifier.ShowNotification("Unspecified Error", "No changes were made to the database.");
+                if (!result) _notifier.ShowNotification("Delete Notification", "No changes were made to the database.");
                 else _notifier.ShowNotification("Delete Notification", "Deleted successfully.");
 
                 return result;
@@ -91,11 +101,12 @@ namespace ibDiary_app.Services.Settings
             }
         }
 
-        public async Task<List<ScheduledNotification>> GetActiveNotificationsAsync()
+        public async Task<List<ScheduledNotificationDto>> GetActiveNotificationsAsync()
         {
             try
             {
-                return await _repo.GetActiveNotificationsAsync();
+                var list = await _repo.GetActiveNotificationsAsync();
+                return _dtoService.ToDtoList(list);
             }
             catch (Exception ex)
             {
@@ -104,11 +115,12 @@ namespace ibDiary_app.Services.Settings
             }
         }
 
-        public async Task<List<ScheduledNotification>> GetNotificationsByTypeAsync(ScheduledNotificationType type)
+        public async Task<List<ScheduledNotificationDto>> GetNotificationsByTypeAsync(ScheduledNotificationType type)
         {
             try
             {
-                return await _repo.GetNotificationsByTypeAsync(type);
+                var list = await _repo.GetNotificationsByTypeAsync(type);
+                return _dtoService.ToDtoList(list);
             }
             catch (Exception ex)
             {

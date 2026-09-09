@@ -1,23 +1,25 @@
 ﻿using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Symptoms;
+using ibDiary_data.Models.Symptoms.Dto;
 using ibDiary_app.Services.System;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ibDiary_app.Services.Symptoms
 {
-    public class SymptomReportClientService(SymptomReportRepository repo, ClientNotificationService notifService) : IDatabaseService<SymptomReport>
+    public class SymptomReportClientService(
+        SymptomReportRepository repo,
+        ClientNotificationService notifService,
+        DtoMappingService dtoService) : IDatabaseService<SymptomReportDto>
     {
         private readonly SymptomReportRepository _repo = repo;
         private readonly ClientNotificationService _notifier = notifService;
+        private readonly DtoMappingService _dtoService = dtoService;
 
-        public async Task<List<SymptomReport>> GetAllAsync()
+        public async Task<List<SymptomReportDto>> GetAllAsync()
         {
             try
             {
                 var list = await _repo.GetAllAsync();
-                return list;
+                return _dtoService.ToDtoList(list);
             }
             catch (Exception ex)
             {
@@ -26,12 +28,14 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<SymptomReport?> GetByIdAsync(int id)
+        public async Task<SymptomReportDto?> GetByIdAsync(int id)
         {
             try
             {
                 var report = await _repo.GetByIdAsync(id);
-                return report;
+                if (report == null) return null;
+
+                return _dtoService.ToDto(report);
             }
             catch (Exception ex)
             {
@@ -40,14 +44,15 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<bool> UpdateAsync(SymptomReport report)
+        public async Task<bool> UpdateAsync(SymptomReportDto report)
         {
             try
             {
-                var result = await _repo.UpdateAsync(report);
+                var item = _dtoService.FromDto(report);
+                var result = await _repo.UpdateAsync(item);
 
-                if (!result) _notifier.ShowNotification("Update Report", "No changes were made to the report.");
-                else _notifier.ShowNotification("Update Report", "Updated successfully.");
+                if (!result) _notifier.ShowNotification("Update Symptom Report", "No changes were made to the report.");
+                else _notifier.ShowNotification("Update Symptom Report", "Updated successfully.");
 
                 return result;
             }
@@ -58,14 +63,15 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<int> AddAsync(SymptomReport report)
+        public async Task<int> AddAsync(SymptomReportDto report)
         {
             try
             {
-                var result = await _repo.AddAsync(report);
+                var item = _dtoService.FromDto(report);
+                var result = await _repo.AddAsync(item);
 
-                if (result == 0) _notifier.ShowNotification("Unpsecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Report Added", "Added successfully.");
+                if (result == 0) _notifier.ShowNotification("Add Symptom Report", "No changes were made to the database.");
+                else _notifier.ShowNotification("Add Symptom Report", "Added successfully.");
 
                 return result;
             }
@@ -76,14 +82,15 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<bool> DeleteAsync(SymptomReport report)
+        public async Task<bool> DeleteAsync(SymptomReportDto report)
         {
             try
             {
-                var result = await _repo.DeleteAsync(report);
+                var item = _dtoService.FromDto(report);
+                var result = await _repo.DeleteAsync(item);
 
-                if (!result) _notifier.ShowNotification("Unpsecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Delete Report", "Deleted successfully.");
+                if (!result) _notifier.ShowNotification("Delete Symptom Report", "No changes were made to the database.");
+                else _notifier.ShowNotification("Delete Symptom Report", "Deleted successfully.");
 
                 return result;
             }

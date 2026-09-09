@@ -68,12 +68,13 @@ namespace ibDiary_app
             settings.Load();
             builder.Services.AddSingleton(settings);
             builder.Services.AddSingleton<FirstLaunchService>();
-
-            builder.Services.AddApexChartsMaui();
-
+            builder.Services.AddSingleton<DateLocalisationService>();
+            builder.Services.AddSingleton<DtoMappingService>();
             builder.Services.AddSingleton<ClientNotificationService>();
             builder.Services.AddSingleton<ConfirmationService>();
             builder.Services.AddSingleton<ComponentUpdateService>();
+
+            builder.Services.AddApexChartsMaui();
 
             builder.Services.AddScoped<CalendarRepositoryService>();
             builder.Services.AddScoped<CalendarClientService>();
@@ -120,9 +121,6 @@ namespace ibDiary_app
 
             builder.Services.AddScoped<ScheduledNotificationRepository>();
             builder.Services.AddScoped<ScheduledNotificationClientService>();
-
-            builder.Services.AddSingleton<DateLocalisationService>();
-            builder.Services.AddSingleton<DtoMappingService>();
 
             builder
                 .UseMauiApp<App>()

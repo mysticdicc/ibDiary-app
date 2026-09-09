@@ -1,23 +1,25 @@
 ﻿using ibDiary_data.Models.Interfaces;
 using ibDiary_data.Models.Symptoms;
+using ibDiary_data.Models.Symptoms.Dto;
 using ibDiary_app.Services.System;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ibDiary_app.Services.Symptoms
 {
-    public class SymptomClientService(SymptomRepository repo, ClientNotificationService notificationService) : IDatabaseService<Symptom>
+    public class SymptomClientService(
+        SymptomRepository repo,
+        ClientNotificationService notificationService,
+        DtoMappingService dtoService) : IDatabaseService<SymptomDto>
     {
         private readonly SymptomRepository _repo = repo;
         private readonly ClientNotificationService _notifier = notificationService;
+        private readonly DtoMappingService _dtoService = dtoService;
 
-        public async Task<List<Symptom>> GetAllAsync()
+        public async Task<List<SymptomDto>> GetAllAsync()
         {
             try
             {
                 var list = await _repo.GetAllAsync();
-                return list;
+                return _dtoService.ToDtoList(list);
             }
             catch (Exception ex)
             {
@@ -26,12 +28,14 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<Symptom?> GetByIdAsync(int id)
+        public async Task<SymptomDto?> GetByIdAsync(int id)
         {
             try
             {
                 var report = await _repo.GetByIdAsync(id);
-                return report;
+                if (report == null) return null;
+
+                return _dtoService.ToDto(report);
             }
             catch (Exception ex)
             {
@@ -40,13 +44,14 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<bool> UpdateAsync(Symptom symptom)
+        public async Task<bool> UpdateAsync(SymptomDto symptom)
         {
             try
             {
-                var result = await _repo.UpdateAsync(symptom);
+                var item = _dtoService.FromDto(symptom);
+                var result = await _repo.UpdateAsync(item);
 
-                if (!result) _notifier.ShowNotification("Update Symptom", "No changes were made to the report.");
+                if (!result) _notifier.ShowNotification("Update Symptom", "No changes were made to the symptom.");
                 else _notifier.ShowNotification("Update Symptom", "Updated successfully.");
 
                 return result;
@@ -58,14 +63,15 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<int> AddAsync(Symptom symptom)
+        public async Task<int> AddAsync(SymptomDto symptom)
         {
             try
             {
-                var result = await _repo.AddAsync(symptom);
+                var item = _dtoService.FromDto(symptom);
+                var result = await _repo.AddAsync(item);
 
-                if (result == 0) _notifier.ShowNotification("Unpsecified Error", "No changes were made to the database.");
-                else _notifier.ShowNotification("Symptom Added", "Added successfully.");
+                if (result == 0) _notifier.ShowNotification("Add Symptom", "No changes were made to the database.");
+                else _notifier.ShowNotification("Add Symptom", "Added successfully.");
 
                 return result;
             }
@@ -76,13 +82,14 @@ namespace ibDiary_app.Services.Symptoms
             }
         }
 
-        public async Task<bool> DeleteAsync(Symptom symptom)
+        public async Task<bool> DeleteAsync(SymptomDto symptom)
         {
             try
             {
-                var result = await _repo.DeleteAsync(symptom);
+                var item = _dtoService.FromDto(symptom);
+                var result = await _repo.DeleteAsync(item);
 
-                if (!result) _notifier.ShowNotification("Unpsecified Error", "No changes were made to the database.");
+                if (!result) _notifier.ShowNotification("Delete Symptom", "No changes were made to the database.");
                 else _notifier.ShowNotification("Delete Symptom", "Deleted successfully.");
 
                 return result;

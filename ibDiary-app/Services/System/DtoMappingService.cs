@@ -335,5 +335,44 @@ namespace ibDiary_app.Services.System
             IsNew = dto.IsNew,
             Active = dto.Active
         };
+
+        public List<SymptomDto> ToDtoList(IEnumerable<Symptom>? source) => MapList(source, ToDto);
+        public List<Symptom> FromDtoList(IEnumerable<SymptomDto>? source) => MapList(source, FromDto);
+
+        public List<SymptomReportDto> ToDtoList(IEnumerable<SymptomReport>? source) => MapList(source, ToDto);
+        public List<SymptomReport> FromDtoList(IEnumerable<SymptomReportDto>? source) => MapList(source, FromDto);
+
+        public List<SymptomStateChangeDto> ToDtoList(IEnumerable<SymptomStateChange>? source) => MapList(source, ToDto);
+        public List<SymptomStateChange> FromDtoList(IEnumerable<SymptomStateChangeDto>? source) => MapList(source, FromDto);
+
+        public List<MedicineDto> ToDtoList(IEnumerable<Medicine>? source) => MapList(source, ToDto);
+        public List<Medicine> FromDtoList(IEnumerable<MedicineDto>? source) => MapList(source, FromDto);
+
+        public List<MedicineScheduleDto> ToDtoList(IEnumerable<MedicineSchedule>? source) => MapList(source, ToDto);
+        public List<MedicineSchedule> FromDtoList(IEnumerable<MedicineScheduleDto>? source) => MapList(source, FromDto);
+
+        public List<MedicineReportDto> ToDtoList(IEnumerable<MedicineReport>? source) => MapList(source, ToDto);
+        public List<MedicineReport> FromDtoList(IEnumerable<MedicineReportDto>? source) => MapList(source, FromDto);
+
+        public List<MedicineDueAtOccuranceDto> ToDtoList(IEnumerable<MedicineDueAtOccurance>? source) => MapList(source, ToDto);
+        public List<MedicineDueAtOccurance> FromDtoList(IEnumerable<MedicineDueAtOccuranceDto>? source) => MapList(source, FromDto);
+
+        public List<MedicineStateChangeDto> ToDtoList(IEnumerable<MedicineStateChange>? source) => MapList(source, ToDto);
+        public List<MedicineStateChange> FromDtoList(IEnumerable<MedicineStateChangeDto>? source) => MapList(source, FromDto);
+
+        public List<FoodItemDto> ToDtoList(IEnumerable<FoodItem>? source) => MapList(source, ToDto);
+        public List<FoodItem> FromDtoList(IEnumerable<FoodItemDto>? source) => MapList(source, FromDto);
+
+        public List<FoodItemReportDto> ToDtoList(IEnumerable<FoodItemReport>? source) => MapList(source, ToDto);
+        public List<FoodItemReport> FromDtoList(IEnumerable<FoodItemReportDto>? source) => MapList(source, FromDto);
+
+        public List<MealDto> ToDtoList(IEnumerable<Meal>? source) => MapList(source, ToDto);
+        public List<Meal> FromDtoList(IEnumerable<MealDto>? source) => MapList(source, FromDto);
+
+        public List<MealReportDto> ToDtoList(IEnumerable<MealReport>? source) => MapList(source, ToDto);
+        public List<MealReport> FromDtoList(IEnumerable<MealReportDto>? source) => MapList(source, FromDto);
+
+        public List<ScheduledNotificationDto> ToDtoList(IEnumerable<ScheduledNotification>? source) => MapList(source, ToDto);
+        public List<ScheduledNotification> FromDtoList(IEnumerable<ScheduledNotificationDto>? source) => MapList(source, FromDto);
     }
 }
