@@ -17,31 +17,31 @@
 @code {
     [Parameter] public EventCallback<ICalendarUpdate> ItemChanged { get; set; }
 
-    private Medicine _medicine = new();
+    private MedicineDto _medicine = new();
     private bool _medicineVisible = false;
 
-    private MedicineReport _medReport = new();
+    private MedicineReportDto _medReport = new();
     private bool _medicineReportVisible = false;
 
-    private Symptom _symptom = new();
+    private SymptomDto _symptom = new();
     private bool _symptomVisible = false;
 
-    private SymptomReport _sympReport = new();
+    private SymptomReportDto _sympReport = new();
     private bool _sympReportVisible = false;
 
-    private FoodItem _food = new();
+    private FoodItemDto _food = new();
     private bool _foodVisible = false;
 
-    private FoodItemReport _foodReport = new();
+    private FoodItemReportDto _foodReport = new();
     private bool _foodReportVisible = false;
 
-    private Meal _meal = new();
+    private MealDto _meal = new();
     private bool _mealVisible = false;
 
-    private MealReport _mealReport = new();
+    private MealReportDto _mealReport = new();
     private bool _mealReportVisible = false;
 
-    private ScheduledNotification _notification = new(ScheduledNotificationType.Food);
+    private ScheduledNotificationDto _notification = new();
     private bool _notificationVisible = false;
 
     private async Task OnItemChanged(ICalendarUpdate item)
@@ -61,21 +61,21 @@
         Reset();
         switch (update)
         {
-            case Medicine x: _medicine = x; _medicineVisible = true; break;
-            case MedicineReport x: _medReport = x; _medicineReportVisible = true; break;
-            case MedicineStateChange x: _medicine = x.MedicineAfter; _medicineVisible = true; break;
+            case MedicineDto x: _medicine = x; _medicineVisible = true; break;
+            case MedicineReportDto x: _medReport = x; _medicineReportVisible = true; break;
+            case MedicineStateChangeDto x: _medicine = x.MedicineAfter; _medicineVisible = true; break;
 
-            case Symptom x: _symptom = x; _symptomVisible = true; break;
-            case SymptomReport x: _sympReport = x; _sympReportVisible = true; break;
-            case SymptomStateChange x: _symptom = x.SymptomAfter; _symptomVisible = true; break;
+            case SymptomDto x: _symptom = x; _symptomVisible = true; break;
+            case SymptomReportDto x: _sympReport = x; _sympReportVisible = true; break;
+            case SymptomStateChangeDto x: _symptom = x.SymptomAfter; _symptomVisible = true; break;
 
-            case FoodItem x: _food = x; _foodVisible = true; break;
-            case FoodItemReport x: _foodReport = x; _foodReportVisible = true; break;
+            case FoodItemDto x: _food = x; _foodVisible = true; break;
+            case FoodItemReportDto x: _foodReport = x; _foodReportVisible = true; break;
 
-            case Meal x: _meal = x; _mealVisible = true; break;
-            case MealReport x: _mealReport = x; _mealReportVisible = true; break;
+            case MealDto x: _meal = x; _mealVisible = true; break;
+            case MealReportDto x: _mealReport = x; _mealReportVisible = true; break;
 
-            case ScheduledNotification x: _notification = x; _notificationVisible = true; break;
+            case ScheduledNotificationDto x: _notification = x; _notificationVisible = true; break;
         }
         StateHasChanged();
     }

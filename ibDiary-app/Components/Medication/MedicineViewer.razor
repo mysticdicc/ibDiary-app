@@ -30,7 +30,7 @@
                     <IbdTextInput @bind-Value="@_medicine.PrescribedBy" Title="Prescribed By" />
                 </div>
                 <div>
-                    <IbdDateTimeInput @bind-Value="@_medicine.PrescribedAt" Title="Prescribed At" />
+                    <IbdDateTimeInput @bind-Value="@_medicine.PrescribedAtLocal" Title="Prescribed At" />
                 </div>
                 <div>
                     <IbdTextArea @bind-Value="@_medicine.Notes" Title="Notes" />
@@ -59,11 +59,10 @@
 
 
 @code {
-    [Parameter] required public Medicine Medicine { get; set; }
-    private Medicine _medicine = new();
-    private Medicine? _source;
+    [Parameter] required public MedicineDto Medicine { get; set; }
+    private MedicineDto _medicine = new();
 
-    [Parameter] public EventCallback<Medicine> MedicineChanged { get; set; }
+    [Parameter] public EventCallback<MedicineDto> MedicineChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
 
@@ -71,15 +70,14 @@
     private bool _medicineVisible = true;
     private bool _historyVisible = false;
 
-    private List<CalendarDay> _historyData = [];
+    private List<CalendarDayDto> _historyData = [];
     private CalendarFilter _filter = new();
 
     protected override void OnParametersSet()
     {
-        if (!ReferenceEquals(_source, Medicine))
+        if (Medicine.Id != _medicine.Id)
         {
-            _medicine = Medicine.Clone();
-            _source = Medicine;
+            _medicine = Medicine;
             _title = _medicine.IsNew ? "Add Medicine" : _medicine.Name;
             GenerateCalendarDays();
             StateHasChanged();
@@ -97,21 +95,21 @@
 
         foreach (var date in dates.Distinct())
         {
-            var day = new CalendarDay(date);
+            var day = new CalendarDayDto(date);
 
             var reports = _medicine.MedicineReports.Where(x => x.GetDate() == date).ToList();
             foreach (var report in reports)
             {
-                report.AddToCalendarDay(day);
+                if (!day.MedicineReports.Contains(report)) day.MedicineReports.Add(report);
             }
 
             var states = _medicine.StateChanges.Where(x => x.GetDate() == date).ToList();
             foreach (var state in states)
             {
-                state.AddToCalendarDay(day);
+                if (!day.MedicineStateChanges.Contains(state)) day.MedicineStateChanges.Add(state);
             }
 
-            if (date == _medicine.GetDate()) _medicine.AddToCalendarDay(day);
+            if (date == _medicine.GetDate()) day.CreatedMedicines.Add(_medicine);
 
             _historyData.Add(day);
         }

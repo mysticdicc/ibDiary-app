@@ -9,7 +9,7 @@
         <p>Dose: @Medicine.Dose</p>
     </div>
     <div>
-        <p>Prescribed at: @Medicine.PrescribedAtDate</p>
+        <p>Prescribed at: @Medicine.PrescribedAtLocalDate</p>
     </div>
     <div>
         <p>Prescribed by: @Medicine.PrescribedBy</p>
@@ -23,11 +23,11 @@
 <MedicineReportViewer MedicineReport="@_report" @bind-Visible="@_reportViewerVisible"/>
 
 @code {
-    [Parameter] required public Medicine Medicine { get; set; }
-    [Parameter] public EventCallback<Medicine> MedicineClicked { get; set; }
-    [Parameter] public EventCallback<Medicine> DeleteClicked { get; set; }
+    [Parameter] required public MedicineDto Medicine { get; set; }
+    [Parameter] public EventCallback<MedicineDto> MedicineClicked { get; set; }
+    [Parameter] public EventCallback<MedicineDto> DeleteClicked { get; set; }
     private bool _reportViewerVisible = false;
-    private MedicineReport _report = new();
+    private MedicineReportDto _report = new();
 
     private async Task OnClickRow()
     {
@@ -36,7 +36,7 @@
 
     private async Task OnClickOpenReport()
     {
-        _report = new(Medicine, new(DateTime.UtcNow, Medicine));
+        _report = new(Medicine, new(Medicine));
         _reportViewerVisible = true;
     }
 

@@ -83,14 +83,14 @@
 <NewItemPopup @bind-Visible="@_newItemVisible" HasOwnControl="false" />
 
 @code {
-    private List<MedicineReport> _pendingReports = [];
+    private List<MedicineReportDto> _pendingReports = [];
 
-    private List<Medicine> _currentMedicines = [];
-    private Medicine _currentMedicine = new();
+    private List<MedicineDto> _currentMedicines = [];
+    private MedicineDto _currentMedicine = new();
     private bool _medicineViewerVisible = false;
 
-    private List<Symptom> _currentSymptoms = [];
-    private Symptom _currentSymptom = new();
+    private List<SymptomDto> _currentSymptoms = [];
+    private SymptomDto _currentSymptom = new();
     private bool _symptomViewerVisible = false;
 
     private bool _symptomHelpVisible = false;
@@ -125,18 +125,18 @@
         _currentSymptoms = symps.Where(x => x.Active).ToList();
     }
 
-    private async Task OnMedicineReportChanged(MedicineReport report)
+    private async Task OnMedicineReportChanged(MedicineReportDto report)
     {
         _pendingReports = await _pendingMedService.GetPendingReportsAsync();
     }
 
-    private void OnMedicineRowClicked(Medicine medicine)
+    private void OnMedicineRowClicked(MedicineDto medicine)
     {
         _currentMedicine = medicine;
         _medicineViewerVisible = true;
     }
 
-    private void OnSymptomRowClicked(Symptom symptom)
+    private void OnSymptomRowClicked(SymptomDto symptom)
     {
         _currentSymptom = symptom;
         _symptomViewerVisible = true;
@@ -167,7 +167,7 @@
         _newItemVisible = true;
     }
 
-    private async Task OnMedicineDeleted(Medicine medicine)
+    private async Task OnMedicineDeleted(MedicineDto medicine)
     {
         var request = new ConfirmationRequest();
         request.Message = $"Are you sure you want to delete {medicine.Name}?";
@@ -182,7 +182,7 @@
         }
     }
 
-    private async Task OnSymptomDeleted(Symptom symptom)
+    private async Task OnSymptomDeleted(SymptomDto symptom)
     {
         var request = new ConfirmationRequest();
         request.Message = $"Are you sure you want to delete {symptom.Title}?";

@@ -35,7 +35,7 @@
     @if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit)
     {
         <div>
-            <IbdDateTimeInput @bind-Value="@MedicineSchedule.StartedAt" Title="Start At" />
+            <IbdDateTimeInput @bind-Value="@MedicineSchedule.StartedAtLocal" Title="Start At" />
         </div>
         <div>
             <IbdIntInput @bind-Value="@MedicineSchedule.IntervalValue" Title="@_intervalTitle" />
@@ -52,8 +52,8 @@
 </div>
 
 @code {
-    [Parameter] required public MedicineSchedule MedicineSchedule { get; set; }
-    [Parameter] public EventCallback<MedicineSchedule> MedicineScheduleChanged { get; set; }
+    [Parameter] required public MedicineScheduleDto MedicineSchedule { get; set; }
+    [Parameter] public EventCallback<MedicineScheduleDto> MedicineScheduleChanged { get; set; }
     private string _intervalTitle = string.Empty;
 
     private IbdSelectOption? _selectedType;

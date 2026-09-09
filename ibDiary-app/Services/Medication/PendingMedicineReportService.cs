@@ -4,6 +4,7 @@ using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ibDiary_data.Models.Medication.Dto;
 
 namespace ibDiary_app.Services.Medication
 {
@@ -12,25 +13,28 @@ namespace ibDiary_app.Services.Medication
         private readonly MedicineReportRepository _reportService;
         private readonly MedicineRepository _medicineService;
         private readonly ClientNotificationService _notifier;
+        private readonly DtoMappingService _dtoService;
 
         public PendingMedicineReportService(
             MedicineReportRepository reportService,
             MedicineRepository medicineService,
-            ClientNotificationService notifier)
+            ClientNotificationService notifier,
+            DtoMappingService dtoService)
         {
             _reportService = reportService;
             _medicineService = medicineService;
             _notifier = notifier;
+            _dtoService = dtoService;
         }
 
-        public async Task<List<MedicineReport>> GetPendingReportsAsync()
+        public async Task<List<MedicineReportDto>> GetPendingReportsAsync()
         {
             try
             {
                 var activeMedicines = await _medicineService.GetAllAsync();
                 activeMedicines = activeMedicines.Where(m => m.Active).ToList();
 
-                var pendingReports = new List<MedicineReport>();
+                var pendingReports = new List<MedicineReportDto>();
 
                 foreach (var medicine in activeMedicines)
                 {
@@ -48,7 +52,7 @@ namespace ibDiary_app.Services.Medication
 
                     foreach (var occ in fresh.MedicineOccurances.Where(x => x.Status == MedicineDueAtStatus.Pending))
                     {
-                        pendingReports.Add(new MedicineReport(fresh, occ));
+                        pendingReports.Add(new MedicineReportDto(_dtoService.ToDto(fresh), _dtoService.ToDto(occ)));
                     }
                 }
 

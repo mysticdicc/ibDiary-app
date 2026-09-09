@@ -10,7 +10,7 @@
                 <MealSearcher @bind-Value="@_report.Meal" ShowSelected="true" />
             </div>
             <div>
-                <IbdDateTimeInput @bind-Value="@_report.AteMealAt" Title="Ate At" />
+                <IbdDateTimeInput @bind-Value="@_report.AteMealAtLocal" Title="Ate At" />
             </div>
             <div>
                 <IbdTextArea @bind-Value="@_report.Notes" Title="Notes" />
@@ -29,15 +29,15 @@
 
 
 @code {
-    [Parameter] public MealReport Report { get; set; } = new();
-    [Parameter] public EventCallback<MealReport> ReportChanged { get; set; }
+    [Parameter] public MealReportDto Report { get; set; } = new();
+    [Parameter] public EventCallback<MealReportDto> ReportChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
-    private MealReport _report = new();
+    private MealReportDto _report = new();
 
     protected override void OnParametersSet()
     {
-        if (Report != _report) _report = Report.Clone();
+        if (Report.Id != _report.Id) _report = Report;
         base.OnParametersSet();
     }
 

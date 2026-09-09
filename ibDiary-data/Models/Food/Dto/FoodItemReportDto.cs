@@ -1,4 +1,6 @@
-﻿using ibDiary_data.Models.Validation;
+﻿using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Interfaces;
+using ibDiary_data.Models.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +8,7 @@ using System.Text;
 
 namespace ibDiary_data.Models.Food.Dto
 {
-    public class FoodItemReportDto
+    public class FoodItemReportDto : ICalendarUpdate
     {
         public int Id { get; set; }
 
@@ -31,6 +33,31 @@ namespace ibDiary_data.Models.Food.Dto
             AteFoodAtLocal = CreatedAtLocal;
             Notes = string.Empty;
             IsNew = true;
+        }
+
+        public FoodItemReportDto(FoodItemDto food)
+        {
+            Id = 0;
+            FoodItem = food;
+            CreatedAtLocal = DateTime.Now;
+            AteFoodAtLocal = CreatedAtLocal;
+            Notes = string.Empty;
+            IsNew = true;
+        }
+
+        public DateOnly GetDate() => CreatedAtLocalDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            return;
+        }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            var minute = AteFoodAtLocal.Minute.ToString("D2");
+            list.Add($"You ate food item {FoodItem.Name} at {AteFoodAtLocal.Hour}:{minute}.");
+            return list;
         }
     }
 }

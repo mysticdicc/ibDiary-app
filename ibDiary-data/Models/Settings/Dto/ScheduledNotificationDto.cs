@@ -1,11 +1,13 @@
-﻿using System;
+﻿using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace ibDiary_data.Models.Settings.Dto
 {
-    public class ScheduledNotificationDto
+    public class ScheduledNotificationDto : ICalendarUpdate
     {
         public int Id { get; set; }
         public ScheduledNotificationType Type { get; set; }
@@ -33,6 +35,20 @@ namespace ibDiary_data.Models.Settings.Dto
             IntervalValue = 1;
             IsNew = true;
             Active = true;
+        }
+
+        public DateOnly GetDate() => CreatedAtLocalDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            return;
+        }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            list.Add($"A notification for {Type} was scheduled to repeat every {IntervalValue} {IntervalType}.");
+            return list;
         }
     }
 }

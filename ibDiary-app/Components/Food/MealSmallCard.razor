@@ -9,7 +9,7 @@
         <p>@Meal.Notes</p>
     </div>
     <div>
-        <p>Added on: @Meal.CreatedAtDate</p>
+        <p>Added on: @Meal.CreatedAtLocalDate</p>
         <button @onclick="@OnClickCreateReport" @onclick:stopPropagation="true">
             Create Report
             <span class="material-symbols-outlined">article</span>
@@ -20,10 +20,10 @@
 <MealReportViewer Report="@_report" @bind-Visible="@_reportVisible"/>
 
 @code {
-    [Parameter] public Meal Meal { get; set; } = new();
-    [Parameter] public EventCallback<Meal> MealClicked { get; set; }
-    [Parameter] public EventCallback<Meal> DeleteClicked { get; set; }
-    private MealReport _report = new();
+    [Parameter] public MealDto Meal { get; set; } = new();
+    [Parameter] public EventCallback<MealDto> MealClicked { get; set; }
+    [Parameter] public EventCallback<MealDto> DeleteClicked { get; set; }
+    private MealReportDto _report = new();
     private bool _reportVisible = false;
 
     protected override void OnParametersSet()

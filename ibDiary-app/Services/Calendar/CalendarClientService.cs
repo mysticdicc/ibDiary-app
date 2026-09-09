@@ -1,21 +1,26 @@
 ﻿using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Calendar.Dto;
+using ibDiary_data.Models.Interfaces;
 using ibDiary_app.Services.System;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ibDiary_app.Services.Calendar
 {
-    public class CalendarClientService(CalendarRepositoryService repo, ClientNotificationService notifier)
+    public class CalendarClientService(
+        CalendarRepositoryService repo,
+        ClientNotificationService notifier,
+        DtoMappingService dtoService)
     {
         private readonly CalendarRepositoryService _repo = repo;
         private readonly ClientNotificationService _notifier = notifier;
+        private readonly DtoMappingService _dtoService = dtoService;
 
-        public async Task<bool> AddAsync(CalendarDay item)
+        public async Task<bool> AddAsync(CalendarDayDto item)
         {
             try
             {
-                var result = await _repo.AddAsync(item);
+                var result = await _repo.AddAsync(_dtoService.FromDto(item));
                 return result;
             }
             catch (Exception ex)
@@ -25,11 +30,11 @@ namespace ibDiary_app.Services.Calendar
             }
         }
 
-        public async Task<bool> DeleteAsync(CalendarDay item)
+        public async Task<bool> DeleteAsync(CalendarDayDto item)
         {
             try
             {
-                var result = await _repo.DeleteAsync(item);
+                var result = await _repo.DeleteAsync(_dtoService.FromDto(item));
                 return result;
             }
             catch (Exception ex)
@@ -39,12 +44,12 @@ namespace ibDiary_app.Services.Calendar
             }
         }
 
-        public async Task<List<CalendarDay>> GetAllAsync()
+        public async Task<List<CalendarDayDto>> GetAllAsync()
         {
             try
             {
                 var result = await _repo.GetAllAsync();
-                return result;
+                return _dtoService.ToDtoList(result);
             }
             catch (Exception ex)
             {
@@ -53,12 +58,14 @@ namespace ibDiary_app.Services.Calendar
             }
         }
 
-        public async Task<CalendarDay?> GetByIdAsync(DateOnly date)
+        public async Task<CalendarDayDto?> GetByIdAsync(DateOnly date)
         {
             try
             {
                 var result = await _repo.GetByIdAsync(date);
-                return result;
+                if (result == null) return null;
+
+                return _dtoService.ToDto(result);
             }
             catch (Exception ex)
             {
@@ -67,12 +74,12 @@ namespace ibDiary_app.Services.Calendar
             }
         }
 
-        public async Task<List<CalendarDay>> GetFromDateAsync(DateOnly from)
+        public async Task<List<CalendarDayDto>> GetFromDateAsync(DateOnly from)
         {
             try
             {
                 var result = await _repo.GetFromDateAsync(from);
-                return result;
+                return _dtoService.ToDtoList(result);
             }
             catch (Exception ex)
             {
@@ -81,11 +88,11 @@ namespace ibDiary_app.Services.Calendar
             }
         }
 
-        public async Task<bool> UpdateAsync(CalendarDay item)
+        public async Task<bool> UpdateAsync(CalendarDayDto item)
         {
             try
             {
-                var result = await _repo.UpdateAsync(item);
+                var result = await _repo.UpdateAsync(_dtoService.FromDto(item));
                 return result;
             }
             catch (Exception ex)

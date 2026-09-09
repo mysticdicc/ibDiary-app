@@ -6,13 +6,13 @@
         @Notification.IntervalValue @Notification.IntervalType
     </p>
     <p>
-        @Notification.StartAt.ToString("HH:mm")
+        @Notification.StartAtLocal.ToString("HH:mm")
     </p>
 </div>
 
 @code {
-    [Parameter] required public ScheduledNotification Notification { get; set; }
-    [Parameter] public EventCallback<ScheduledNotification> NotificationClicked { get; set; }
+    [Parameter] required public ScheduledNotificationDto Notification { get; set; }
+    [Parameter] public EventCallback<ScheduledNotificationDto> NotificationClicked { get; set; }
 
     private async Task OnRowClicked()
     {

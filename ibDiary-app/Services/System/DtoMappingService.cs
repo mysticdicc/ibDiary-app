@@ -1,4 +1,6 @@
-﻿using ibDiary_data.Models.Food;
+﻿using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Calendar.Dto;
+using ibDiary_data.Models.Food;
 using ibDiary_data.Models.Food.Dto;
 using ibDiary_data.Models.Medication;
 using ibDiary_data.Models.Medication.Dto;
@@ -336,6 +338,40 @@ namespace ibDiary_app.Services.System
             Active = dto.Active
         };
 
+        public CalendarDayDto ToDto(CalendarDay model) => new()
+        {
+            Date = model.Date,
+            MedicineReports = MapList(model.MedicineReports, ToDto),
+            MedicineStateChanges = MapList(model.MedicineStateChanges, ToDto),
+            SymptomReports = MapList(model.SymptomReports, ToDto),
+            SymptomStateChanges = MapList(model.SymptomStateChanges, ToDto),
+            CreatedMedicines = MapList(model.CreatedMedicines, ToDto),
+            CreatedSymptoms = MapList(model.CreatedSymptoms, ToDto),
+            CreatedFoods = MapList(model.CreatedFoods, ToDto),
+            FoodReports = MapList(model.FoodReports, ToDto),
+            CreatedMeals = MapList(model.CreatedMeals, ToDto),
+            MealReports = MapList(model.MealReports, ToDto),
+            CreatedNotifications = MapList(model.CreatedNotifications, ToDto),
+            IsNew = model.IsNew
+        };
+
+        public CalendarDay FromDto(CalendarDayDto dto) => new()
+        {
+            Date = dto.Date,
+            MedicineReports = MapList(dto.MedicineReports, FromDto),
+            MedicineStateChanges = MapList(dto.MedicineStateChanges, FromDto),
+            SymptomReports = MapList(dto.SymptomReports, FromDto),
+            SymptomStateChanges = MapList(dto.SymptomStateChanges, FromDto),
+            CreatedMedicines = MapList(dto.CreatedMedicines, FromDto),
+            CreatedSymptoms = MapList(dto.CreatedSymptoms, FromDto),
+            CreatedFoods = MapList(dto.CreatedFoods, FromDto),
+            FoodReports = MapList(dto.FoodReports, FromDto),
+            CreatedMeals = MapList(dto.CreatedMeals, FromDto),
+            MealReports = MapList(dto.MealReports, FromDto),
+            CreatedNotifications = MapList(dto.CreatedNotifications, FromDto),
+            IsNew = dto.IsNew
+        };
+
         public List<SymptomDto> ToDtoList(IEnumerable<Symptom>? source) => MapList(source, ToDto);
         public List<Symptom> FromDtoList(IEnumerable<SymptomDto>? source) => MapList(source, FromDto);
 
@@ -374,5 +410,8 @@ namespace ibDiary_app.Services.System
 
         public List<ScheduledNotificationDto> ToDtoList(IEnumerable<ScheduledNotification>? source) => MapList(source, ToDto);
         public List<ScheduledNotification> FromDtoList(IEnumerable<ScheduledNotificationDto>? source) => MapList(source, FromDto);
+
+        public List<CalendarDayDto> ToDtoList(IEnumerable<CalendarDay>? source) => MapList(source, ToDto);
+        public List<CalendarDay> FromDtoList(IEnumerable<CalendarDayDto>? source) => MapList(source, FromDto);
     }
 }

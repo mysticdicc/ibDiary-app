@@ -12,6 +12,7 @@
 @inject ConfirmationService _confirmService
 @inject ScheduledNotificationClientService _notificationService
 @inject AppSettings _settings
+@inject DtoMappingService _dtoService
 @using System.Text.Json
 
 <article class="settings-page">
@@ -74,8 +75,8 @@
 <ScheduledNotificationViewer @bind-Notification="@_currentNotification" @bind-Visible="@_notificationViewerVisible"/>
 
 @code {
-    private List<ScheduledNotification> _notifications = [];
-    private ScheduledNotification _currentNotification = new(ScheduledNotificationType.Food);
+    private List<ScheduledNotificationDto> _notifications = [];
+    private ScheduledNotificationDto _currentNotification = new();
     private bool _notificationViewerVisible = false;
     private IbdSelectOption? _selectTimeZone;
     private List<IbdSelectOption> _timeZoneOptions = [];
@@ -105,13 +106,13 @@
     private async Task OnClickDownloadBackup()
     {
         var backup = new BackupDto();
-        backup.CalendarDays = await _calService.GetAllAsync();
-        backup.MedicineReports = await _medReportService.GetAllAsync();
-        backup.Medicines = await _medService.GetAllAsync();
-        backup.MedicineStateChanges = await _medStateChangeService.GetAllAsync();
-        backup.SymptomReports = await _sympReportService.GetAllAsync();
-        backup.Symptoms = await _sympService.GetAllAsync();
-        backup.SymptomStateChanges = await _sympStateChangeService.GetAllAsync();
+        backup.CalendarDays = _dtoService.FromDtoList(await _calService.GetAllAsync());
+        backup.MedicineReports = _dtoService.FromDtoList(await _medReportService.GetAllAsync());
+        backup.Medicines = _dtoService.FromDtoList(await _medService.GetAllAsync());
+        backup.MedicineStateChanges = _dtoService.FromDtoList(await _medStateChangeService.GetAllAsync());
+        backup.SymptomReports = _dtoService.FromDtoList(await _sympReportService.GetAllAsync());
+        backup.Symptoms = _dtoService.FromDtoList(await _sympService.GetAllAsync());
+        backup.SymptomStateChanges = _dtoService.FromDtoList(await _sympStateChangeService.GetAllAsync());
 
         var json = JsonSerializer.Serialize(backup);
 
@@ -156,7 +157,7 @@
         _settings.Save();
     }
 
-    private void OnNotificationClicked(ScheduledNotification notification)
+    private void OnNotificationClicked(ScheduledNotificationDto notification)
     {
         _currentNotification = notification;
         _notificationViewerVisible = true;
@@ -164,7 +165,7 @@
 
     private void OnClickNewNotification()
     {
-        _currentNotification = new(ScheduledNotificationType.Food);
+        _currentNotification = new();
         _notificationViewerVisible = true;
     }
 

@@ -1,9 +1,9 @@
 ﻿<div class="symptom-report-row">
     <p>@SymptomReport.Symptom.Title</p>
     <p>@SymptomReport.Severity</p>
-    <p>@SymptomReport.SubmittedFor</p>
+    <p>@SymptomReport.SubmittedForLocal</p>
 </div>
 
 @code {
-    [Parameter] required public SymptomReport SymptomReport { get; set; }
+    [Parameter] required public SymptomReportDto SymptomReport { get; set; }
 }

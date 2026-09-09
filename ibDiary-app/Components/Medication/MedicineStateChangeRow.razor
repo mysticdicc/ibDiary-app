@@ -1,6 +1,6 @@
 ﻿<div class="medicine-state-change">
     <div class="left">
-        <p>@StateChange.ChangedAtDate</p>
+        <p>@StateChange.ChangedAtLocalDate</p>
     </div>
     <div class="right">
         @foreach (var update in StateChange.GetCalendarUpdate())
@@ -11,5 +11,5 @@
 </div>
 
 @code {
-    [Parameter] required public MedicineStateChange StateChange { get; set; }
+    [Parameter] required public MedicineStateChangeDto StateChange { get; set; }
 }

@@ -1,4 +1,6 @@
-﻿using ibDiary_data.Models.Validation;
+﻿using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Interfaces;
+using ibDiary_data.Models.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +9,7 @@ using System.Text.Json.Serialization;
 
 namespace ibDiary_data.Models.Medication.Dto
 {
-    public class MedicineReportDto
+    public class MedicineReportDto : ICalendarUpdate
     {
         public int Id { get; set; }
         public int MedicineId { get; set; }
@@ -43,5 +45,34 @@ namespace ibDiary_data.Models.Medication.Dto
             Notes = string.Empty;
             IsNew = true;
         }
+
+        public MedicineReportDto(MedicineDto medicine, MedicineDueAtOccuranceDto dueAt)
+        {
+            Id = 0;
+            Medicine = medicine;
+            SubmittedAtLocal = DateTime.Now;
+            MedicineTakenAtLocal = SubmittedAtLocal;
+            DueAt = dueAt;
+            MedicineTaken = true;
+            Dose = string.Empty;
+            Notes = string.Empty;
+            IsNew = true;
+        }
+
+        public DateOnly GetDate() => MedicineTakenAtLocalDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            return;
+        }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            var minute = MedicineTakenAtLocal.Minute.ToString("D2");
+            list.Add($"You took {Dose} of {Medicine.Name} at {MedicineTakenAtLocal.Hour}:{minute}.");
+            return list;
+        }
+
     }
 }

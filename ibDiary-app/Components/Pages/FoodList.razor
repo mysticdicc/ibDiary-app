@@ -47,11 +47,11 @@
 <FoodHelpPopup @bind-Visible="@_helpVisible"/>
 
 @code {
-    private List<FoodItem> _allFoods = [];
-    private FoodItem _selectedFood = new();
+    private List<FoodItemDto> _allFoods = [];
+    private FoodItemDto _selectedFood = new();
     private bool _foodViewerVisible = false;
-    private List<Meal> _allMeals = [];
-    private Meal _selectedMeal = new();
+    private List<MealDto> _allMeals = [];
+    private MealDto _selectedMeal = new();
     private bool _mealViewerVisible = false;
     private bool _helpVisible = false;
 
@@ -62,13 +62,13 @@
         await base.OnInitializedAsync();
     }
 
-    private void OnFoodItemClicked(FoodItem item)
+    private void OnFoodItemClicked(FoodItemDto item)
     {
         _selectedFood = item;
         _foodViewerVisible = true;
     }
 
-    private void OnMealClicked(Meal meal)
+    private void OnMealClicked(MealDto meal)
     {
         _selectedMeal = meal;
         _mealViewerVisible = true;
@@ -94,7 +94,7 @@
         }
     }
 
-    private async Task OnClickDeleteFood(FoodItem food)
+    private async Task OnClickDeleteFood(FoodItemDto food)
     {
         var request = new ConfirmationRequest();
         request.Message = $"Are you sure you want to delete {food.Name}?";
@@ -109,7 +109,7 @@
         }
     }
 
-    private async Task OnClickDeleteMeal(Meal meal)
+    private async Task OnClickDeleteMeal(MealDto meal)
     {
         var request = new ConfirmationRequest();
         request.Message = $"Are you sure you want to delete {meal.Name}?";
@@ -124,12 +124,12 @@
         }
     }
 
-    private async Task OnFoodItemChanged(FoodItem foodItem)
+    private async Task OnFoodItemChanged(FoodItemDto foodItem)
     {
         await OnInitializedAsync();
     }
 
-    private async Task OnMealChanged(Meal meal)
+    private async Task OnMealChanged(MealDto meal)
     {
         await OnInitializedAsync();
     }

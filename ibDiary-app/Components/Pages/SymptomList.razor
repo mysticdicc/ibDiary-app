@@ -41,9 +41,9 @@
 <SymptomHelpPopup Visible="@_helpVisible"/>
 
 @code {
-    private List<Symptom> _activeSymptoms = []; 
-    private List<Symptom> _inactiveSymptoms = [];
-    private Symptom _currentSymptom = new();
+    private List<SymptomDto> _activeSymptoms = []; 
+    private List<SymptomDto> _inactiveSymptoms = [];
+    private SymptomDto _currentSymptom = new();
     private bool _symptomViewerVisible = false;
     private bool _helpVisible = false;
 
@@ -66,12 +66,12 @@
         _symptomViewerVisible = true;
     }
 
-    private async Task OnSymptomChanged(Symptom symptom)
+    private async Task OnSymptomChanged(SymptomDto symptom)
     {
         await RefreshSymptomsAsync();
     }
 
-    private void OnSymptomRowClicked(Symptom symptom)
+    private void OnSymptomRowClicked(SymptomDto symptom)
     {
         _currentSymptom = symptom;
         _symptomViewerVisible = true;
@@ -82,7 +82,7 @@
         _helpVisible = true;
     }
 
-    private async Task OnSymptomDeleted(Symptom symptom)
+    private async Task OnSymptomDeleted(SymptomDto symptom)
     {
         var request = new ConfirmationRequest();
         request.Message = $"Are you sure you want to delete {symptom.Title}?";

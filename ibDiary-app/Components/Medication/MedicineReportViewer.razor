@@ -10,7 +10,7 @@
                 <MedicineSearcher @bind-Value="@_report.Medicine" ShowSelected="true" />
             </div>
             <div>
-                <IbdDateTimeInput Title="Taken At" @bind-Value="@_report.MedicineTakenAt" />
+                <IbdDateTimeInput Title="Taken At" @bind-Value="@_report.MedicineTakenAtLocal" />
                 <IbdCheckbox @bind-Value="@_report.MedicineTaken" Title="Taken" />
             </div>
             <div>
@@ -29,20 +29,15 @@
 </Popup>
 
 @code {
-    [Parameter] required public MedicineReport MedicineReport { get; set; }
-    [Parameter] required public EventCallback<MedicineReport> MedicineReportChanged { get; set; }
+    [Parameter] required public MedicineReportDto MedicineReport { get; set; }
+    [Parameter] required public EventCallback<MedicineReportDto> MedicineReportChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
-    private MedicineReport _report = new();
-    private MedicineReport? _sourceReport;
+    private MedicineReportDto _report = new();
 
     protected override void OnParametersSet()
     {
-        if (!ReferenceEquals(_sourceReport, MedicineReport))
-        {
-            _sourceReport = MedicineReport;
-            _report = MedicineReport.Clone();
-        }
+        if (MedicineReport.Id != _report.Id) _report = MedicineReport;
         base.OnParametersSet();
     }
 

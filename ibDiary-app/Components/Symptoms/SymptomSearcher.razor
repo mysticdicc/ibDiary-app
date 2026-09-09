@@ -1,4 +1,4 @@
-﻿@inherits InputBase<Symptom?>
+﻿@inherits InputBase<SymptomDto?>
 @inject SymptomClientService _sympDbService
 
 <div class="searcher-preview symptom-searcher-preview">
@@ -56,15 +56,15 @@
 
 @code {
     [Parameter] public bool ShowSelected { get; set; } = false;
-    private List<Symptom> _allSymptoms = [];
-    private List<Symptom> _suggestedSymptoms = [];
+    private List<SymptomDto> _allSymptoms = [];
+    private List<SymptomDto> _suggestedSymptoms = [];
     private string _searchString = string.Empty;
     private bool _popupVisible = false;
     private int _showCount = 5;
-    private Symptom _newSymptom = new();
+    private SymptomDto _newSymptom = new();
     private bool _newSymptomVisible = false;
 
-    protected override bool TryParseValueFromString(string? value, out Symptom? result, out string validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out SymptomDto? result, out string validationErrorMessage)
     {
         result = null;
         validationErrorMessage = string.Empty;
@@ -83,7 +83,7 @@
         _suggestedSymptoms = _allSymptoms.Where(x => x.Title.Contains(_searchString, StringComparison.CurrentCultureIgnoreCase)).Take(_showCount).ToList();
     }
 
-    private async Task OnSymptomClicked(Symptom symptom)
+    private async Task OnSymptomClicked(SymptomDto symptom)
     {
         CurrentValue = symptom;
         await ValueChanged.InvokeAsync(CurrentValue);
@@ -114,7 +114,7 @@
         OnSearchInputChanged();
     }
 
-    private async Task OnNewSymptomChanged(Symptom symptom)
+    private async Task OnNewSymptomChanged(SymptomDto symptom)
     {
         _allSymptoms = await _sympDbService.GetAllAsync();
         _newSymptom = new();

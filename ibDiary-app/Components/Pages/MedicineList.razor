@@ -43,9 +43,9 @@
 <MedicineHelpPopup @bind-Visible="@_helpVisible"/>
 
 @code {
-    private List<Medicine> _activeMedicines = [];
-    private List<Medicine> _inactiveMedicines = [];
-    private Medicine _currentMedicine = new();
+    private List<MedicineDto> _activeMedicines = [];
+    private List<MedicineDto> _inactiveMedicines = [];
+    private MedicineDto _currentMedicine = new();
     private bool _medicineViewerVisible = false;
     private bool _helpVisible = false;
 
@@ -73,7 +73,7 @@
         await RefreshMedicinesAsync();
     }
 
-    private void OnMedicineRowClicked(Medicine medicine)
+    private void OnMedicineRowClicked(MedicineDto medicine)
     {
         _currentMedicine = medicine;
         _medicineViewerVisible = true;
@@ -84,7 +84,7 @@
         _helpVisible = true;
     }
 
-    private async Task OnMedicineDeleted(Medicine medicine)
+    private async Task OnMedicineDeleted(MedicineDto medicine)
     {
         var request = new ConfirmationRequest();
         request.Message = $"Are you sure you want to delete {medicine.Name}?";

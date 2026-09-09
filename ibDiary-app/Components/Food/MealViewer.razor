@@ -35,17 +35,17 @@
 </Popup>
 
 @code {
-    [Parameter] public Meal Meal { get; set; } = new();
-    [Parameter] public EventCallback<Meal> MealChanged { get; set; }
+    [Parameter] public MealDto Meal { get; set; } = new();
+    [Parameter] public EventCallback<MealDto> MealChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
-    private Meal _meal = new();
-    private FoodItem _selectedFood = new();
+    private MealDto _meal = new();
+    private FoodItemDto _selectedFood = new();
     private string _title = string.Empty;
 
     protected override Task OnParametersSetAsync()
     {
-        if (Meal != _meal) _meal = Meal.Clone();
+        if (Meal.Id != _meal.Id) _meal = Meal;
         _title = _meal.IsNew ? "Add Meal" : _meal.Name;
         return base.OnParametersSetAsync();
     }
@@ -87,7 +87,7 @@
         if (!_meal.FoodItems.Contains(_selectedFood)) _meal.FoodItems.Add(_selectedFood);
     }
 
-    private void OnFoodItemDeleted(FoodItem foodItem)
+    private void OnFoodItemDeleted(FoodItemDto foodItem)
     {
         if (_meal.FoodItems.Contains(foodItem)) _meal.FoodItems.Remove(foodItem);
     }

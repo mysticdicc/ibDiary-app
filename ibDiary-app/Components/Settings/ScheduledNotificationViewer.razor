@@ -7,7 +7,7 @@
             <IbdSelect Options="@_typeOptions" Title="Notification Type" @bind-Value="@_selectedType" @bind-Value:after="@OnTypeChanged"/>
         </div>
         <div>
-            <IbdDateTimeInput @bind-Value="@Notification.StartAt" Title="Start At"/>
+            <IbdDateTimeInput @bind-Value="@Notification.StartAtLocal" Title="Start At"/>
         </div>
         <div>
             <header>
@@ -32,8 +32,8 @@
 </Popup>
 
 @code {
-    [Parameter] required public ScheduledNotification Notification { get; set; }
-    [Parameter] public EventCallback<ScheduledNotification> NotificationChanged { get; set; }
+    [Parameter] required public ScheduledNotificationDto Notification { get; set; }
+    [Parameter] public EventCallback<ScheduledNotificationDto> NotificationChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     private string _intervalTitle = string.Empty;

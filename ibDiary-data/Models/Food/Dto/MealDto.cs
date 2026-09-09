@@ -1,11 +1,13 @@
-﻿using System;
+﻿using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace ibDiary_data.Models.Food.Dto
 {
-    public class MealDto
+    public class MealDto : ICalendarUpdate
     {
         public int Id { get; set; }
 
@@ -33,6 +35,20 @@ namespace ibDiary_data.Models.Food.Dto
             CreatedAtLocal = DateTime.Now;
             IsNew = true;
             MealReports = [];
+        }
+
+        public DateOnly GetDate() => CreatedAtLocalDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            return;
+        }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            list.Add($"Meal {Name} was added.");
+            return list;
         }
     }
 }

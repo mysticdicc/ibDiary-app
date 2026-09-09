@@ -22,6 +22,19 @@ namespace ibDiary_data.Models.Settings
         public bool IsNew { get; set; }
         public bool Active { get; set; }
 
+        public ScheduledNotification()
+        {
+            Id = 0;
+            Type = ScheduledNotificationType.Food;
+            StartAt = DateTime.UtcNow;
+            CreatedAt = DateTime.UtcNow;
+            LastSentAt = DateTime.MinValue;
+            IntervalType = ScheduleIntervalType.Days;
+            IntervalValue = 1;
+            IsNew = true;
+            Active = true;
+        }
+
         public ScheduledNotification(ScheduledNotificationType type)
         {
             Id = 0;

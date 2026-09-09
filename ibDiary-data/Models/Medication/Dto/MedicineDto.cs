@@ -1,11 +1,13 @@
-﻿using System;
+﻿using ibDiary_data.Models.Calendar;
+using ibDiary_data.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace ibDiary_data.Models.Medication.Dto
 {
-    public class MedicineDto
+    public class MedicineDto : ICalendarUpdate
     {
         public int Id { get; set; }
 
@@ -51,6 +53,20 @@ namespace ibDiary_data.Models.Medication.Dto
             IsNew = true;
             MedicineSchedule = new();
             MedicineReports = [];
+        }
+
+        public DateOnly GetDate() => PrescribedAtLocalDate;
+
+        public void AddToCalendarDay(CalendarDay day)
+        {
+            return;
+        }
+
+        public List<string> GetCalendarUpdate()
+        {
+            var list = new List<string>();
+            list.Add($"You were prescribed {Dose} of {Name} by {PrescribedBy}.");
+            return list;
         }
     }
 }

@@ -27,7 +27,7 @@
                     <IbdTextArea @bind-Value="@Symptom.Description" Title="Description" />
                 </div>
                 <div>
-                    <IbdDateTimeInput @bind-Value="@Symptom.StartedAt" Title="Started At" />
+                    <IbdDateTimeInput @bind-Value="@Symptom.StartedAtLocal" Title="Started At" />
                 </div>
             }
             @if (_historyVisible)
@@ -49,18 +49,18 @@
 </Popup>
 
 @code {
-    [Parameter] required public Symptom Symptom { get; set; }
-    private Symptom _symptom = new();
-    private Symptom _source = new();
+    [Parameter] required public SymptomDto Symptom { get; set; }
+    private SymptomDto _symptom = new();
+    private SymptomDto _source = new();
 
-    [Parameter] public EventCallback<Symptom> SymptomChanged { get; set; }
+    [Parameter] public EventCallback<SymptomDto> SymptomChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     private string _title = string.Empty;
     private bool _symptomVisible = true;
     private bool _historyVisible = false;
 
-    private List<CalendarDay> _historyData = [];
+    private List<CalendarDayDto> _historyData = [];
     private CalendarFilter _filter = new();
 
     protected override void OnParametersSet()
@@ -85,21 +85,21 @@
 
         foreach (var date in dates.Distinct())
         {
-            var day = new CalendarDay(date);
+            var day = new CalendarDayDto(date);
 
             var sympReports = _symptom.SymptomReports.Where(x => x.GetDate() == date).ToList();
             foreach (var report in sympReports)
             {
-                report.AddToCalendarDay(day);
+                if (!day.SymptomReports.Contains(report)) day.SymptomReports.Add(report);
             }
 
             var stateChanges = _symptom.StateChanges.Where(x => x.GetDate() == date).ToList();
             foreach (var sc in stateChanges)
             {
-                sc.AddToCalendarDay(day);
+                if (!day.SymptomStateChanges.Contains(sc)) day.SymptomStateChanges.Add(sc);
             }
 
-            if (date == _symptom.GetDate()) _symptom.AddToCalendarDay(day);
+            if (date == _symptom.GetDate()) day.CreatedSymptoms.Add(_symptom);
 
             _historyData.Add(day);
         }

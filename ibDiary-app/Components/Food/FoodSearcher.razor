@@ -1,4 +1,4 @@
-﻿@inherits InputBase<FoodItem?>
+﻿@inherits InputBase<FoodItemDto?>
 @inject FoodItemClientService _foodService
 
 <div class="searcher-preview food-searcher-preview">
@@ -55,15 +55,15 @@
 
 @code {
     [Parameter] public bool ShowSelected { get; set; } = false;
-    private List<FoodItem> _suggestedFoods = [];
-    private List<FoodItem> _allFoods = [];
+    private List<FoodItemDto> _suggestedFoods = [];
+    private List<FoodItemDto> _allFoods = [];
     private string _searchString = string.Empty;
     private bool _popupVisible = false;
     private int _showCount = 5;
-    private FoodItem _newFood = new();
+    private FoodItemDto _newFood = new();
     private bool _newFoodVisible = false;
 
-    protected override bool TryParseValueFromString(string? value, out FoodItem? result, out string validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out FoodItemDto? result, out string validationErrorMessage)
     {
         result = null;
         validationErrorMessage = string.Empty;
@@ -96,7 +96,7 @@
         _suggestedFoods = _allFoods.Where(x => x.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)).Take(_showCount).ToList();
     }
 
-    private async Task OnFoodClicked(FoodItem food)
+    private async Task OnFoodClicked(FoodItemDto food)
     {
         CurrentValue = food;
         await ValueChanged.InvokeAsync(food);
@@ -115,7 +115,7 @@
         _popupVisible = true;
     }
 
-    private async Task DeleteClicked(FoodItem food)
+    private async Task DeleteClicked(FoodItemDto food)
     {
         CurrentValue = null;
         await ValueChanged.InvokeAsync(CurrentValue);
@@ -127,7 +127,7 @@
         OnSearchInputChanged();
     }
 
-    private async Task OnNewFoodChanged(FoodItem food)
+    private async Task OnNewFoodChanged(FoodItemDto food)
     {
         _allFoods = await _foodService.GetAllAsync();
         _newFood = new();

@@ -26,7 +26,7 @@
                 <IbdTextArea @bind-Value="@_report.Notes" Title="Notes" />
             </div>
             <div>
-                <IbdDateTimeInput @bind-Value="@_report.SubmittedFor" Title="Submitted For" />
+                <IbdDateTimeInput @bind-Value="@_report.SubmittedForLocal" Title="Submitted For" />
             </div>
             <div>
                 <button type="button" @onclick="@OnClickCancel">
@@ -41,21 +41,15 @@
 </Popup>
 
 @code {
-    [Parameter] required public SymptomReport SymptomReport { get; set; }
-    [Parameter] public EventCallback<SymptomReport> SymptomReportChanged { get; set; }
+    [Parameter] required public SymptomReportDto SymptomReport { get; set; }
+    [Parameter] public EventCallback<SymptomReportDto> SymptomReportChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
-    private SymptomReport _report = new();
-    private SymptomReport? _source;
+    private SymptomReportDto _report = new();
 
     protected override void OnParametersSet()
     {
-        if (!ReferenceEquals(_source, SymptomReport))
-        {
-            _report = SymptomReport.Clone();
-            _source = SymptomReport;
-        }
-
+        if (_report.Id != SymptomReport.Id) _report = SymptomReport;
         base.OnParametersSet();
     }
 

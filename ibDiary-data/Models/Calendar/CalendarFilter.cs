@@ -1,6 +1,9 @@
 ﻿using ibDiary_data.Models.Food;
+using ibDiary_data.Models.Food.Dto;
 using ibDiary_data.Models.Medication;
+using ibDiary_data.Models.Medication.Dto;
 using ibDiary_data.Models.Symptoms;
+using ibDiary_data.Models.Symptoms.Dto;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,7 +26,7 @@ namespace ibDiary_data.Models.Calendar
                 UpdateShowFilters();
             }
         }
-        public Medicine Medicine { get; set; }
+        public MedicineDto Medicine { get; set; }
         private bool _symptomFilterEnabled;
         public bool SymptomFilterEnabled
         {
@@ -35,7 +38,7 @@ namespace ibDiary_data.Models.Calendar
                 UpdateShowFilters();
             }
         }
-        public Symptom Symptom { get; set; }
+        public SymptomDto Symptom { get; set; }
         private bool _foodFilterEnabled;
         public bool FoodFilterEnabled
         {
@@ -47,7 +50,7 @@ namespace ibDiary_data.Models.Calendar
                 UpdateShowFilters();
             }
         }
-        public FoodItem Food { get; set; }
+        public FoodItemDto Food { get; set; }
         private bool _mealFilterEnabled;
         public bool MealFilterEnabled
         {
@@ -59,7 +62,7 @@ namespace ibDiary_data.Models.Calendar
                 UpdateShowFilters();
             }
         }
-        public Meal Meal { get; set; }
+        public MealDto Meal { get; set; }
         public bool ShowInactive { get; set; }
         public bool ShowMedicineReports { get; set; }
         public bool ShowSymptomReports { get; set; }

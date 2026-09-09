@@ -30,13 +30,13 @@
 
 @code {
     [Parameter] public bool FilterBarEnabled { get; set; } = true;
-    [Parameter] public List<CalendarDay> Values { get; set; } = [];
+    [Parameter] public List<CalendarDayDto> Values { get; set; } = [];
     [Parameter] public CalendarFilter Filter { get; set; } = new();
 
     private int _dayOffset = 365;
     private DateOnly _oldDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-365));
     private DateOnly _today = DateOnly.FromDateTime(DateTime.UtcNow);
-    private Dictionary<DateOnly, CalendarDay?> _calendarData = new();
+    private Dictionary<DateOnly, CalendarDayDto?> _calendarData = new();
 
     private ElementReference _scrollContainer;
     private bool _loading = false;
@@ -83,7 +83,7 @@
         _today = DateOnly.FromDateTime(_dateService.GetCurrentLocalTime());
         _oldDate = DateOnly.FromDateTime(_dateService.GetCurrentLocalTime().AddDays(-_dayOffset));
 
-        var days = new List<CalendarDay>();
+        var days = new List<CalendarDayDto>();
 
         if (Values.Count > 0) days = Values;
         else days = await _calDbService.GetFromDateAsync(_oldDate);
@@ -116,7 +116,7 @@
         var days = await _calDbService.GetFromDateAsync(newOldDate);
         var lookup = days.ToDictionary(x => x.Date);
 
-        var newEntries = new Dictionary<DateOnly, CalendarDay?>();
+        var newEntries = new Dictionary<DateOnly, CalendarDayDto?>();
 
         var newDates = Enumerable
                     .Range(0, (_oldDate.DayNumber - newOldDate.DayNumber))
@@ -151,7 +151,7 @@
         StateHasChanged();
     }
 
-    private bool ApplyFilter(CalendarDay? day)
+    private bool ApplyFilter(CalendarDayDto? day)
     {
         if (day == null && _filter.ShowInactive) return true;
         else if (day == null && !_filter.ShowInactive) return false;
@@ -231,9 +231,9 @@
         return true;
     }
 
-    private Dictionary<DateOnly, CalendarDay?> GetFilteredCalendarData()
+    private Dictionary<DateOnly, CalendarDayDto?> GetFilteredCalendarData()
     {
-        var filtered = new Dictionary<DateOnly, CalendarDay?>();
+        var filtered = new Dictionary<DateOnly, CalendarDayDto?>();
 
         foreach (var kvp in _calendarData)
         {

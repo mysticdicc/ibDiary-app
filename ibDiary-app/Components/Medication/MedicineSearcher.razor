@@ -1,4 +1,4 @@
-﻿@inherits InputBase<Medicine?>
+﻿@inherits InputBase<MedicineDto?>
 @inject MedicineClientService _medDbService
 
 <div class="searcher-preview medicine-searcher-preview">
@@ -56,15 +56,15 @@
 
 @code {
     [Parameter] public bool ShowSelected { get; set; } = false;
-    private List<Medicine> _suggestedMedicines = [];
-    private List<Medicine> _allMedicines = [];
+    private List<MedicineDto> _suggestedMedicines = [];
+    private List<MedicineDto> _allMedicines = [];
     private string _searchString = string.Empty;
     private bool _popupVisible = false;
     private int _showCount = 5;
-    private Medicine _newMedicine = new();
+    private MedicineDto _newMedicine = new();
     private bool _newMedicineVisible = false;
 
-    protected override bool TryParseValueFromString(string? value, out Medicine? result, out string validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out MedicineDto? result, out string validationErrorMessage)
     {
         result = null;
         validationErrorMessage = string.Empty;
@@ -83,7 +83,7 @@
         _suggestedMedicines = _allMedicines.Where(x => x.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)).Take(_showCount).ToList();
     }
 
-    private async Task OnMedicineClicked(Medicine medicine)
+    private async Task OnMedicineClicked(MedicineDto medicine)
     {
         CurrentValue = medicine;
         await ValueChanged.InvokeAsync(medicine);
@@ -102,7 +102,7 @@
         _popupVisible = true;
     }
 
-    private async Task DeleteClicked(Medicine medicine)
+    private async Task DeleteClicked(MedicineDto medicine)
     {
         CurrentValue = null;
         await ValueChanged.InvokeAsync(null);
@@ -120,7 +120,7 @@
         _newMedicineVisible = true;
     }
 
-    private async Task OnNewMedicineChanged(Medicine medicine)
+    private async Task OnNewMedicineChanged(MedicineDto medicine)
     {
         _allMedicines = await _medDbService.GetAllAsync();
         _newMedicine = new();

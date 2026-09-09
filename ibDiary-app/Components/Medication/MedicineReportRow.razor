@@ -3,19 +3,19 @@
     <p>@MedicineReport.Dose</p>
     @if (null != MedicineReport.DueAt)
     {
-        <p>@(MedicineReport.DueAt.DueAt.ToString("d/M h:mm tt") ?? string.Empty)</p>
+        <p>@(MedicineReport.DueAt.DueAtLocal.ToString("d/M h:mm tt") ?? string.Empty)</p>
     }
     else
     {
-        <p>@MedicineReport.MedicineTakenAt.ToString("d/M h:mm tt")</p>
+        <p>@MedicineReport.MedicineTakenAtLocal.ToString("d/M h:mm tt")</p>
     }
 </div>
 
 <MedicineReportViewer MedicineReport="@MedicineReport" @bind-Visible="@_reportViewerVisible"/>
 
 @code {
-    [Parameter] required public MedicineReport MedicineReport { get; set; }
-    [Parameter] public EventCallback<MedicineReport> MedicineReportClicked { get; set; }
+    [Parameter] required public MedicineReportDto MedicineReport { get; set; }
+    [Parameter] public EventCallback<MedicineReportDto> MedicineReportClicked { get; set; }
     [Parameter] public bool ShouldCallback { get; set; } = false;
     private bool _reportViewerVisible = false;
 
