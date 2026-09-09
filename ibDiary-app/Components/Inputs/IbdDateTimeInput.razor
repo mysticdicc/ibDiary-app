@@ -2,17 +2,19 @@
 
 <div class="ibd-datetime-input ibd-input">
     <p>@Title</p>
-    @if (ReadOnly)
-    {
-        <input type="text" value="@CurrentValue.ToString("yyyy-MM-ddTHH:mm")" readonly />
-    }
-    else
-    {
-        <input type="datetime-local" value="@CurrentValue.ToString("yyyy-MM-ddTHH:mm")" @onchange="@OnValueChanged" />
-    }
-    <button @onclick="@OnClickNow" @onclick:stopPropagation="true">
-        Now
-    </button>
+    <div>
+        @if (ReadOnly)
+        {
+            <input type="text" value="@CurrentValue.ToString("yyyy-MM-ddTHH:mm")" readonly />
+        }
+        else
+        {
+            <input type="datetime-local" value="@CurrentValue.ToString("yyyy-MM-ddTHH:mm")" @onchange="@OnValueChanged" />
+        }
+        <button @onclick="@OnClickNow" @onclick:stopPropagation="true" type="button">
+            Now
+        </button>
+    </div>
     @if (EditContext != null && ValueExpression != null)
     {
         var messages = EditContext.GetValidationMessages(FieldIdentifier.Create(ValueExpression)).ToList();

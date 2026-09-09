@@ -79,15 +79,37 @@
     private ScheduledNotificationDto _currentNotification = new();
     private bool _notificationViewerVisible = false;
     private IbdSelectOption? _selectTimeZone;
-    private List<IbdSelectOption> _timeZoneOptions = [];
+    private readonly List<IbdSelectOption> _timeZoneOptions =
+    [
+            new("(UTC) UTC", "UTC"),
+            new("(UTC+00:00) London", "Europe/London"),
+            new("(UTC+01:00) Paris", "Europe/Paris"),
+            new("(UTC+02:00) Athens", "Europe/Athens"),
+            new("(UTC+03:00) Moscow", "Europe/Moscow"),
+            new("(UTC+04:00) Dubai", "Asia/Dubai"),
+            new("(UTC+05:30) India", "Asia/Kolkata"),
+            new("(UTC+06:00) Dhaka", "Asia/Dhaka"),
+            new("(UTC+07:00) Bangkok", "Asia/Bangkok"),
+            new("(UTC+08:00) Beijing", "Asia/Shanghai"),
+            new("(UTC+09:00) Tokyo", "Asia/Tokyo"),
+            new("(UTC+10:00) Sydney", "Australia/Sydney"),
+            new("(UTC+12:00) Auckland", "Pacific/Auckland"),
+            new("(UTC-02:30) Newfoundland", "America/St_Johns"),
+            new("(UTC-04:00) Atlantic Time", "America/Halifax"),
+            new("(UTC-05:00) Eastern Time", "America/New_York"),
+            new("(UTC-06:00) Central Time", "America/Chicago"),
+            new("(UTC-07:00) Mountain Time", "America/Denver"),
+            new("(UTC-07:00) Arizona", "America/Phoenix"),
+            new("(UTC-08:00) Pacific Time", "America/Los_Angeles"),
+            new("(UTC-09:00) Alaska", "America/Anchorage"),
+            new("(UTC-10:00) Hawaii", "Pacific/Honolulu"),
+            new("(UTC-03:00) São Paulo", "America/Sao_Paulo"),
+            new("(UTC-06:00) Mexico City", "America/Mexico_City")
+    ];
 
     protected override async Task OnInitializedAsync()
     {
-        foreach (var timezone in TimeZoneInfo.GetSystemTimeZones())
-        {
-            _timeZoneOptions.Add(new(timezone.DisplayName, timezone));
-        }
-
+        _selectTimeZone = _timeZoneOptions.FirstOrDefault(x => (string?)x.Value == _settings.TimeZoneId);
         _notifications = await _notificationService.GetAllAsync();
         _updateService.SubscribeToComponentUpdates(RefreshCallbackAsync);
         await base.OnInitializedAsync();
@@ -171,9 +193,9 @@
 
     private void OnTimeZoneChanged()
     {
-        if (_selectTimeZone is null) return;
-        if (_selectTimeZone.Value is null || _selectTimeZone.Value is not TimeZoneInfo timezone) return;
-        _settings.TimeZoneId = timezone.Id;
+        if (_selectTimeZone?.Value is not string timeZoneId) return;
+
+        _settings.TimeZoneId = timeZoneId;
         _settings.Save();
     }
 }

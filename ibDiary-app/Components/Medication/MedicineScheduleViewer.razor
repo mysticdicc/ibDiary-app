@@ -53,6 +53,8 @@
 
 @code {
     [Parameter] required public MedicineScheduleDto MedicineSchedule { get; set; }
+    private MedicineScheduleDto _schedule = new();
+
     [Parameter] public EventCallback<MedicineScheduleDto> MedicineScheduleChanged { get; set; }
     private string _intervalTitle = string.Empty;
 
@@ -75,8 +77,10 @@
 
     protected override Task OnParametersSetAsync()
     {
-        _selectedType = _typeOptions.FirstOrDefault(x => x.Value?.Equals(MedicineSchedule.Type) ?? false);
-        _selectedInterval = _scheduleOptions.FirstOrDefault(x => x.Value?.Equals(MedicineSchedule.IntervalType) ?? false);
+        if (!ReferenceEquals(MedicineSchedule, _schedule)) _schedule = MedicineSchedule;
+
+        _selectedType = _typeOptions.FirstOrDefault(x => x.Value?.Equals(_schedule.Type) ?? false);
+        _selectedInterval = _scheduleOptions.FirstOrDefault(x => x.Value?.Equals(_schedule.IntervalType) ?? false);
         UpdateIntervalTitle();
         return base.OnParametersSetAsync();
     }
@@ -84,23 +88,23 @@
     private async Task OnTypeChanged()
     {
         if (_selectedType?.Value is not MedicineScheduleType type) return;
-        MedicineSchedule.Type = type;
-        if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit) MedicineSchedule.IntervalType = ScheduleIntervalType.Hours;
+        _schedule.Type = type;
+        if (MedicineSchedule.Type == MedicineScheduleType.DailyLimit) _schedule.IntervalType = ScheduleIntervalType.Hours;
         UpdateIntervalTitle();
-        await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
+        await MedicineScheduleChanged.InvokeAsync(_schedule);
     }
 
     private async Task OnIntervalTypeChanged()
     {
         if (_selectedInterval?.Value is not ScheduleIntervalType type) return;
-        MedicineSchedule.IntervalType = type;
+        _schedule.IntervalType = type;
         UpdateIntervalTitle();
-        await MedicineScheduleChanged.InvokeAsync(MedicineSchedule);
+        await MedicineScheduleChanged.InvokeAsync(_schedule);
     }
 
     private void UpdateIntervalTitle()
     {
-        _intervalTitle = MedicineSchedule.IntervalType switch
+        _intervalTitle = _schedule.IntervalType switch
         {
             ScheduleIntervalType.Minutes => "Minutes",
             ScheduleIntervalType.Hours => "Hours",

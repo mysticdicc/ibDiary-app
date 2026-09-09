@@ -26,6 +26,16 @@ namespace ibDiary_data.Models.Symptoms.Dto
             IsNew = true;
         }
 
+        public SymptomStateChangeDto(DateTime changedAt)
+        {
+            Id = 0;
+            SymptomId = 0;
+            ChangedAtLocal = changedAt;
+            SymptomBefore = new();
+            SymptomAfter = new();
+            IsNew = true;
+        }
+
         public DateOnly GetDate() => ChangedAtLocalDate;
 
         public void AddToCalendarDay(CalendarDay day)

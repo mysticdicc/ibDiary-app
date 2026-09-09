@@ -46,12 +46,38 @@ namespace ibDiary_data.Models.Medication.Dto
             IsNew = true;
         }
 
+        public MedicineReportDto(DateTime submittedAt)
+        {
+            Id = 0;
+            Medicine = new();
+            SubmittedAtLocal = submittedAt;
+            MedicineTakenAtLocal = submittedAt;
+            DueAt = new();
+            MedicineTaken = true;
+            Dose = string.Empty;
+            Notes = string.Empty;
+            IsNew = true;
+        }
+
         public MedicineReportDto(MedicineDto medicine, MedicineDueAtOccuranceDto dueAt)
         {
             Id = 0;
             Medicine = medicine;
             SubmittedAtLocal = DateTime.Now;
             MedicineTakenAtLocal = SubmittedAtLocal;
+            DueAt = dueAt;
+            MedicineTaken = true;
+            Dose = string.Empty;
+            Notes = string.Empty;
+            IsNew = true;
+        }
+
+        public MedicineReportDto(MedicineDto medicine, MedicineDueAtOccuranceDto dueAt, DateTime submittedAt)
+        {
+            Id = 0;
+            Medicine = medicine;
+            SubmittedAtLocal = submittedAt;
+            MedicineTakenAtLocal = submittedAt;
             DueAt = dueAt;
             MedicineTaken = true;
             Dose = string.Empty;

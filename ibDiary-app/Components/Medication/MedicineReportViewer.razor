@@ -37,7 +37,7 @@
 
     protected override void OnParametersSet()
     {
-        if (MedicineReport.Id != _report.Id) _report = MedicineReport;
+        if (!ReferenceEquals(_report, MedicineReport)) _report = MedicineReport;
         base.OnParametersSet();
     }
 

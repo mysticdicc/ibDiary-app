@@ -35,7 +35,7 @@
 </Popup>
 
 @code {
-    [Parameter] public MealDto Meal { get; set; } = new();
+    [Parameter] required public MealDto Meal { get; set; }
     [Parameter] public EventCallback<MealDto> MealChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
@@ -45,7 +45,7 @@
 
     protected override Task OnParametersSetAsync()
     {
-        if (Meal.Id != _meal.Id) _meal = Meal;
+        if (!ReferenceEquals(_meal, Meal)) _meal = Meal;
         _title = _meal.IsNew ? "Add Meal" : _meal.Name;
         return base.OnParametersSetAsync();
     }

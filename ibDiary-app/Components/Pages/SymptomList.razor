@@ -1,5 +1,6 @@
 ﻿@inject SymptomClientService _symDbService
 @inject ConfirmationService _confirmService
+@inject DateLocalisationService _dateService
 @page "/symptoms"
 
 <article class="symptom-page">
@@ -62,7 +63,7 @@
 
     private void OnClickAddNew()
     {
-        _currentSymptom = new();
+        _currentSymptom = new(_dateService.GetCurrentLocalTime());
         _symptomViewerVisible = true;
     }
 

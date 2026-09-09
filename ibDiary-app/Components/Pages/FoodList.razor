@@ -1,6 +1,7 @@
 ﻿@inject FoodItemClientService _foodService
 @inject MealClientService _mealService
 @inject ConfirmationService _confirmService
+@inject DateLocalisationService _dateService
 @page "/foods"
 
 <article class="food-page">
@@ -84,12 +85,12 @@
 
         if (result.Result) 
         {
-            _selectedFood = new();
+            _selectedFood = new(_dateService.GetCurrentLocalTime());
             _foodViewerVisible = true;
         }
         else
         {
-            _selectedMeal = new();
+            _selectedMeal = new(_dateService.GetCurrentLocalTime());
             _mealViewerVisible = true;
         }
     }

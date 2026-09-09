@@ -47,7 +47,9 @@ namespace ibDiary_app.Services.System
 
         public DateTime GetCurrentLocalTime()
         {
-            return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GetTimeZone());
+            var tz = GetTimeZone();
+            var time = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+            return time;
         }
     }
 }

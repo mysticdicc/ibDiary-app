@@ -33,5 +33,16 @@ namespace ibDiary_data.Models.Medication.Dto
             StartedAtLocal = DateTime.Now;
             IsNew = true;
         }
+
+        public MedicineScheduleDto(DateTime startedAt)
+        {
+            Id = 0;
+            Type = MedicineScheduleType.DailyLimit;
+            IntervalType = ScheduleIntervalType.Hours;
+            IntervalValue = 1;
+            AmountPerDay = 1;
+            StartedAtLocal = startedAt;
+            IsNew = true;
+        }
     }
 }

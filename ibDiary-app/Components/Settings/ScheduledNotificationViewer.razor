@@ -7,7 +7,7 @@
             <IbdSelect Options="@_typeOptions" Title="Notification Type" @bind-Value="@_selectedType" @bind-Value:after="@OnTypeChanged"/>
         </div>
         <div>
-            <IbdDateTimeInput @bind-Value="@Notification.StartAtLocal" Title="Start At"/>
+            <IbdDateTimeInput @bind-Value="@_notification.StartAtLocal" Title="Start At" />
         </div>
         <div>
             <header>
@@ -17,7 +17,7 @@
             </header>
             <div>
                 <IbdSelect Options="@_intervalTypes" Title="Interval Type" @bind-Value="@_selectedInterval" @bind-Value:after="@OnIntervalTypeChanged"/>
-                <IbdIntInput Title="@_intervalTitle" @bind-Value="@Notification.IntervalValue"/>
+                <IbdIntInput Title="@_intervalTitle" @bind-Value="@_notification.IntervalValue" />
             </div>
         </div>
         <div>
@@ -33,6 +33,8 @@
 
 @code {
     [Parameter] required public ScheduledNotificationDto Notification { get; set; }
+    private ScheduledNotificationDto _notification = new();
+
     [Parameter] public EventCallback<ScheduledNotificationDto> NotificationChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
@@ -54,8 +56,10 @@
 
     protected override void OnParametersSet()
     {
-        _selectedType = _typeOptions.FirstOrDefault(x => x.Value?.Equals(Notification.Type) ?? false);
-        _selectedInterval = _intervalTypes.FirstOrDefault(x => x.Value?.Equals(Notification.IntervalType) ?? false);
+        if (!ReferenceEquals(Notification, _notification)) _notification = Notification;
+
+        _selectedType = _typeOptions.FirstOrDefault(x => x.Value?.Equals(_notification.Type) ?? false);
+        _selectedInterval = _intervalTypes.FirstOrDefault(x => x.Value?.Equals(_notification.IntervalType) ?? false);
         UpdateIntervalTitle();
         base.OnParametersSet();
     }
@@ -69,19 +73,19 @@
     {
         bool success = false;
 
-        if (Notification.IsNew)
+        if (_notification.IsNew)
         {
-            success = await _notificationService.AddAsync(Notification) > 0;
+            success = await _notificationService.AddAsync(_notification) > 0;
         }
         else
         {
-            success = await _notificationService.UpdateAsync(Notification);
+            success = await _notificationService.UpdateAsync(_notification);
         }
 
         if (success)
         {
-            _updateService.NotifiyComponentUpdate(Notification);
-            await NotificationChanged.InvokeAsync(Notification);
+            _updateService.NotifiyComponentUpdate(_notification);
+            await NotificationChanged.InvokeAsync(_notification);
             await OnClickCancel();
         }
     }
@@ -94,7 +98,7 @@
 
     private void UpdateIntervalTitle()
     {
-        _intervalTitle = Notification.IntervalType switch
+        _intervalTitle = _notification.IntervalType switch
         {
             ScheduleIntervalType.Minutes => "Minutes",
             ScheduleIntervalType.Hours => "Hours",
@@ -108,16 +112,16 @@
     {
         if (_selectedType is null) return;
         if (_selectedType.Value is not ScheduledNotificationType type || _selectedType.Value == null) return;
-        Notification.Type = type;
-        await NotificationChanged.InvokeAsync(Notification);
+        _notification.Type = type;
+        await NotificationChanged.InvokeAsync(_notification);
     }
 
     private async Task OnIntervalTypeChanged()
     {
         if (_selectedInterval is null) return;
         if (_selectedInterval.Value is not ScheduleIntervalType type || _selectedInterval.Value == null) return;
-        Notification.IntervalType = type;
+        _notification.IntervalType = type;
         UpdateIntervalTitle();
-        await NotificationChanged.InvokeAsync(Notification);
+        await NotificationChanged.InvokeAsync(_notification);
     }
 }

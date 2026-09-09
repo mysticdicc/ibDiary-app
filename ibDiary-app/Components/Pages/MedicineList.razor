@@ -1,5 +1,6 @@
 ﻿@inject MedicineClientService _medDbService
 @inject ConfirmationService _confirmService
+@inject DateLocalisationService _dateService
 @page "/medicines"
 
 <article class="medicine-page">
@@ -64,7 +65,7 @@
 
     private void OnClickAddNew()
     {
-        _currentMedicine = new();
+        _currentMedicine = new(_dateService.GetCurrentLocalTime());
         _medicineViewerVisible = true;
     }
 

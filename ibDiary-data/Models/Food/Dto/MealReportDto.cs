@@ -35,12 +35,32 @@ namespace ibDiary_data.Models.Food.Dto
             IsNew = true;
         }
 
+        public MealReportDto(DateTime createdAt)
+        {
+            Id = 0;
+            Meal = new();
+            CreatedAtLocal = createdAt;
+            AteMealAtLocal = createdAt;
+            Notes = string.Empty;
+            IsNew = true;
+        }
+
         public MealReportDto(MealDto meal)
         {
             Id = 0;
             Meal = meal;
             CreatedAtLocal = DateTime.Now;
             AteMealAtLocal = CreatedAtLocal;
+            Notes = string.Empty;
+            IsNew = true;
+        }
+
+        public MealReportDto(MealDto meal, DateTime createdAt)
+        {
+            Id = 0;
+            Meal = meal;
+            CreatedAtLocal = createdAt;
+            AteMealAtLocal = createdAt;
             Notes = string.Empty;
             IsNew = true;
         }

@@ -29,7 +29,7 @@
 
 
 @code {
-    [Parameter] public MealReportDto Report { get; set; } = new();
+    [Parameter] required public MealReportDto Report { get; set; }
     [Parameter] public EventCallback<MealReportDto> ReportChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
@@ -37,7 +37,7 @@
 
     protected override void OnParametersSet()
     {
-        if (Report.Id != _report.Id) _report = Report;
+        if (!ReferenceEquals(_report, Report)) _report = Report;
         base.OnParametersSet();
     }
 

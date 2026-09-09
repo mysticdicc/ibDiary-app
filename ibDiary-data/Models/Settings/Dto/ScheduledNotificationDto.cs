@@ -37,6 +37,20 @@ namespace ibDiary_data.Models.Settings.Dto
             Active = true;
         }
 
+
+        public ScheduledNotificationDto(DateTime startedAt)
+        {
+            Id = 0;
+            Type = default;
+            StartAtLocal = startedAt;
+            CreatedAtLocal = startedAt;
+            LastSentAtLocal = DateTime.MinValue;
+            IntervalType = ScheduleIntervalType.Days;
+            IntervalValue = 1;
+            IsNew = true;
+            Active = true;
+        }
+
         public DateOnly GetDate() => CreatedAtLocalDate;
 
         public void AddToCalendarDay(CalendarDay day)

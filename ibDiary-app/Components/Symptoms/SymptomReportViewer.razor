@@ -49,7 +49,7 @@
 
     protected override void OnParametersSet()
     {
-        if (_report.Id != SymptomReport.Id) _report = SymptomReport;
+        if (!ReferenceEquals(_report, SymptomReport)) _report = SymptomReport;
         base.OnParametersSet();
     }
 

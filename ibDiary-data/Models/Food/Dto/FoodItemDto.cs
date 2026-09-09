@@ -33,6 +33,15 @@ namespace ibDiary_data.Models.Food.Dto
             FoodReports = [];
             IsNew = true;
         }
+        public FoodItemDto(DateTime createdAt)
+        {
+            Id = 0;
+            Name = string.Empty;
+            Description = string.Empty;
+            CreatedAtLocal = createdAt;
+            FoodReports = [];
+            IsNew = true;
+        }
 
         public DateOnly GetDate() => CreatedAtLocalDate;
 

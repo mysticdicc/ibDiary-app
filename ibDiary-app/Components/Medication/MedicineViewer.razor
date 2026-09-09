@@ -75,13 +75,14 @@
 
     protected override void OnParametersSet()
     {
-        if (Medicine.Id != _medicine.Id)
+        if (!ReferenceEquals(_medicine, Medicine))
         {
             _medicine = Medicine;
-            _title = _medicine.IsNew ? "Add Medicine" : _medicine.Name;
             GenerateCalendarDays();
             StateHasChanged();
         }
+
+        _title = _medicine.IsNew ? "Add Medicine" : _medicine.Name;
 
         base.OnParametersSet();
     }

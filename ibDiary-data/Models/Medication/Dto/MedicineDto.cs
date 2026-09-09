@@ -55,6 +55,22 @@ namespace ibDiary_data.Models.Medication.Dto
             MedicineReports = [];
         }
 
+        public MedicineDto(DateTime prescribedAt)
+        {
+            Id = 0;
+            Name = string.Empty;
+            Dose = string.Empty;
+            PrescribedBy = string.Empty;
+            Notes = string.Empty;
+            PrescribedAtLocal = prescribedAt;
+            Active = true;
+            StateChanges = [];
+            MedicineOccurances = [];
+            IsNew = true;
+            MedicineSchedule = new(prescribedAt);
+            MedicineReports = [];
+        }
+
         public DateOnly GetDate() => PrescribedAtLocalDate;
 
         public void AddToCalendarDay(CalendarDay day)

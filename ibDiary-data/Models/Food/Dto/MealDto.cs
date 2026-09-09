@@ -37,6 +37,17 @@ namespace ibDiary_data.Models.Food.Dto
             MealReports = [];
         }
 
+        public MealDto(DateTime createdAt)
+        {
+            Id = 0;
+            Name = string.Empty;
+            FoodItems = [];
+            Notes = string.Empty;
+            CreatedAtLocal = createdAt;
+            IsNew = true;
+            MealReports = [];
+        }
+
         public DateOnly GetDate() => CreatedAtLocalDate;
 
         public void AddToCalendarDay(CalendarDay day)

@@ -1,4 +1,5 @@
 ﻿@inject ComponentUpdateService _updateService
+@inject DateLocalisationService _dateService
 
 @if (HasOwnControl)
 {
@@ -48,42 +49,42 @@
 
     private void MedicineClicked()
     {
-        _viewerHost?.OpenCalendarUpdate(new Medicine());
+        _viewerHost?.OpenCalendarUpdate(new MedicineDto(_dateService.GetCurrentLocalTime()));
     }
 
     private void MedicineReportClicked()
     {
-        _viewerHost?.OpenCalendarUpdate(new MedicineReport());
+        _viewerHost?.OpenCalendarUpdate(new MedicineReportDto(_dateService.GetCurrentLocalTime()));
     }
 
     private void SymptomClicked()
     {
-        _viewerHost?.OpenCalendarUpdate(new Symptom());
+        _viewerHost?.OpenCalendarUpdate(new SymptomDto(_dateService.GetCurrentLocalTime()));
     }
 
     private void SymptomReportClicked()
     {
-        _viewerHost?.OpenCalendarUpdate(new SymptomReport());
+        _viewerHost?.OpenCalendarUpdate(new SymptomReportDto(_dateService.GetCurrentLocalTime()));
     }
 
     private void FoodClicked()
     {
-        _viewerHost?.OpenCalendarUpdate(new FoodItem());
+        _viewerHost?.OpenCalendarUpdate(new FoodItemDto(_dateService.GetCurrentLocalTime()));
     }
 
     private void FoodReportClicked()
     {
-        _viewerHost?.OpenCalendarUpdate(new FoodItemReport());
+        _viewerHost?.OpenCalendarUpdate(new FoodItemReportDto(_dateService.GetCurrentLocalTime()));
     }
 
     private void MealClicked()
     {
-        _viewerHost?.OpenCalendarUpdate(new Meal());
+        _viewerHost?.OpenCalendarUpdate(new MealDto(_dateService.GetCurrentLocalTime()));
     }
 
     private void MealReportClicked()
     {
-        _viewerHost?.OpenCalendarUpdate(new MealReport());
+        _viewerHost?.OpenCalendarUpdate(new MealReportDto(_dateService.GetCurrentLocalTime()));
     }
 
     private async Task OnClickAdd()

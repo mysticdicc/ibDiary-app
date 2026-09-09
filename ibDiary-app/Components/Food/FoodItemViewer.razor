@@ -2,15 +2,15 @@
 @inject ComponentUpdateService _updateService
 
 <Popup Visible="@Visible" VisibleChanged="@OnVisibleChamged" Title="@_title">
-    <EditForm Model="@Food" OnValidSubmit="@OnClickSave">
+    <EditForm Model="@_food" OnValidSubmit="@OnClickSave">
         <DataAnnotationsValidator />
 
         <div class="food-item-viewer">
             <div>
-                <IbdTextInput @bind-Value="@Food.Name" Title="Name" />
+                <IbdTextInput @bind-Value="@_food.Name" Title="Name" />
             </div>
             <div>
-                <IbdTextArea @bind-Value="@Food.Description" Title="Description" />
+                <IbdTextArea @bind-Value="@_food.Description" Title="Description" />
             </div>
             <div>
                 <button type="button" @onclick="@OnClickCancel">
@@ -25,7 +25,9 @@
 </Popup>
 
 @code {
-    [Parameter] public FoodItemDto Food { get; set; } = new();
+    [Parameter] required public FoodItemDto Food { get; set; }
+    private FoodItemDto _food = new();
+
     [Parameter] public EventCallback<FoodItemDto> FoodChanged { get; set; }
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
@@ -34,8 +36,10 @@
 
     protected override Task OnParametersSetAsync()
     {
-        if (Food.IsNew) _title = "Add Food";
-        else _title = Food.Name;
+        if (!ReferenceEquals(Food, _food)) _food = Food;
+
+        if (_food.IsNew) _title = "Add Food";
+        else _title = _food.Name;
         return base.OnParametersSetAsync();
     }
 
@@ -56,17 +60,17 @@
 
         if (Food.IsNew)
         {
-            result = await _foodService.AddAsync(Food) > 0;
+            result = await _foodService.AddAsync(_food) > 0;
         }
         else
         {
-            result = await _foodService.UpdateAsync(Food);
+            result = await _foodService.UpdateAsync(_food);
         }
 
         if (result)
         {
-            _updateService.NotifiyComponentUpdate(Food);
-            await FoodChanged.InvokeAsync(Food);
+            _updateService.NotifiyComponentUpdate(_food);
+            await FoodChanged.InvokeAsync(_food);
             await OnClickCancel();
         }
     }

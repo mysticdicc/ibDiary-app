@@ -21,6 +21,15 @@ namespace ibDiary_data.Models.Medication.Dto
             CreatedAtLocal = DateTime.Now;
         }
 
+        public MedicineDueAtOccuranceDto(DateTime dueAt)
+        {
+            Id = 0;
+            Medicine = new();
+            Status = MedicineDueAtStatus.Pending;
+            DueAtLocal = dueAt;
+            CreatedAtLocal = dueAt;
+        }
+
         public MedicineDueAtOccuranceDto(MedicineDto medicine)
         {
             Id = 0;
@@ -28,6 +37,15 @@ namespace ibDiary_data.Models.Medication.Dto
             Status = MedicineDueAtStatus.Pending;
             DueAtLocal = DateTime.Now;
             CreatedAtLocal = DateTime.Now;
+        }
+
+        public MedicineDueAtOccuranceDto(MedicineDto medicine, DateTime dueAt)
+        {
+            Id = 0;
+            Medicine = medicine;
+            Status = MedicineDueAtStatus.Pending;
+            DueAtLocal = dueAt;
+            CreatedAtLocal = dueAt;
         }
     }
 }

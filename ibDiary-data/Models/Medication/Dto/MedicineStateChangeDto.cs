@@ -26,6 +26,16 @@ namespace ibDiary_data.Models.Medication.Dto
             IsNew = true;
         }
 
+        public MedicineStateChangeDto(DateTime changedAt)
+        {
+            Id = 0;
+            MedicineId = 0;
+            ChangedAtLocal = changedAt;
+            MedicineBefore = new();
+            MedicineAfter = new();
+            IsNew = true;
+        }
+
         public DateOnly GetDate() => ChangedAtLocalDate;
 
         public void AddToCalendarDay(CalendarDay day)

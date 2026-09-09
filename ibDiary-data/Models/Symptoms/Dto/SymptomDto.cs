@@ -38,6 +38,19 @@ namespace ibDiary_data.Models.Symptoms.Dto
             SymptomReports = [];
         }
 
+        public SymptomDto(DateTime createdAt)
+        {
+            Id = 0;
+            Title = string.Empty;
+            Description = string.Empty;
+            Active = true;
+            IsNew = true;
+            CreatedAtLocal = createdAt;
+            StartedAtLocal = createdAt;
+            StateChanges = [];
+            SymptomReports = [];
+        }
+
         public SymptomDto Clone()
         {
             var clone = new SymptomDto();

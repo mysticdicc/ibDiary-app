@@ -43,6 +43,18 @@ namespace ibDiary_data.Models.Symptoms.Dto
             IsNew = true;
         }
 
+        public SymptomReportDto(DateTime submittedAt)
+        {
+            Id = 0;
+            Symptom = new();
+            Medication = null;
+            SubmittedAtLocal = submittedAt;
+            SubmittedForLocal = submittedAt;
+            Severity = 0;
+            Notes = string.Empty;
+            IsNew = true;
+        }
+
         public SymptomReportDto(SymptomDto symptom)
         {
             Id = 0;
@@ -50,6 +62,18 @@ namespace ibDiary_data.Models.Symptoms.Dto
             Medication = null;
             SubmittedAtLocal = DateTime.Now;
             SubmittedForLocal = SubmittedAtLocal;
+            Severity = 0;
+            Notes = string.Empty;
+            IsNew = true;
+        }
+
+        public SymptomReportDto(SymptomDto symptom, DateTime submittedAt)
+        {
+            Id = 0;
+            Symptom = symptom;
+            Medication = null;
+            SubmittedAtLocal = submittedAt;
+            SubmittedForLocal = submittedAt;
             Severity = 0;
             Notes = string.Empty;
             IsNew = true;
