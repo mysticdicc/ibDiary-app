@@ -1,18 +1,18 @@
 ﻿<div class="symptom-card small-card" @onclick="@OnClickRow">
     <header>
-        <h3>@Symptom.Title</h3>
+        <h3>@_symptom.Title</h3>
         <button @onclick="@OnDeleteClicked" @onclick:stopPropagation="true">
             <span class="material-symbols-outlined">delete</span>
         </button>
     </header>
     <div>
-        <p>@Symptom.Description</p>
+        <p>@_symptom.Description</p>
     </div>
     <div>
-        <p>Started at: @DateOnly.FromDateTime(Symptom.StartedAtLocal)</p>
+        <p>Started at: @DateOnly.FromDateTime(_symptom.StartedAtLocal)</p>
     </div>
     <div>
-        <p>Added on: @Symptom.CreatedAtLocalDate</p>
+        <p>Added on: @_symptom.CreatedAtLocalDate</p>
         <button @onclick="@OnClickOpenReport" @onclick:stopPropagation="true">
             Create Report
             <span class="material-symbols-outlined">article</span>
@@ -24,6 +24,8 @@
 
 @code {
     [Parameter] required public SymptomDto Symptom { get; set; }
+    private SymptomDto _symptom = new();
+
     [Parameter] public EventCallback<SymptomDto> SymptomClicked { get; set; }
     [Parameter] public EventCallback<SymptomDto> DeleteClicked { get; set; }
     private bool _reportViewerVisible = false;
@@ -31,13 +33,17 @@
 
     protected override void OnParametersSet()
     {
-        _report = new(Symptom);
+        if (Symptom != _symptom)
+        {
+            _symptom = Symptom;
+            _report = new(Symptom);
+        }
         base.OnParametersSet();
     }
 
     private async Task OnClickRow()
     {
-        await SymptomClicked.InvokeAsync(Symptom);
+        await SymptomClicked.InvokeAsync(_symptom);
     }
 
     private async Task OnClickOpenReport()
@@ -47,6 +53,6 @@
 
     private async Task OnDeleteClicked()
     {
-        await DeleteClicked.InvokeAsync(Symptom);
+        await DeleteClicked.InvokeAsync(_symptom);
     }
 }

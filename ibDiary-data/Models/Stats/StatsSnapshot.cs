@@ -13,7 +13,7 @@ using System.Text;
 namespace ibDiary_data.Models.Stats
 {
     [Index(nameof(MonthEnd), IsUnique = true)]
-    public class StatsSnapshot : IStatsObject<AppDbContext>, IUpdatableObject<StatsSnapshot>
+    public class StatsSnapshot : IUpdatableObject<StatsSnapshot>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -182,89 +182,6 @@ namespace ibDiary_data.Models.Stats
 
             MealStats.RemoveAll(existing =>
                 !source.Any(x => x.Meal.Id == existing.Meal.Id));
-        }
-
-        public async Task GenerateStats(AppDbContext context, DateOnly monthEnd)
-        {
-            MonthEnd = monthEnd;
-
-            MedicineStats = [];
-            SymptomStats = [];
-            FoodStats = [];
-            MealStats = [];
-
-            var medicines = await context.Medicines
-                .Include(x => x.MedicineReports)
-                .Include(x => x.StateChanges)
-                .Include(x => x.MedicineOccurances)
-                .ToListAsync();
-
-            MedicineCount = medicines.Count;
-            ActiveMedicineCount = medicines.Count(x => x.Active);
-            TotalMedicineReports = medicines.Sum(x => x.MedicineReports.Count);
-            MonthlyMedicalReports = medicines.Sum(x =>
-                x.MedicineReports.Count(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
-            MonthlyMedicinesTaken = medicines.Sum(x =>
-                x.MedicineReports.Count(r => r.MedicineTaken && r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
-
-            foreach (var medicine in medicines)
-            {
-                var snapshot = new MedicineStatsSnapshot(medicine);
-                await snapshot.GenerateStats(medicine, MonthBefore);
-                MedicineStats.Add(snapshot);
-            }
-
-            var symptoms = await context.Symptoms
-                .Include(x => x.SymptomReports)
-                .Include(x => x.StateChanges)
-                .ToListAsync();
-
-            SymptomCount = symptoms.Count;
-            ActiveSymptomCount = symptoms.Count(x => x.Active);
-            TotalSymptomReports = symptoms.Sum(x => x.SymptomReports.Count);
-            MonthlySymptomReports = symptoms.Sum(x =>
-                x.SymptomReports.Count(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
-
-            foreach (var symptom in symptoms)
-            {
-                var snapshot = new SymptomStatsSnapshot(symptom);
-                await snapshot.GenerateStats(symptom, MonthBefore);
-                SymptomStats.Add(snapshot);
-            }
-
-            var foods = await context.FoodItems
-                .Include(x => x.FoodReports)
-                .ToListAsync();
-
-            TotalFoodReports = foods.Sum(x => x.FoodReports.Count);
-            MonthlyFoodReports = foods.Sum(x =>
-                x.FoodReports.Count(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
-            UniqueMonthlyFoodItems = foods.Count(x =>
-                x.FoodReports.Any(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
-
-            foreach (var food in foods)
-            {
-                var snapshot = new FoodStatsSnapshot(food);
-                await snapshot.GenerateStats(food, MonthBefore);
-                FoodStats.Add(snapshot);
-            }
-
-            var meals = await context.Meals
-                .Include(x => x.MealReports)
-                .ToListAsync();
-
-            TotalMealReports = meals.Sum(x => x.MealReports.Count);
-            MonthlyMealReports = meals.Sum(x =>
-                x.MealReports.Count(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
-            UniqueMonthlyMeals = meals.Count(x =>
-                x.MealReports.Any(r => r.GetDate() > MonthBefore && r.GetDate() <= MonthEnd));
-
-            foreach (var meal in meals)
-            {
-                var snapshot = new MealStatsSnapshot(meal);
-                await snapshot.GenerateStats(meal, MonthBefore);
-                MealStats.Add(snapshot);
-            }
         }
 
         public List<string> BuildSummaries(StatsSnapshot lastMonth)

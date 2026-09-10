@@ -43,6 +43,10 @@ namespace ibDiary_app.Services
             var dbItem = await GetByIdAsync(report.Id);
             if (null == dbItem) return false;
 
+            var symptom = await _dbService.Symptoms.FindAsync(report.Symptom.Id);
+            if (symptom == null) return false;
+            report.Symptom = symptom;
+
             dbItem.UpdateProperties(report);
             var rows = await _dbService.SaveChangesAsync();
 
@@ -54,6 +58,11 @@ namespace ibDiary_app.Services
         public async Task<int> AddAsync(SymptomReport report)
         {
             report.IsNew = false;
+
+            var symptom = await _dbService.Symptoms.FindAsync(report.Symptom.Id);
+            if (symptom == null) return 0;
+            report.Symptom = symptom;
+
             await _dbService.SymptomReports.AddAsync(report);
             await _dbService.SaveChangesAsync();
 

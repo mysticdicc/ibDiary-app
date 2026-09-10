@@ -52,6 +52,38 @@ a {
         border-radius: 0 0 10px 10px;
     }
 }
+.privacy-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .badge {
+        margin-top: auto;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 2rem;
+    }
+
+    p {
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    p:last-of-type {
+        margin-bottom: auto;
+    }
+}
+
+@media (max-width: 900px) {
+    .privacy-page {
+        p {
+            width: 90%;
+        }
+    }
+}
+
 
 .container {
     width: min(1100px, 92%);

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class MedicineTakenTrendPoint : IStatsObject<Medicine>, IUpdatableObject<MedicineTakenTrendPoint>, IMergableListItem<List<MedicineTakenTrendPoint>>
+    public class MedicineTakenTrendPoint : IUpdatableObject<MedicineTakenTrendPoint>, IMergableListItem<List<MedicineTakenTrendPoint>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -28,16 +28,6 @@ namespace ibDiary_data.Models.Stats
             Date = date;
             AverageTaken = 0;
             ReportCount = 0;
-        }
-
-        public Task GenerateStats(Medicine medicine, DateOnly monthBefore)
-        {
-            var reports = medicine.MedicineReports.Where(x => x.GetDate() == Date).ToList();
-            ReportCount = reports.Count;
-            var taken = reports.Count(x => x.MedicineTaken);
-            AverageTaken = ReportCount == 0 ? 0 : ((double)taken / ReportCount) * 100;
-
-            return Task.CompletedTask;
         }
 
         public void UpdateProperties(MedicineTakenTrendPoint source)

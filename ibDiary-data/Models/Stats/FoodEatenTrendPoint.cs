@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class FoodEatenTrendPoint : IStatsObject<FoodItem>, IUpdatableObject<FoodEatenTrendPoint>, IMergableListItem<List<FoodEatenTrendPoint>>
+    public class FoodEatenTrendPoint : IUpdatableObject<FoodEatenTrendPoint>, IMergableListItem<List<FoodEatenTrendPoint>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -37,21 +37,6 @@ namespace ibDiary_data.Models.Stats
             Count = 0;
         }
 
-        public Task GenerateStats(FoodItem food, DateOnly monthBefore)
-        {
-            var reports = food.FoodReports;
-            var endHour = StartHour.AddHours(1);
-
-            var dateReports = reports.Where(x => DateOnly.FromDateTime(x.AteFoodAt) == Date).ToList();
-            var relevent = dateReports.Where(x => 
-                            TimeOnly.FromDateTime(x.AteFoodAt) >= StartHour &&
-                            TimeOnly.FromDateTime(x.AteFoodAt) <= endHour)
-                            .ToList();
-
-            Count = relevent.Count();
-
-            return Task.CompletedTask;
-        }
 
         public void UpdateProperties(FoodEatenTrendPoint source)
         {

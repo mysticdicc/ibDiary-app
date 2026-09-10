@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class FoodStatsSnapshot : IStatsObject<FoodItem>, IUpdatableObject<FoodStatsSnapshot>, IMergableListItem<List<FoodStatsSnapshot>>
+    public class FoodStatsSnapshot : IUpdatableObject<FoodStatsSnapshot>, IMergableListItem<List<FoodStatsSnapshot>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -36,34 +36,6 @@ namespace ibDiary_data.Models.Stats
             FoodEatenByHour = [];
         }
 
-        public Task GenerateStats(FoodItem food, DateOnly monthBefore)
-        {
-            var endDate = monthBefore.AddMonths(1);
-            var reports = food.FoodReports;
-
-            TotalReportsCount = reports.Count;
-            var monthly = reports.Where(x => 
-                                    x.GetDate() > monthBefore &&
-                                    x.GetDate() <= endDate)
-                                    .ToList();
-
-            MonthlyReportsCount = monthly.Count;
-
-            FoodEatenByHour = [];
-            for (var date = monthBefore; date <= endDate; date = date.AddDays(1))
-            {
-                for (int i = 1; i < 24; i++)
-                {
-                    var target = new DateTime(date.Year, date.Month, date.Day, i, 0, 0);
-                    var point = new FoodEatenTrendPoint(target);
-                    point.GenerateStats(food, monthBefore);
-                    FoodEatenByHour.Add(point);
-                }
-            }
-
-            return Task.CompletedTask;
-        }
-
         public void UpdateProperties(FoodStatsSnapshot source)
         {
             TotalReportsCount = source.TotalReportsCount;
@@ -80,7 +52,7 @@ namespace ibDiary_data.Models.Stats
 
         public void MergeToList(List<FoodStatsSnapshot> target)
         {
-            var existing = target.FirstOrDefault(x => x.Food == Food);
+            var existing = target.FirstOrDefault(x => x.Food.Id == Food.Id);
             if (existing == null) target.Add(this);
             else existing.UpdateProperties(this);
         }

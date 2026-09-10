@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class SymptomSeverityTrendPoint : IStatsObject<Symptom>, IUpdatableObject<SymptomSeverityTrendPoint>, IMergableListItem<List<SymptomSeverityTrendPoint>>
+    public class SymptomSeverityTrendPoint : IUpdatableObject<SymptomSeverityTrendPoint>, IMergableListItem<List<SymptomSeverityTrendPoint>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -28,16 +28,6 @@ namespace ibDiary_data.Models.Stats
             Date = date;
             AverageSeverity = 0;
             ReportCount = 0;
-        }
-
-        public Task GenerateStats(Symptom symptom, DateOnly monthBefore)
-        {
-            var reports = symptom.SymptomReports.Where(x => x.GetDate() == Date).ToList();
-            ReportCount = reports.Count;
-            var severity = reports.Select(x => x.Severity).ToList();
-            AverageSeverity = severity.Count == 0 ? 0 : severity.Average();
-
-            return Task.CompletedTask;
         }
 
         public void UpdateProperties(SymptomSeverityTrendPoint source)

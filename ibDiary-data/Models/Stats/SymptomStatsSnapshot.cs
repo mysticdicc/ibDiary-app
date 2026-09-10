@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class SymptomStatsSnapshot : IStatsObject<Symptom>, IUpdatableObject<SymptomStatsSnapshot>, IMergableListItem<List<SymptomStatsSnapshot>>
+    public class SymptomStatsSnapshot : IUpdatableObject<SymptomStatsSnapshot>, IMergableListItem<List<SymptomStatsSnapshot>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -39,30 +39,6 @@ namespace ibDiary_data.Models.Stats
             MonthlyStateChanges = 0;
         }
 
-        public Task GenerateStats(Symptom symptom, DateOnly monthBefore)
-        {
-            var endDate = monthBefore.AddMonths(1);
-            var reports = symptom.SymptomReports;
-
-            TotalReportsCount = reports.Count;
-            var monthly = reports.Where(x => x.SubmittedForDate > monthBefore && x.SubmittedForDate <= endDate).ToList();
-            MonthlyReportsCount = monthly.Count;
-
-            TotalStateChanges = symptom.StateChanges.Count;
-            var monthlySc = symptom.StateChanges.Where(x => x.ChangedAtDate > monthBefore && x.ChangedAtDate <= endDate).ToList();
-            MonthlyStateChanges = monthlySc.Count;
-
-            MonthlySeverityTrend = [];
-            for (var date = monthBefore; date <= endDate; date = date.AddDays(1))
-            {
-                var point = new SymptomSeverityTrendPoint(date);
-                point.GenerateStats(symptom, monthBefore);
-                MonthlySeverityTrend.Add(point);
-            }
-
-            return Task.CompletedTask;
-        }
-
         public void UpdateProperties(SymptomStatsSnapshot source)
         {
             TotalReportsCount = source.TotalReportsCount;
@@ -81,7 +57,7 @@ namespace ibDiary_data.Models.Stats
 
         public void MergeToList(List<SymptomStatsSnapshot> target)
         {
-            var existing = target.FirstOrDefault(x => x.Symptom == Symptom);
+            var existing = target.FirstOrDefault(x => x.Symptom.Id == Symptom.Id);
             if (existing == null) target.Add(this);
             else existing.UpdateProperties(this);
         }

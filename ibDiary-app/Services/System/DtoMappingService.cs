@@ -65,11 +65,37 @@ namespace ibDiary_app.Services.System
             SymptomReports = MapList(dto.SymptomReports, FromDto)
         };
 
+        private SymptomDto ToSymptomRefDto(Symptom model) => new()
+        {
+            Id = model.Id,
+            Title = model.Title,
+            Description = model.Description,
+            Active = model.Active,
+            IsNew = model.IsNew,
+            CreatedAtLocal = ToLocal(model.CreatedAtUtc),
+            StartedAtLocal = ToLocal(model.StartedAtUtc),
+            StateChanges = [],
+            SymptomReports = []
+        };
+
+        private Symptom FromSymptomRefDto(SymptomDto dto) => new()
+        {
+            Id = dto.Id,
+            Title = dto.Title,
+            Description = dto.Description,
+            Active = dto.Active,
+            IsNew = dto.IsNew,
+            CreatedAtUtc = ToUtc(dto.CreatedAtLocal),
+            StartedAtUtc = ToUtc(dto.StartedAtLocal),
+            StateChanges = [],
+            SymptomReports = []
+        };
+
         public SymptomReportDto ToDto(SymptomReport model) => new()
         {
             Id = model.Id,
-            Symptom = ToDto(model.Symptom),
-            Medication = model.Medication is null ? null : ToDto(model.Medication),
+            Symptom = ToSymptomRefDto(model.Symptom),
+            Medication = model.Medication is null ? null : ToMedicineRefDto(model.Medication),
             SubmittedAtLocal = ToLocal(model.SubmittedAt),
             SubmittedForLocal = ToLocal(model.SubmittedFor),
             Severity = model.Severity,
@@ -80,8 +106,8 @@ namespace ibDiary_app.Services.System
         public SymptomReport FromDto(SymptomReportDto dto) => new()
         {
             Id = dto.Id,
-            Symptom = FromDto(dto.Symptom),
-            Medication = dto.Medication is null ? null : FromDto(dto.Medication),
+            Symptom = FromSymptomRefDto(dto.Symptom),
+            Medication = dto.Medication is null ? null : FromMedicineRefDto(dto.Medication),
             SubmittedAt = ToUtc(dto.SubmittedAtLocal),
             SubmittedFor = ToUtc(dto.SubmittedForLocal),
             Severity = dto.Severity,
@@ -94,8 +120,8 @@ namespace ibDiary_app.Services.System
             Id = model.Id,
             SymptomId = model.SymptomId,
             ChangedAtLocal = ToLocal(model.ChangedAt),
-            SymptomBefore = ToDto(model.SymptomBefore),
-            SymptomAfter = ToDto(model.SymptomAfter),
+            SymptomBefore = ToSymptomRefDto(model.SymptomBefore),
+            SymptomAfter = ToSymptomRefDto(model.SymptomAfter),
             IsNew = model.IsNew
         };
 
@@ -104,8 +130,8 @@ namespace ibDiary_app.Services.System
             Id = dto.Id,
             SymptomId = dto.SymptomId,
             ChangedAt = ToUtc(dto.ChangedAtLocal),
-            SymptomBefore = FromDto(dto.SymptomBefore),
-            SymptomAfter = FromDto(dto.SymptomAfter),
+            SymptomBefore = FromSymptomRefDto(dto.SymptomBefore),
+            SymptomAfter = FromSymptomRefDto(dto.SymptomAfter),
             IsNew = dto.IsNew
         };
 
@@ -118,7 +144,7 @@ namespace ibDiary_app.Services.System
             Notes = model.Notes,
             PrescribedAtLocal = ToLocal(model.PrescribedAt),
             MedicineScheduleId = model.MedicineScheduleId,
-            MedicineSchedule = model.MedicineSchedule is null ? new MedicineScheduleDto() : ToDto(model.MedicineSchedule),
+            MedicineSchedule = ToDto(model.MedicineSchedule),
             StateChanges = MapList(model.StateChanges, ToDto),
             MedicineOccurances = MapList(model.MedicineOccurances, ToDto),
             Active = model.Active,
@@ -135,12 +161,46 @@ namespace ibDiary_app.Services.System
             Notes = dto.Notes,
             PrescribedAt = ToUtc(dto.PrescribedAtLocal),
             MedicineScheduleId = dto.MedicineScheduleId,
-            MedicineSchedule = dto.MedicineSchedule is null ? new MedicineSchedule() : FromDto(dto.MedicineSchedule),
+            MedicineSchedule = FromDto(dto.MedicineSchedule),
             StateChanges = MapList(dto.StateChanges, FromDto),
             MedicineOccurances = MapList(dto.MedicineOccurances, FromDto),
             Active = dto.Active,
             IsNew = dto.IsNew,
             MedicineReports = MapList(dto.MedicineReports, FromDto)
+        };
+
+        private MedicineDto ToMedicineRefDto(Medicine model) => new()
+        {
+            Id = model.Id,
+            Name = model.Name,
+            Dose = model.Dose,
+            PrescribedBy = model.PrescribedBy,
+            Notes = model.Notes,
+            PrescribedAtLocal = ToLocal(model.PrescribedAt),
+            MedicineScheduleId = model.MedicineScheduleId,
+            MedicineSchedule = ToDto(model.MedicineSchedule),
+            Active = model.Active,
+            IsNew = model.IsNew,
+            StateChanges = [],
+            MedicineOccurances = [],
+            MedicineReports = []
+        };
+
+        private Medicine FromMedicineRefDto(MedicineDto dto) => new()
+        {
+            Id = dto.Id,
+            Name = dto.Name,
+            Dose = dto.Dose,
+            PrescribedBy = dto.PrescribedBy,
+            Notes = dto.Notes,
+            PrescribedAt = ToUtc(dto.PrescribedAtLocal),
+            MedicineScheduleId = dto.MedicineScheduleId,
+            MedicineSchedule = FromDto(dto.MedicineSchedule),
+            Active = dto.Active,
+            IsNew = dto.IsNew,
+            StateChanges = [],
+            MedicineOccurances = [],
+            MedicineReports = []
         };
 
         public MedicineScheduleDto ToDto(MedicineSchedule model) => new()
@@ -169,7 +229,7 @@ namespace ibDiary_app.Services.System
         {
             Id = model.Id,
             MedicineId = model.MedicineId,
-            Medicine = ToDto(model.Medicine),
+            Medicine = ToMedicineRefDto(model.Medicine),
             SubmittedAtLocal = ToLocal(model.SubmittedAt),
             MedicineTakenAtLocal = ToLocal(model.MedicineTakenAt),
             DueAt = ToDto(model.DueAt),
@@ -183,7 +243,7 @@ namespace ibDiary_app.Services.System
         {
             Id = dto.Id,
             MedicineId = dto.MedicineId,
-            Medicine = FromDto(dto.Medicine),
+            Medicine = FromMedicineRefDto(dto.Medicine),
             SubmittedAt = ToUtc(dto.SubmittedAtLocal),
             MedicineTakenAt = ToUtc(dto.MedicineTakenAtLocal),
             DueAt = dto.DueAt is null ? new MedicineDueAtOccurance() : FromDto(dto.DueAt),
@@ -196,7 +256,7 @@ namespace ibDiary_app.Services.System
         public MedicineDueAtOccuranceDto ToDto(MedicineDueAtOccurance model) => new()
         {
             Id = model.Id,
-            Medicine = ToDto(model.Medicine),
+            Medicine = ToMedicineRefDto(model.Medicine),
             Status = model.Status,
             DueAtLocal = ToLocal(model.DueAt),
             CreatedAtLocal = ToLocal(model.CreatedAt)
@@ -205,7 +265,7 @@ namespace ibDiary_app.Services.System
         public MedicineDueAtOccurance FromDto(MedicineDueAtOccuranceDto dto) => new()
         {
             Id = dto.Id,
-            Medicine = FromDto(dto.Medicine),
+            Medicine = FromMedicineRefDto(dto.Medicine),
             Status = dto.Status,
             DueAt = ToUtc(dto.DueAtLocal),
             CreatedAt = ToUtc(dto.CreatedAtLocal)
@@ -216,8 +276,8 @@ namespace ibDiary_app.Services.System
             Id = model.Id,
             MedicineId = model.MedicineId,
             ChangedAtLocal = ToLocal(model.ChangedAt),
-            MedicineBefore = ToDto(model.MedicineBefore),
-            MedicineAfter = ToDto(model.MedicineAfter),
+            MedicineBefore = ToMedicineRefDto(model.MedicineBefore),
+            MedicineAfter = ToMedicineRefDto(model.MedicineAfter),
             IsNew = model.IsNew
         };
 
@@ -226,8 +286,8 @@ namespace ibDiary_app.Services.System
             Id = dto.Id,
             MedicineId = dto.MedicineId,
             ChangedAt = ToUtc(dto.ChangedAtLocal),
-            MedicineBefore = FromDto(dto.MedicineBefore),
-            MedicineAfter = FromDto(dto.MedicineAfter),
+            MedicineBefore = FromMedicineRefDto(dto.MedicineBefore),
+            MedicineAfter = FromMedicineRefDto(dto.MedicineAfter),
             IsNew = dto.IsNew
         };
 
@@ -251,10 +311,30 @@ namespace ibDiary_app.Services.System
             IsNew = dto.IsNew
         };
 
+        private FoodItemDto ToFoodItemRefDto(FoodItem model) => new()
+        {
+            Id = model.Id,
+            Name = model.Name,
+            Description = model.Description,
+            CreatedAtLocal = ToLocal(model.CreatedAt),
+            FoodReports = [],
+            IsNew = model.IsNew
+        };
+
+        private FoodItem FromFoodItemRefDto(FoodItemDto dto) => new()
+        {
+            Id = dto.Id,
+            Name = dto.Name,
+            Description = dto.Description,
+            CreatedAt = ToUtc(dto.CreatedAtLocal),
+            FoodReports = [],
+            IsNew = dto.IsNew
+        };
+
         public FoodItemReportDto ToDto(FoodItemReport model) => new()
         {
             Id = model.Id,
-            FoodItem = ToDto(model.FoodItem),
+            FoodItem = ToFoodItemRefDto(model.FoodItem),
             CreatedAtLocal = ToLocal(model.CreatedAt),
             AteFoodAtLocal = ToLocal(model.AteFoodAt),
             Notes = model.Notes,
@@ -264,7 +344,7 @@ namespace ibDiary_app.Services.System
         public FoodItemReport FromDto(FoodItemReportDto dto) => new()
         {
             Id = dto.Id,
-            FoodItem = FromDto(dto.FoodItem),
+            FoodItem = FromFoodItemRefDto(dto.FoodItem),
             CreatedAt = ToUtc(dto.CreatedAtLocal),
             AteFoodAt = ToUtc(dto.AteFoodAtLocal),
             Notes = dto.Notes,
@@ -293,10 +373,32 @@ namespace ibDiary_app.Services.System
             IsNew = dto.IsNew
         };
 
+        private MealDto ToMealRefDto(Meal model) => new()
+        {
+            Id = model.Id,
+            Name = model.Name,
+            FoodItems = MapList(model.FoodItems, ToFoodItemRefDto),
+            Notes = model.Notes,
+            CreatedAtLocal = ToLocal(model.CreatedAt),
+            MealReports = [],
+            IsNew = model.IsNew
+        };
+
+        private Meal FromMealRefDto(MealDto dto) => new()
+        {
+            Id = dto.Id,
+            Name = dto.Name,
+            FoodItems = MapList(dto.FoodItems, FromFoodItemRefDto),
+            Notes = dto.Notes,
+            CreatedAt = ToUtc(dto.CreatedAtLocal),
+            MealReports = [],
+            IsNew = dto.IsNew
+        };
+
         public MealReportDto ToDto(MealReport model) => new()
         {
             Id = model.Id,
-            Meal = ToDto(model.Meal),
+            Meal = ToMealRefDto(model.Meal),
             CreatedAtLocal = ToLocal(model.CreatedAt),
             AteMealAtLocal = ToLocal(model.AteMealAt),
             Notes = model.Notes,
@@ -306,7 +408,7 @@ namespace ibDiary_app.Services.System
         public MealReport FromDto(MealReportDto dto) => new()
         {
             Id = dto.Id,
-            Meal = FromDto(dto.Meal),
+            Meal = FromMealRefDto(dto.Meal),
             CreatedAt = ToUtc(dto.CreatedAtLocal),
             AteMealAt = ToUtc(dto.AteMealAtLocal),
             Notes = dto.Notes,

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class MealStatsSnapshot : IStatsObject<Meal>, IUpdatableObject<MealStatsSnapshot>, IMergableListItem<List<MealStatsSnapshot>>
+    public class MealStatsSnapshot : IUpdatableObject<MealStatsSnapshot>, IMergableListItem<List<MealStatsSnapshot>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -36,35 +36,6 @@ namespace ibDiary_data.Models.Stats
             MealEatenByHour = [];
         } 
 
-        public Task GenerateStats(Meal meal, DateOnly monthBefore)
-        {
-            var endDate = monthBefore.AddMonths(1);
-            var reports = meal.MealReports;
-
-            TotalReportsCount = reports.Count;
-            var monthly = reports
-                                .Where(x => 
-                                x.GetDate() > monthBefore && 
-                                x.GetDate() <= endDate)
-                                .ToList();
-
-            MonthlyReportsCount = monthly.Count;
-
-            MealEatenByHour = [];
-            for (var date = monthBefore; date <= endDate; date = date.AddDays(1))
-            {
-                for (int i = 1; i < 24; i++)
-                {
-                    var target = new DateTime(date.Year, date.Month, date.Day, i, 0, 0);
-                    var point = new MealEatenTrendPoint(target);
-                    point.GenerateStats(meal, monthBefore);
-                    MealEatenByHour.Add(point);
-                }
-            }
-
-            return Task.CompletedTask;
-        }
-
         public void UpdateProperties(MealStatsSnapshot source)
         {
             TotalReportsCount = source.TotalReportsCount;
@@ -81,7 +52,7 @@ namespace ibDiary_data.Models.Stats
 
         public void MergeToList(List<MealStatsSnapshot> target)
         {
-            var existing = target.FirstOrDefault(x => x.Meal == Meal);
+            var existing = target.FirstOrDefault(x => x.Meal.Id == Meal.Id);
             if (existing == null) target.Add(this);
             else existing.UpdateProperties(this);
         }

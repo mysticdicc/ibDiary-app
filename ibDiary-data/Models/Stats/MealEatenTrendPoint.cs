@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ibDiary_data.Models.Stats
 {
-    public class MealEatenTrendPoint : IStatsObject<Meal>, IUpdatableObject<MealEatenTrendPoint>, IMergableListItem<List<MealEatenTrendPoint>>
+    public class MealEatenTrendPoint : IUpdatableObject<MealEatenTrendPoint>, IMergableListItem<List<MealEatenTrendPoint>>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -32,22 +32,6 @@ namespace ibDiary_data.Models.Stats
             Date = DateOnly.FromDateTime(startDate);
             StartHour = TimeOnly.FromDateTime(startDate);
             Count = 0;
-        }
-
-        public Task GenerateStats(Meal meal, DateOnly monthBefore)
-        {
-            var reports = meal.MealReports;
-            var endHour = StartHour.AddHours(1);
-
-            var dateReports = reports.Where(x => DateOnly.FromDateTime(x.AteMealAt) == Date).ToList();
-            var relevent = dateReports.Where(x =>
-                            TimeOnly.FromDateTime(x.AteMealAt) >= StartHour &&
-                            TimeOnly.FromDateTime(x.AteMealAt) <= endHour)
-                            .ToList();
-
-            Count = relevent.Count();
-
-            return Task.CompletedTask;
         }
 
         public void UpdateProperties(MealEatenTrendPoint source)

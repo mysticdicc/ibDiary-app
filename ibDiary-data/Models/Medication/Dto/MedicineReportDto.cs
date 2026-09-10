@@ -67,7 +67,7 @@ namespace ibDiary_data.Models.Medication.Dto
             MedicineTakenAtLocal = SubmittedAtLocal;
             DueAt = dueAt;
             MedicineTaken = true;
-            Dose = string.Empty;
+            Dose = medicine.Dose;
             Notes = string.Empty;
             IsNew = true;
         }
@@ -80,7 +80,7 @@ namespace ibDiary_data.Models.Medication.Dto
             MedicineTakenAtLocal = submittedAt;
             DueAt = dueAt;
             MedicineTaken = true;
-            Dose = string.Empty;
+            Dose = medicine.Dose;
             Notes = string.Empty;
             IsNew = true;
         }

@@ -46,7 +46,7 @@
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     private SymptomReportDto _report = new();
-
+    
     protected override void OnParametersSet()
     {
         if (!ReferenceEquals(_report, SymptomReport)) _report = SymptomReport;
